@@ -2065,7 +2065,6 @@
             if (e.key === 'Enter') performSearch();
         });
 
-        document.getElementById('sort-select').addEventListener('change', handleSortChange);
         document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
         document.getElementById('language-btn').addEventListener('click', toggleLanguageDropdown);
         document.getElementById('clear-all-favorites').addEventListener('click', showConfirmationModal);
@@ -2519,6 +2518,10 @@
                 filterAndDisplayProducts();
             });
 
+            // Sıralama seçeneği event listener'ı ekle - DÜZELTİLDİ
+            const sortSelect = document.getElementById('sort-select');
+            sortSelect.addEventListener('change', handleSortChange);
+            
             statusInfo.style.display = 'none';
             mainContent.style.display = 'block';
             
@@ -2542,14 +2545,14 @@
             }
             
             // Sıralama
-            applySorting(filteredProducts);
+            filteredProducts = applySorting(filteredProducts);
             
             // İlk 50 ürünü göster
             currentDisplayedCount = 0;
             loadMoreProducts();
         }
 
-        // Sıralama
+        // Sıralama - DÜZELTİLDİ
         function handleSortChange() {
             currentSort = document.getElementById('sort-select').value;
             currentDisplayedCount = 0;
@@ -2557,29 +2560,52 @@
         }
 
         function applySorting(products) {
+            const sortedProducts = [...products];
+            
             switch(currentSort) {
                 case 'price-low':
-                    products.sort((a, b) => extractPrice(a.discountPrice) - extractPrice(b.discountPrice));
+                    sortedProducts.sort((a, b) => {
+                        const priceA = extractPrice(a.discountPrice);
+                        const priceB = extractPrice(b.discountPrice);
+                        return priceA - priceB;
+                    });
                     break;
                 case 'price-high':
-                    products.sort((a, b) => extractPrice(b.discountPrice) - extractPrice(a.discountPrice));
+                    sortedProducts.sort((a, b) => {
+                        const priceA = extractPrice(a.discountPrice);
+                        const priceB = extractPrice(b.discountPrice);
+                        return priceB - priceA;
+                    });
                     break;
                 case 'discount':
-                    products.sort((a, b) => extractDiscount(b.discount) - extractDiscount(a.discount));
+                    sortedProducts.sort((a, b) => {
+                        const discountA = extractDiscount(a.discount);
+                        const discountB = extractDiscount(b.discount);
+                        return discountB - discountA;
+                    });
                     break;
                 case 'rating':
-                    products.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+                    sortedProducts.sort((a, b) => {
+                        const ratingA = parseFloat(a.rating) || 0;
+                        const ratingB = parseFloat(b.rating) || 0;
+                        return ratingB - ratingA;
+                    });
+                    break;
+                default:
+                    // Varsayılan sıralama - en son eklenenler önce
                     break;
             }
-            return products;
+            return sortedProducts;
         }
 
         function extractPrice(priceStr) {
+            if (!priceStr) return 0;
             const match = priceStr.match(/[\d,]+/);
             return match ? parseFloat(match[0].replace(',', '')) : 0;
         }
 
         function extractDiscount(discountStr) {
+            if (!discountStr) return 0;
             const match = discountStr.match(/\d+/);
             return match ? parseInt(match[0]) : 0;
         }
