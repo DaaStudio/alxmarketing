@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ürün Video Oluşturucu - Tek Dosya</title>
+    <title>Excel Ürün Video Oluşturucu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.6.2/RecordRTC.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -34,6 +35,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 20px;
             background: white;
+            height: 100%;
         }
         
         .product-card:hover {
@@ -46,6 +48,7 @@
             object-fit: contain;
             background: #f8f9fa;
             padding: 10px;
+            width: 100%;
         }
         
         .discount-badge {
@@ -57,6 +60,7 @@
             padding: 5px 10px;
             border-radius: 20px;
             font-weight: bold;
+            z-index: 1;
         }
         
         .price-container {
@@ -252,16 +256,90 @@
             width: 0%;
             transition: width 0.3s ease;
         }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .filter-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pagination-container {
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
+    <!-- Yükleme Ekranı -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Yükleniyor...</span>
+            </div>
+            <h4 class="mt-3">Excel dosyası yükleniyor...</h4>
+            <p id="loadingText">GitHub'dan data22.xls dosyası okunuyor</p>
+        </div>
+    </div>
+    
     <div class="container py-5">
         <!-- Başlık -->
         <div class="text-center mb-5">
             <h1 class="text-white fw-bold mb-3">
-                <i class="fas fa-video me-2"></i>Ürün Video Oluşturucu
+                <i class="fas fa-video me-2"></i>Excel Ürün Video Oluşturucu
             </h1>
-            <p class="text-white lead">Ürünleriniz için otomatik sosyal medya videoları oluşturun</p>
+            <p class="text-white lead">GitHub'daki Excel dosyasından ürünleri otomatik yükleyin ve video oluşturun</p>
+        </div>
+        
+        <!-- Filtreleme -->
+        <div class="filter-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Ürün ara..." onkeyup="filterProducts()">
+                </div>
+                <div class="col-md-6">
+                    <select id="sortSelect" class="form-control" onchange="sortProducts()">
+                        <option value="discount-high">İndirime Göre (Yüksekten Düşüğe)</option>
+                        <option value="discount-low">İndirime Göre (Düşükten Yükseğe)</option>
+                        <option value="price-high">Fiyata Göre (Yüksekten Düşüğe)</option>
+                        <option value="price-low">Fiyata Göre (Düşükten Yükseğe)</option>
+                        <option value="sales-high">Satışa Göre (Yüksekten Düşüğe)</option>
+                        <option value="rating-high">Puana Göre (Yüksekten Düşüğe)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="filterDiscount" onchange="filterProducts()">
+                        <label class="form-check-label" for="filterDiscount">Sadece İndirimli Ürünler</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="filterRating" onchange="filterProducts()">
+                        <label class="form-check-label" for="filterRating">90%+ Pozitif Puan</label>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Ürün Grid -->
@@ -269,8 +347,27 @@
             <!-- Ürünler buraya yüklenecek -->
         </div>
         
+        <!-- Sayfalama -->
+        <div id="paginationContainer" class="pagination-container text-center" style="display: none;">
+            <nav aria-label="Sayfalama">
+                <ul id="pagination" class="pagination justify-content-center">
+                    <!-- Sayfa numaraları buraya eklenecek -->
+                </ul>
+            </nav>
+            <p id="pageInfo" class="text-white mt-2"></p>
+        </div>
+        
+        <!-- Ürün Bulunamadı -->
+        <div id="noProducts" class="alert alert-warning text-center" style="display: none;">
+            <i class="fas fa-exclamation-triangle me-2"></i>Filtre kriterlerine uygun ürün bulunamadı.
+        </div>
+        
         <!-- Video Oluşturma Alanı -->
         <div id="videoCreationArea" class="video-container">
+            <button id="backButton" class="btn btn-outline-secondary mb-3" onclick="goBackToProducts()">
+                <i class="fas fa-arrow-left me-2"></i>Ürünlere Geri Dön
+            </button>
+            
             <div class="step-indicator">
                 <div class="step active" id="step1">1</div>
                 <div class="step" id="step2">2</div>
@@ -306,10 +403,10 @@
                 
                 <div class="text-center mb-4">
                     <button id="downloadVideoBtn" class="btn btn-primary btn-lg">
-                        <i class="fas fa-download me-2"></i>Videoyu İndir
+                        <i class="fas fa-download me-2"></i>Videoyu İndir (MP4)
                     </button>
-                    <button id="shareVideoBtn" class="btn btn-info btn-lg">
-                        <i class="fas fa-share me-2"></i>Paylaş
+                    <button id="shareVideoBtn" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#shareModal">
+                        <i class="fas fa-share me-2"></i>Sosyal Medya Paylaş
                     </button>
                 </div>
                 
@@ -359,128 +456,332 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Örnek ürün verileri (Excel'den alınmış gibi)
-        const sampleProducts = [
-            {
-                "ProductId": "1005007876823800",
-                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/S76008ad7510f417aab4e840c5f10642bA.jpg",
-                "Product Desc": "Japan Cherry Blossom Mouse Pad XXL Gray Laptops Gaming Deskmat Sakura Mousepad",
-                "Origin Price": "EUR 6.20",
-                "Discount Price": "EUR 2.23",
-                "Discount": "64%",
-                "Positive Feedback": "91.0%",
-                "Sales180Day": "8025",
-                "Promotion Url": "https://s.click.aliexpress.com/e/_c3Gaz3HB",
-                "Code Name": "PJXD1T509HYB",
-                "Code Value": "EUR 0.74"
-            },
-            {
-                "ProductId": "1005007839347268",
-                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/S20bd0c574f454bafb00d5089fc16a481E.jpg",
-                "Product Desc": "2-in-1 Vitamin D3 K2 Supplement Softgel, 10000 IU VIT D3 + 200 MCG Vitamin K2",
-                "Origin Price": "EUR 22.41",
-                "Discount Price": "EUR 15.69",
-                "Discount": "30%",
-                "Positive Feedback": "96.3%",
-                "Sales180Day": "305",
-                "Promotion Url": "https://s.click.aliexpress.com/e/_c4KawaKz",
-                "Code Name": "M4J8J76H7LYE",
-                "Code Value": "EUR 0.87"
-            },
-            {
-                "ProductId": "1005005081276760",
-                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/S93f679ca64e84f7cbc608d6fe7f095d7W.png",
-                "Product Desc": "Mens Slimming Body Shaper Vest Shirt Abs Abdomen Slim Gym Workout Tummy Control",
-                "Origin Price": "EUR 5.92",
-                "Discount Price": "EUR 1.87",
-                "Discount": "68%",
-                "Positive Feedback": "91.9%",
-                "Sales180Day": "3275",
-                "Promotion Url": "https://s.click.aliexpress.com/e/_c3Zkybmh",
-                "Code Name": "3L5LZ1ARAJNG",
-                "Code Value": "EUR 0.87"
-            },
-            {
-                "ProductId": "1005008119845882",
-                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/Sef12305ed58b43ad928d27b6a50c0a06F.jpg",
-                "Product Desc": "Lab Grown Sapphire Cushion Cut Royal Blue Selectable AGL Certificate",
-                "Origin Price": "EUR 8.55",
-                "Discount Price": "EUR 3.16",
-                "Discount": "63%",
-                "Positive Feedback": "94.9%",
-                "Sales180Day": "138",
-                "Promotion Url": "https://s.click.aliexpress.com/e/_c34NBzpJ",
-                "Code Name": "B72SWKO1KMDR",
-                "Code Value": "EUR 2.48"
-            }
-        ];
-        
         // Global değişkenler
+        let allProducts = [];
+        let filteredProducts = [];
         let currentProduct = null;
+        let currentPage = 1;
+        const itemsPerPage = 12;
         let recorder = null;
         let videoChunks = [];
         let videoStream = null;
         let stepInterval = null;
         
-        // Sayfa yüklendiğinde ürünleri göster
+        // Sayfa yüklendiğinde Excel dosyasını oku
         document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
+            loadExcelFromGitHub();
             setupEventListeners();
         });
         
-        function loadProducts() {
-            const productsGrid = document.getElementById('productsGrid');
-            productsGrid.innerHTML = '';
+        async function loadExcelFromGitHub() {
+            try {
+                // GitHub'dan Excel dosyasını yükle
+                const excelUrl = 'data22.xls';
+                // Alternatif URL'ler (dosya adınıza göre değiştirin):
+                // const excelUrl = 'https://github.com/YOUR_USERNAME/YOUR_REPO/raw/main/data22.xlsx';
+                // const excelUrl = 'https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/data22.xls?raw=true';
+                
+                document.getElementById('loadingText').textContent = 'Excel dosyası indiriliyor...';
+                
+                const response = await fetch(excelUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP hatası! Durum: ${response.status}`);
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                document.getElementById('loadingText').textContent = 'Excel dosyası işleniyor...';
+                
+                // Excel'i oku
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                // İlk sayfayı al
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // JSON formatına çevir
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                
+                // Verileri işle
+                allProducts = processExcelData(jsonData);
+                filteredProducts = [...allProducts];
+                
+                // Ürünleri göster
+                document.getElementById('loadingText').textContent = 'Ürünler yükleniyor...';
+                displayProducts();
+                
+                // Yükleme ekranını gizle
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 500);
+                
+            } catch (error) {
+                console.error('Excel yükleme hatası:', error);
+                document.getElementById('loadingText').textContent = `Hata: ${error.message}`;
+                
+                // Eğer GitHub'dan yüklenemezse, örnek verilerle devam et
+                setTimeout(() => {
+                    loadSampleData();
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 2000);
+            }
+        }
+        
+        function processExcelData(jsonData) {
+            return jsonData.map((item, index) => {
+                // Fiyatları temizle
+                const originPrice = cleanPrice(item['Origin Price'] || item['OriginPrice'] || '0');
+                const discountPrice = cleanPrice(item['Discount Price'] || item['DiscountPrice'] || '0');
+                
+                // İndirim yüzdesini hesapla
+                let discountPercent = '0%';
+                if (item.Discount && typeof item.Discount === 'string') {
+                    discountPercent = item.Discount;
+                } else if (originPrice > 0 && discountPrice > 0) {
+                    const discount = Math.round((1 - discountPrice / originPrice) * 100);
+                    discountPercent = `${discount}%`;
+                }
+                
+                // Satış sayısını temizle
+                const sales = parseInt(item['Sales180Day'] || item['Sales'] || '0');
+                
+                // Puanı temizle
+                let rating = '0%';
+                if (item['Positive Feedback'] && typeof item['Positive Feedback'] === 'string') {
+                    rating = item['Positive Feedback'];
+                }
+                
+                return {
+                    id: item.ProductId || item.productId || `product_${index}`,
+                    image: item['Image Url'] || item.imageUrl || '',
+                    title: item['Product Desc'] || item.productDesc || 'Ürün Açıklaması Yok',
+                    originalPrice: formatPrice(originPrice),
+                    discountPrice: formatPrice(discountPrice),
+                    discount: discountPercent,
+                    rating: rating,
+                    sales: sales,
+                    code: item['Code Name'] || item.codeName || 'KOD2024',
+                    codeValue: item['Code Value'] || item.codeValue || 'EUR 0.99',
+                    link: item['Promotion Url'] || item.promotionUrl || '#',
+                    rawOriginalPrice: originPrice,
+                    rawDiscountPrice: discountPrice
+                };
+            });
+        }
+        
+        function cleanPrice(price) {
+            if (!price) return 0;
+            const str = String(price).replace(/[^\d.,]/g, '').replace(',', '.');
+            const num = parseFloat(str);
+            return isNaN(num) ? 0 : num;
+        }
+        
+        function formatPrice(price) {
+            if (price === 0) return 'EUR 0.00';
+            return `EUR ${price.toFixed(2)}`;
+        }
+        
+        function loadSampleData() {
+            // Örnek veriler (Excel yüklenemezse)
+            allProducts = Array.from({length: 50}, (_, i) => ({
+                id: `sample_${i + 1}`,
+                image: `https://picsum.photos/300/200?random=${i + 1}`,
+                title: `Örnek Ürün ${i + 1} - Kaliteli ve dayanıklı ürün ${i + 1}`,
+                originalPrice: `EUR ${(Math.random() * 100 + 10).toFixed(2)}`,
+                discountPrice: `EUR ${(Math.random() * 50 + 5).toFixed(2)}`,
+                discount: `${Math.floor(Math.random() * 70 + 10)}%`,
+                rating: `${Math.floor(Math.random() * 20 + 80)}%`,
+                sales: Math.floor(Math.random() * 10000),
+                code: `KOD${1000 + i}`,
+                codeValue: `EUR ${(Math.random() * 5).toFixed(2)}`,
+                link: `https://example.com/product/${i + 1}`,
+                rawOriginalPrice: parseFloat((Math.random() * 100 + 10).toFixed(2)),
+                rawDiscountPrice: parseFloat((Math.random() * 50 + 5).toFixed(2))
+            }));
             
-            sampleProducts.forEach(product => {
+            filteredProducts = [...allProducts];
+            displayProducts();
+        }
+        
+        function displayProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const noProducts = document.getElementById('noProducts');
+            
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = '';
+                paginationContainer.style.display = 'none';
+                noProducts.style.display = 'block';
+                return;
+            }
+            
+            noProducts.style.display = 'none';
+            
+            // Sayfalama
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length);
+            const pageProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            // Ürünleri göster
+            productsGrid.innerHTML = '';
+            pageProducts.forEach(product => {
                 const productCard = createProductCard(product);
                 productsGrid.appendChild(productCard);
             });
+            
+            // Sayfalama kontrollerini göster
+            if (totalPages > 1) {
+                paginationContainer.style.display = 'block';
+                updatePagination(totalPages);
+            } else {
+                paginationContainer.style.display = 'none';
+            }
         }
         
         function createProductCard(product) {
             const col = document.createElement('div');
-            col.className = 'col-md-6 col-lg-3 mb-4';
+            col.className = 'col-md-6 col-lg-4 col-xl-3 mb-4';
+            
+            const discountPercent = parseInt(product.discount) || 0;
             
             const card = document.createElement('div');
-            card.className = 'product-card h-100';
-            
+            card.className = 'product-card';
             card.innerHTML = `
                 <div class="position-relative">
-                    <img src="${product['Image Url']}" 
+                    <img src="${product.image}" 
                          class="card-img-top product-image" 
-                         alt="${product['Product Desc']}"
-                         onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
-                    ${product.Discount !== '0%' ? 
-                        `<span class="discount-badge">${product.Discount} İNDİRİM</span>` : ''}
+                         alt="${product.title}"
+                         onerror="this.src='https://via.placeholder.com/300x200/667eea/ffffff?text=Ürün+Resmi'">
+                    ${discountPercent > 0 ? 
+                        `<span class="discount-badge">${product.discount} İNDİRİM</span>` : ''}
                 </div>
                 <div class="card-body d-flex flex-column">
-                    <h6 class="card-title product-title">${product['Product Desc']}</h6>
+                    <h6 class="card-title product-title" title="${product.title}">${product.title}</h6>
                     
                     <div class="price-container">
-                        <span class="original-price">${product['Origin Price']}</span>
-                        <span class="discount-price">${product['Discount Price']}</span>
+                        <span class="original-price">${product.originalPrice}</span>
+                        <span class="discount-price">${product.discountPrice}</span>
                     </div>
                     
-                    <div class="mt-auto">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-success">
-                                <i class="fas fa-star"></i> ${product['Positive Feedback']}
-                            </small>
-                            <small class="text-muted">
-                                <i class="fas fa-shopping-cart"></i> ${product['Sales180Day']}
-                            </small>
-                        </div>
-                        
-                        <button class="btn btn-primary w-100" onclick="selectProduct('${product.ProductId}')">
-                            <i class="fas fa-video me-2"></i>Video Oluştur
-                        </button>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-success">
+                            <i class="fas fa-star"></i> ${product.rating}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-shopping-cart"></i> ${product.sales.toLocaleString()} satış
+                        </small>
                     </div>
+                    
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-tag"></i> Kupon: ${product.code}
+                        </small>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 mt-auto" onclick="selectProduct('${product.id}')">
+                        <i class="fas fa-video me-2"></i>Video Oluştur
+                    </button>
                 </div>
             `;
             
             col.appendChild(card);
             return col;
+        }
+        
+        function updatePagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            // Sayfa bilgisi
+            const startIndex = (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, filteredProducts.length);
+            pageInfo.textContent = `${startIndex}-${endIndex} / ${filteredProducts.length} ürün gösteriliyor`;
+            
+            // Sayfa numaraları
+            pagination.innerHTML = '';
+            
+            // Önceki sayfa butonu
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">&laquo;</a>`;
+            pagination.appendChild(prevLi);
+            
+            // Sayfa numaraları
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                pagination.appendChild(li);
+            }
+            
+            // Sonraki sayfa butonu
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">&raquo;</a>`;
+            pagination.appendChild(nextLi);
+        }
+        
+        function changePage(page) {
+            currentPage = page;
+            displayProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function filterProducts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const filterDiscount = document.getElementById('filterDiscount').checked;
+            const filterRating = document.getElementById('filterRating').checked;
+            
+            filteredProducts = allProducts.filter(product => {
+                // Arama filtresi
+                const matchesSearch = product.title.toLowerCase().includes(searchText) ||
+                                    product.code.toLowerCase().includes(searchText);
+                
+                // İndirim filtresi
+                const hasDiscount = filterDiscount ? (parseInt(product.discount) > 0) : true;
+                
+                // Puan filtresi
+                const hasHighRating = filterRating ? (parseInt(product.rating) >= 90) : true;
+                
+                return matchesSearch && hasDiscount && hasHighRating;
+            });
+            
+            currentPage = 1;
+            displayProducts();
+        }
+        
+        function sortProducts() {
+            const sortBy = document.getElementById('sortSelect').value;
+            
+            filteredProducts.sort((a, b) => {
+                switch(sortBy) {
+                    case 'discount-high':
+                        return (parseInt(b.discount) || 0) - (parseInt(a.discount) || 0);
+                    case 'discount-low':
+                        return (parseInt(a.discount) || 0) - (parseInt(b.discount) || 0);
+                    case 'price-high':
+                        return b.rawDiscountPrice - a.rawDiscountPrice;
+                    case 'price-low':
+                        return a.rawDiscountPrice - b.rawDiscountPrice;
+                    case 'sales-high':
+                        return b.sales - a.sales;
+                    case 'rating-high':
+                        return (parseInt(b.rating) || 0) - (parseInt(a.rating) || 0);
+                    default:
+                        return 0;
+                }
+            });
+            
+            currentPage = 1;
+            displayProducts();
         }
         
         function setupEventListeners() {
@@ -491,12 +792,31 @@
         }
         
         function selectProduct(productId) {
-            currentProduct = sampleProducts.find(p => p.ProductId === productId);
+            currentProduct = allProducts.find(p => p.id === productId);
             if (currentProduct) {
                 document.getElementById('videoCreationArea').style.display = 'block';
                 document.getElementById('productsGrid').style.display = 'none';
+                document.getElementById('paginationContainer').style.display = 'none';
+                document.querySelector('.filter-container').style.display = 'none';
                 resetVideoCreation();
+                
+                // Başlığı güncelle
+                document.querySelector('.text-center h1').style.display = 'none';
+                document.querySelector('.text-center p').style.display = 'none';
             }
+        }
+        
+        function goBackToProducts() {
+            document.getElementById('videoCreationArea').style.display = 'none';
+            document.getElementById('productsGrid').style.display = 'flex';
+            document.getElementById('paginationContainer').style.display = 'block';
+            document.querySelector('.filter-container').style.display = 'block';
+            
+            // Başlığı göster
+            document.querySelector('.text-center h1').style.display = 'block';
+            document.querySelector('.text-center p').style.display = 'block';
+            
+            stopVideoCreation();
         }
         
         function resetVideoCreation() {
@@ -606,6 +926,7 @@
                     videoScreen.innerHTML = `
                         <div class="video-element" style="animation-delay: 0s">
                             <h1 class="video-title mb-4">🔥 ÖZEL TEKLİF 🔥</h1>
+                            <p style="color: #fff; font-size: 1.2em;">Sadece bugüne özel!</p>
                         </div>
                     `;
                     break;
@@ -613,28 +934,30 @@
                 case 2:
                     videoScreen.innerHTML = `
                         <div class="video-element" style="animation-delay: 0s">
-                            <h2 style="color: #fff; font-size: 2em; margin-bottom: 20px;">${currentProduct['Product Desc'].substring(0, 80)}...</h2>
-                            <img src="${currentProduct['Image Url']}" 
+                            <h2 style="color: #fff; font-size: 1.5em; margin-bottom: 20px;">${currentProduct.title.substring(0, 100)}...</h2>
+                            <img src="${currentProduct.image}" 
                                  style="max-width: 300px; max-height: 300px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
-                                 onerror="this.src='https://via.placeholder.com/300x300?text=Ürün+Resmi'">
+                                 onerror="this.src='https://via.placeholder.com/300x300/667eea/ffffff?text=Ürün+Resmi'">
                         </div>
                     `;
                     break;
                     
                 case 3:
+                    const discountPercent = parseInt(currentProduct.discount) || 0;
                     videoScreen.innerHTML = `
                         <div class="video-element" style="animation-delay: 0s">
-                            <h2 class="mb-3" style="color: #ff6b6b; font-size: 2.5em;">FİYAT DÜŞTÜ!</h2>
-                            <div style="font-size: 2em;">
+                            <h2 class="mb-3" style="color: #ff6b6b; font-size: 2em;">FİYAT DÜŞTÜ!</h2>
+                            <div style="font-size: 1.8em;">
                                 <div style="text-decoration: line-through; color: #aaa; margin-bottom: 10px;">
-                                    ${currentProduct['Origin Price']}
+                                    ${currentProduct.originalPrice}
                                 </div>
                                 <div class="video-price">
-                                    ${currentProduct['Discount Price']}
+                                    ${currentProduct.discountPrice}
                                 </div>
-                                <div style="color: #ffd93d; font-size: 1.5em; margin-top: 10px;">
-                                    ${currentProduct.Discount} İNDİRİM!
-                                </div>
+                                ${discountPercent > 0 ? 
+                                    `<div style="color: #ffd93d; font-size: 1.5em; margin-top: 10px;">
+                                        ${discountPercent}% İNDİRİM!
+                                    </div>` : ''}
                             </div>
                         </div>
                     `;
@@ -644,9 +967,12 @@
                     videoScreen.innerHTML = `
                         <div class="video-element" style="animation-delay: 0s">
                             <h2 style="color: #4d96ff; font-size: 2em; margin-bottom: 20px;">KUPON KODU</h2>
-                            <div class="video-code mb-3">${currentProduct['Code Name']}</div>
+                            <div class="video-code mb-3">${currentProduct.code}</div>
                             <div style="color: #6bcf7f; font-size: 1.2em;">
-                                Değeri: ${currentProduct['Code Value']}
+                                Değeri: ${currentProduct.codeValue}
+                            </div>
+                            <div style="color: #ffd93d; font-size: 1em; margin-top: 10px;">
+                                Kupon süresi dolmadan kullanın!
                             </div>
                         </div>
                     `;
@@ -656,9 +982,12 @@
                     videoScreen.innerHTML = `
                         <div class="video-element" style="animation-delay: 0s">
                             <h2 style="color: #ffd93d; font-size: 2em; margin-bottom: 20px;">HEMEN AL!</h2>
-                            <div class="video-link mb-3">${currentProduct['Promotion Url']}</div>
+                            <div class="video-link mb-3" style="font-size: 1.2em;">${currentProduct.link}</div>
                             <div style="color: #fff; font-size: 1.5em; margin-top: 20px;">
                                 ⏰ Fırsat sınırlı sürelidir!
+                            </div>
+                            <div style="color: #6bcf7f; font-size: 1.2em; margin-top: 10px;">
+                                <i class="fas fa-star"></i> ${currentProduct.rating} Müşteri Puanı
                             </div>
                         </div>
                     `;
@@ -705,7 +1034,7 @@
             if (videoPreview.src) {
                 const a = document.createElement('a');
                 a.href = videoPreview.src;
-                a.download = `urun_videosu_${currentProduct.ProductId}_${new Date().getTime()}.mp4`;
+                a.download = `urun_videosu_${currentProduct.id}_${new Date().getTime()}.mp4`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -718,50 +1047,57 @@
             if (!currentProduct) return;
             
             const postsContainer = document.getElementById('socialMediaPosts');
+            const discountPercent = parseInt(currentProduct.discount) || 0;
             
             const posts = {
                 instagram: `🔥 FLASH SATIŞ! 🔥
 
-${currentProduct['Product Desc']}
+${currentProduct.title}
 
-🏷️ Normal Fiyat: ${currentProduct['Origin Price']}
-💰 İndirimli Fiyat: ${currentProduct['Discount Price']}
-🎁 Kupon Kodu: ${currentProduct['Code Name']} (${currentProduct['Code Value']} değerinde!)
+🏷️ Normal Fiyat: ${currentProduct.originalPrice}
+💰 İndirimli Fiyat: ${currentProduct.discountPrice}
+🎁 Kupon Kodu: ${currentProduct.code} (${currentProduct.codeValue} değerinde!)
+⭐ Müşteri Puanı: ${currentProduct.rating}
+🛒 Satış Adedi: ${currentProduct.sales.toLocaleString()}
 
-👉 Hemen Al: ${currentProduct['Promotion Url']}
+👉 Hemen Al: ${currentProduct.link}
 
-#indirim #kampanya #alışveriş #onlinealışveriş #fırsat #ürün #ecommerce #flashsale`,
+#indirim #kampanya #alışveriş #onlinealışveriş #fırsat #ürün #ecommerce #flashsale #online #alışverişfırsatı`,
                 
                 twitter: `🚨 İNDİRİM ALERT! 🚨
 
-${currentProduct['Product Desc'].substring(0, 100)}...
+${currentProduct.title.substring(0, 80)}...
 
-💰 Sadece: ${currentProduct['Discount Price']} (${currentProduct.Discount} indirim!)
-🎟️ Kupon: ${currentProduct['Code Name']}
+💰 Sadece: ${currentProduct.discountPrice} ${discountPercent > 0 ? `(${discountPercent}% indirim!)` : ''}
+🎟️ Kupon: ${currentProduct.code}
+⭐ ${currentProduct.rating} müşteri puanı
 
-🔗 ${currentProduct['Promotion Url']}
+🔗 ${currentProduct.link}
 
-#FlashSale #Deal #Discount #Shopping #Amazon`,
+#FlashSale #Deal #Discount #Shopping #Amazon #Sale`,
                 
                 facebook: `🎉 ÖZEL FIRSAT! 🎉
 
-${currentProduct['Product Desc']}
+${currentProduct.title}
 
-💸 Önceki Fiyat: ${currentProduct['Origin Price']}
-💥 İndirimli Fiyat: ${currentProduct['Discount Price']} (${currentProduct.Discount} indirim!)
-🎁 Kupon Kodu: ${currentProduct['Code Name']} (${currentProduct['Code Value']} değerinde!)
+💸 Önceki Fiyat: ${currentProduct.originalPrice}
+💥 İndirimli Fiyat: ${currentProduct.discountPrice} ${discountPercent > 0 ? `(${discountPercent}% indirim!)` : ''}
+🎁 Kupon Kodu: ${currentProduct.code} (${currentProduct.codeValue} değerinde!)
+⭐ Müşteri Puanı: ${currentProduct.rating}
+🛒 ${currentProduct.sales.toLocaleString()} adet satıldı!
 
-🛒 Hemen satın almak için: ${currentProduct['Promotion Url']}
+🛒 Hemen satın almak için: ${currentProduct.link}
 
 Bu fırsatı kaçırmayın! ⏳
 
-#Alışveriş #İndirim #Kampanya #OnlineAlışveriş #FırsatÜrünü`,
+#Alışveriş #İndirim #Kampanya #OnlineAlışveriş #FırsatÜrünü #FlashSale #Online`,
                 
                 tiktok: `🔥 İndirim fırsatı! 
-${currentProduct['Discount Price']} yerine ${currentProduct['Origin Price']} 
-Kupon: ${currentProduct['Code Name']} 
-🔗 ${currentProduct['Promotion Url']} 
-#indirim #alışveriş #fırsat #online #ecommerce #tiktokshop`
+${currentProduct.discountPrice} yerine ${currentProduct.originalPrice} 
+Kupon: ${currentProduct.code} 
+⭐ ${currentProduct.rating} müşteri puanı 
+🔗 ${currentProduct.link} 
+#indirim #alışveriş #fırsat #online #ecommerce #tiktokshop #flashsale #kampanya #ürün`
             };
             
             postsContainer.innerHTML = '';
@@ -789,24 +1125,28 @@ Kupon: ${currentProduct['Code Name']}
             }
             
             // Video bağlantısını ayarla
-            document.getElementById('videoLinkInput').value = window.location.href + '#video_' + currentProduct.ProductId;
+            document.getElementById('videoLinkInput').value = window.location.href + '#video_' + currentProduct.id;
         }
         
         function copyToClipboard(platform, event) {
-            event.preventDefault();
+            if (event) event.preventDefault();
             const textarea = document.getElementById(`${platform}Text`);
             textarea.select();
             document.execCommand('copy');
             
             // Geri bildirim göster
-            const originalText = event.target.innerHTML;
-            event.target.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
-            event.target.className = 'btn btn-sm btn-success me-2';
-            
-            setTimeout(() => {
-                event.target.innerHTML = originalText;
-                event.target.className = 'btn btn-sm btn-outline-primary me-2';
-            }, 2000);
+            if (event) {
+                const originalText = event.target.innerHTML;
+                event.target.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
+                event.target.className = 'btn btn-sm btn-success me-2';
+                
+                setTimeout(() => {
+                    event.target.innerHTML = originalText;
+                    event.target.className = 'btn btn-sm btn-outline-primary me-2';
+                }, 2000);
+            } else {
+                alert('Metin panoya kopyalandı!');
+            }
         }
         
         function shareTo(platform) {
@@ -820,11 +1160,12 @@ Kupon: ${currentProduct['Code Name']}
                     shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
                     break;
                 case 'facebook':
-                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct['Promotion Url'])}&quote=${encodeURIComponent(text.substring(0, 200))}`;
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct.link)}&quote=${encodeURIComponent(text.substring(0, 200))}`;
                     break;
                 case 'instagram':
                 case 'tiktok':
                     alert(`${platform.charAt(0).toUpperCase() + platform.slice(1)} için metni kopyalayıp uygulamada kullanabilirsiniz.`);
+                    copyToClipboard(platform);
                     return;
             }
             
@@ -839,21 +1180,21 @@ Kupon: ${currentProduct['Code Name']}
         }
         
         function shareToInstagram() {
-            alert('Instagram için:\n1. Videoyu indirin\n2. Instagram\'a yükleyin\n3. Açıklamaya sosyal medya içeriklerini kopyalayın');
+            copyToClipboard('instagram');
+            alert('Instagram için metin kopyalandı!\n1. Videoyu indirin\n2. Instagram\'a yükleyin\n3. Açıklamaya kopyalanan metni yapıştırın');
         }
         
         function shareToTwitter() {
-            const text = document.getElementById('twitterText').value;
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+            shareTo('twitter');
         }
         
         function shareToFacebook() {
-            const text = document.getElementById('facebookText').value.substring(0, 200);
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct['Promotion Url'])}&quote=${encodeURIComponent(text)}`, '_blank');
+            shareTo('facebook');
         }
         
         function shareToTiktok() {
-            alert('TikTok için:\n1. Videoyu indirin\n2. TikTok\'a yükleyin\n3. Açıklamaya #indirim #alışveriş etiketlerini ekleyin');
+            copyToClipboard('tiktok');
+            alert('TikTok için metin kopyalandı!\n1. Videoyu indirin\n2. TikTok\'a yükleyin\n3. Açıklamaya kopyalanan metni yapıştırın');
         }
         
         function copyVideoLink() {
@@ -862,31 +1203,6 @@ Kupon: ${currentProduct['Code Name']}
             document.execCommand('copy');
             alert('Video bağlantısı kopyalandı!');
         }
-        
-        // Geri dön butonu (sayfanın en üstüne ekleyebilirsiniz)
-        function goBackToProducts() {
-            document.getElementById('videoCreationArea').style.display = 'none';
-            document.getElementById('productsGrid').style.display = 'flex';
-        }
-        
-        // Sayfanın üstüne bir geri dön butonu ekleyelim
-        document.addEventListener('DOMContentLoaded', function() {
-            const header = document.querySelector('.text-center');
-            const backButton = document.createElement('button');
-            backButton.className = 'btn btn-outline-light position-absolute top-0 start-0 m-3';
-            backButton.innerHTML = '<i class="fas fa-arrow-left me-2"></i>Ürünlere Dön';
-            backButton.onclick = goBackToProducts;
-            backButton.id = 'backButton';
-            backButton.style.display = 'none';
-            
-            document.querySelector('.container').insertBefore(backButton, header);
-            
-            // Ürün seçildiğinde geri butonunu göster
-            window.selectProduct = function(productId) {
-                selectProduct(productId);
-                document.getElementById('backButton').style.display = 'block';
-            };
-        });
     </script>
 </body>
 </html>
