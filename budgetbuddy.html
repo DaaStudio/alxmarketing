@@ -1576,7 +1576,7 @@
                 noFavoritesDescription: "Produkte zu Favoriten hinzufügen.",
                 loadingMore: "Lade mehr Produkte...",
                 endOfResultsTitle: "Sie haben alle Produkte gesehen!",
-                endOfResultsDescription: "Sie haben alle gelisteten Produkte gesehen. Versuchen Sie eine andere Kategorie oder Filter für weitere Ergebnisse.",
+                endOfResultsDescription: "Sie haben alle gelisteten Produkte gesehen. Versuchen Sie eine andere Kategorie ou filter für weitere Ergebnisse.",
                 footerAbout: "AliExpress",
                 footerDescription: "Beste Produkte zu erschwinglichen Preisen.",
                 footerLinks: "Links",
@@ -2180,10 +2180,6 @@
         function predictCategory(productTitle) {
             const title = productTitle.toLowerCase();
             
-            if (productTitle.category && productTitle.category !== 'Diğer') {
-                return productTitle.category;
-            }
-            
             for (const [category, keywords] of Object.entries(categoryKeywords)) {
                 for (const keyword of keywords) {
                     if (title.includes(keyword.toLowerCase())) {
@@ -2274,7 +2270,7 @@
             }).join('');
         }
 
-        // Modal'dan kategori seçme
+        // Modal'dan kategori seçme - DÜZELTİLDİ
         function selectCategoryFromModal(category) {
             // Kategoriyi seç
             currentCategory = category;
@@ -2463,7 +2459,7 @@
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
-            // Kategori filtresi
+            // Kategori filtresi - DÜZELTİLDİ
             if (currentCategory !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
             }
