@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Ürün Video Oluşturucu</title>
+    <title>Programatik Video Oluşturucu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.6.2/RecordRTC.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
@@ -82,6 +79,107 @@
             font-weight: bold;
         }
         
+        .video-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        #videoCanvas {
+            display: none;
+            max-width: 100%;
+            margin: 20px auto;
+            border: 3px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        #videoPreview {
+            max-width: 100%;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        .product-title {
+            font-size: 14px;
+            height: 60px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress {
+            height: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .video-template-card {
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .video-template-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+        
+        .video-template-card.active {
+            border-color: var(--success-color);
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+        
+        .template-preview {
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
         .social-media-btn {
             margin: 5px;
             padding: 10px 20px;
@@ -118,175 +216,11 @@
             border: none;
         }
         
-        #videoCanvas {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: black;
-        }
-        
-        #videoPreview {
-            display: none;
-            max-width: 100%;
-            margin: 20px auto;
+        .audio-options {
+            background: #f8f9fa;
+            padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .product-title {
-            font-size: 14px;
-            height: 60px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
-        
-        .video-container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        
-        .step {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 10px;
-            font-weight: bold;
-            color: #666;
-        }
-        
-        .step.active {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .step.completed {
-            background: var(--success-color);
-            color: white;
-        }
-        
-        .video-screen {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 10px;
-            padding: 30px;
-            color: white;
-            text-align: center;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .video-element {
-            position: absolute;
-            opacity: 0;
-            animation: fadeInOut 3s forwards;
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(20px); }
-            20% { opacity: 1; transform: translateY(0); }
-            80% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-        
-        .video-title {
-            font-size: 3em;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        
-        .video-price {
-            font-size: 2.5em;
-            color: #ffd93d;
-            font-weight: bold;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        
-        .video-code {
-            font-size: 2em;
-            color: #6bcf7f;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        
-        .video-link {
-            font-size: 1.5em;
-            color: #4d96ff;
-            text-decoration: underline;
-            word-break: break-all;
-        }
-        
-        .progress-bar {
-            height: 5px;
-            background: #333;
-            border-radius: 10px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-        }
-        
-        .loading-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .filter-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .pagination-container {
-            margin-top: 30px;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -297,8 +231,12 @@
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Yükleniyor...</span>
             </div>
-            <h4 class="mt-3">Excel dosyası yükleniyor...</h4>
-            <p id="loadingText">GitHub'dan data22.xls dosyası okunuyor</p>
+            <h4 class="mt-3" id="loadingTitle">Video Oluşturuluyor</h4>
+            <div class="progress mt-3">
+                <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" style="width: 0%"></div>
+            </div>
+            <p id="loadingText" class="mt-2">Hazırlanıyor...</p>
         </div>
     </div>
     
@@ -306,60 +244,14 @@
         <!-- Başlık -->
         <div class="text-center mb-5">
             <h1 class="text-white fw-bold mb-3">
-                <i class="fas fa-video me-2"></i>Excel Ürün Video Oluşturucu
+                <i class="fas fa-film me-2"></i>Programatik Video Oluşturucu
             </h1>
-            <p class="text-white lead">GitHub'daki Excel dosyasından ürünleri otomatik yükleyin ve video oluşturun</p>
-        </div>
-        
-        <!-- Filtreleme -->
-        <div class="filter-container">
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Ürün ara..." onkeyup="filterProducts()">
-                </div>
-                <div class="col-md-6">
-                    <select id="sortSelect" class="form-control" onchange="sortProducts()">
-                        <option value="discount-high">İndirime Göre (Yüksekten Düşüğe)</option>
-                        <option value="discount-low">İndirime Göre (Düşükten Yükseğe)</option>
-                        <option value="price-high">Fiyata Göre (Yüksekten Düşüğe)</option>
-                        <option value="price-low">Fiyata Göre (Düşükten Yükseğe)</option>
-                        <option value="sales-high">Satışa Göre (Yüksekten Düşüğe)</option>
-                        <option value="rating-high">Puana Göre (Yüksekten Düşüğe)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-12">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="filterDiscount" onchange="filterProducts()">
-                        <label class="form-check-label" for="filterDiscount">Sadece İndirimli Ürünler</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="filterRating" onchange="filterProducts()">
-                        <label class="form-check-label" for="filterRating">90%+ Pozitif Puan</label>
-                    </div>
-                </div>
-            </div>
+            <p class="text-white lead">Excel dosyasından ürünleri oku, otomatik video oluştur ve indir!</p>
         </div>
         
         <!-- Ürün Grid -->
         <div id="productsGrid" class="row">
             <!-- Ürünler buraya yüklenecek -->
-        </div>
-        
-        <!-- Sayfalama -->
-        <div id="paginationContainer" class="pagination-container text-center" style="display: none;">
-            <nav aria-label="Sayfalama">
-                <ul id="pagination" class="pagination justify-content-center">
-                    <!-- Sayfa numaraları buraya eklenecek -->
-                </ul>
-            </nav>
-            <p id="pageInfo" class="text-white mt-2"></p>
-        </div>
-        
-        <!-- Ürün Bulunamadı -->
-        <div id="noProducts" class="alert alert-warning text-center" style="display: none;">
-            <i class="fas fa-exclamation-triangle me-2"></i>Filtre kriterlerine uygun ürün bulunamadı.
         </div>
         
         <!-- Video Oluşturma Alanı -->
@@ -368,55 +260,99 @@
                 <i class="fas fa-arrow-left me-2"></i>Ürünlere Geri Dön
             </button>
             
-            <div class="step-indicator">
-                <div class="step active" id="step1">1</div>
-                <div class="step" id="step2">2</div>
-                <div class="step" id="step3">3</div>
-                <div class="step" id="step4">4</div>
-                <div class="step" id="step5">5</div>
+            <h3 class="text-center mb-4">Video Ayarları</h3>
+            
+            <!-- Video Şablonları -->
+            <div class="mb-4">
+                <h5>Video Şablonu Seçin:</h5>
+                <div class="row" id="videoTemplates">
+                    <!-- Şablonlar buraya eklenecek -->
+                </div>
             </div>
             
-            <div id="videoScreen" class="video-screen">
-                <!-- Video içeriği burada gösterilecek -->
+            <!-- Ses Efektleri -->
+            <div class="audio-options">
+                <h5>Ses Efektleri:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="addBackgroundMusic" checked>
+                            <label class="form-check-label" for="addBackgroundMusic">
+                                Arka Plan Müziği Ekle
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="addSoundEffects" checked>
+                            <label class="form-check-label" for="addSoundEffects">
+                                Ses Efektleri Ekle
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="musicStyle">Müzik Stili:</label>
+                        <select id="musicStyle" class="form-control">
+                            <option value="upbeat">Enerjik</option>
+                            <option value="relaxing">Rahatlatıcı</option>
+                            <option value="epic">Epik</option>
+                            <option value="electronic">Elektronik</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             
-            <div class="progress-bar mt-4">
-                <div id="progressFill" class="progress-fill"></div>
+            <!-- Video Önizleme Canvas -->
+            <canvas id="videoCanvas" width="1080" height="1920"></canvas>
+            
+            <!-- İlerleme Çubuğu -->
+            <div class="progress-container">
+                <div class="progress">
+                    <div id="videoProgress" class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <span id="progressText">%0 Tamamlandı</span>
+                    <span id="timeRemaining">Kalan Süre: Hesaplanıyor...</span>
+                </div>
             </div>
             
-            <div class="text-center mt-4">
-                <button id="startVideoBtn" class="btn btn-success btn-lg">
-                    <i class="fas fa-play me-2"></i>Video Oluşturmaya Başla
+            <!-- Video Kontrolleri -->
+            <div class="video-controls">
+                <button id="createVideoBtn" class="btn btn-success btn-lg">
+                    <i class="fas fa-play me-2"></i>Video Oluştur
                 </button>
-                <button id="stopVideoBtn" class="btn btn-danger btn-lg" style="display: none;">
-                    <i class="fas fa-stop me-2"></i>Durdur
+                <button id="cancelVideoBtn" class="btn btn-danger btn-lg" style="display: none;">
+                    <i class="fas fa-stop me-2"></i>İptal Et
+                </button>
+                <button id="previewVideoBtn" class="btn btn-info btn-lg" style="display: none;">
+                    <i class="fas fa-eye me-2"></i>Önizle
+                </button>
+                <button id="downloadVideoBtn" class="btn btn-primary btn-lg" style="display: none;">
+                    <i class="fas fa-download me-2"></i>Videoyu İndir
                 </button>
             </div>
             
             <!-- Video Önizleme -->
-            <video id="videoPreview" controls></video>
+            <video id="videoPreview" controls style="display: none;"></video>
             
+            <!-- Sonuçlar -->
             <div id="videoResult" class="mt-4" style="display: none;">
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle me-2"></i>Video başarıyla oluşturuldu!
                 </div>
                 
-                <div class="text-center mb-4">
-                    <button id="downloadVideoBtn" class="btn btn-primary btn-lg">
-                        <i class="fas fa-download me-2"></i>Videoyu İndir (MP4)
-                    </button>
-                    <button id="shareVideoBtn" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#shareModal">
-                        <i class="fas fa-share me-2"></i>Sosyal Medya Paylaş
-                    </button>
-                </div>
-                
                 <h4 class="text-center mb-3">Sosyal Medya İçerikleri</h4>
                 <div id="socialMediaPosts"></div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#shareModal">
+                        <i class="fas fa-share-alt me-2"></i>Paylaşım Seçenekleri
+                    </button>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Sosyal Medya Paylaşım Modalı -->
+    <!-- Paylaşım Modalı -->
     <div class="modal fade" id="shareModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -441,10 +377,10 @@
                     </button>
                     
                     <div class="mt-4">
-                        <h6>Video Bağlantısı:</h6>
+                        <h6>Video Dosyası:</h6>
                         <div class="input-group">
-                            <input type="text" id="videoLinkInput" class="form-control" readonly>
-                            <button class="btn btn-outline-secondary" onclick="copyVideoLink()">
+                            <input type="text" id="videoFileName" class="form-control" readonly>
+                            <button class="btn btn-outline-secondary" onclick="copyFileName()">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -458,185 +394,90 @@
     <script>
         // Global değişkenler
         let allProducts = [];
-        let filteredProducts = [];
         let currentProduct = null;
-        let currentPage = 1;
-        const itemsPerPage = 12;
-        let recorder = null;
-        let videoChunks = [];
-        let videoStream = null;
-        let stepInterval = null;
+        let currentTemplate = 'modern';
+        let isCreatingVideo = false;
+        let videoFrames = [];
+        let audioContext = null;
+        let videoBlob = null;
         
-        // Sayfa yüklendiğinde Excel dosyasını oku
+        // Video şablonları
+        const videoTemplates = [
+            {
+                id: 'modern',
+                name: 'Modern Şablon',
+                backgroundColor: '#1a1a2e',
+                primaryColor: '#667eea',
+                secondaryColor: '#764ba2',
+                fontFamily: 'Arial',
+                duration: 15
+            },
+            {
+                id: 'minimal',
+                name: 'Minimal Şablon',
+                backgroundColor: '#ffffff',
+                primaryColor: '#333333',
+                secondaryColor: '#666666',
+                fontFamily: 'Helvetica',
+                duration: 12
+            },
+            {
+                id: 'energetic',
+                name: 'Enerjik Şablon',
+                backgroundColor: '#000000',
+                primaryColor: '#ff4757',
+                secondaryColor: '#ffd93d',
+                fontFamily: 'Impact',
+                duration: 10
+            },
+            {
+                id: 'elegant',
+                name: 'Zarif Şablon',
+                backgroundColor: '#2c3e50',
+                primaryColor: '#ecf0f1',
+                secondaryColor: '#3498db',
+                fontFamily: 'Georgia',
+                duration: 18
+            }
+        ];
+        
+        // Örnek ürün verileri (GitHub'dan Excel gelene kadar)
+        const sampleProducts = Array.from({length: 24}, (_, i) => ({
+            id: `product_${i + 1}`,
+            image: `https://picsum.photos/300/200?random=${i + 1}`,
+            title: `Harika Ürün ${i + 1} - Kaliteli ve Dayanıklı ${['Mouse Pad', 'Vitamin', 'Giyim', 'Elektronik', 'Oyuncak', 'Spor'][i % 6]}`,
+            originalPrice: `EUR ${(Math.random() * 100 + 10).toFixed(2)}`,
+            discountPrice: `EUR ${(Math.random() * 50 + 5).toFixed(2)}`,
+            discount: `${Math.floor(Math.random() * 70 + 10)}%`,
+            rating: `${Math.floor(Math.random() * 20 + 80)}%`,
+            sales: Math.floor(Math.random() * 10000),
+            code: `KOD${1000 + i}`,
+            codeValue: `EUR ${(Math.random() * 5).toFixed(2)}`,
+            link: `https://example.com/product/${i + 1}`
+        }));
+        
+        // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', function() {
-            loadExcelFromGitHub();
+            loadProducts();
+            loadVideoTemplates();
             setupEventListeners();
         });
         
-        async function loadExcelFromGitHub() {
-            try {
-                // GitHub'dan Excel dosyasını yükle
-               const excelUrl = 'data22.xls';
-                 
-                // Alternatif URL'ler (dosya adınıza göre değiştirin):
-                // const excelUrl = 'https://github.com/YOUR_USERNAME/YOUR_REPO/raw/main/data22.xlsx';
-                // const excelUrl = 'https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/data22.xls?raw=true';
-                
-                document.getElementById('loadingText').textContent = 'Excel dosyası indiriliyor...';
-                
-                const response = await fetch(excelUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP hatası! Durum: ${response.status}`);
-                }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                document.getElementById('loadingText').textContent = 'Excel dosyası işleniyor...';
-                
-                // Excel'i oku
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                
-                // İlk sayfayı al
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                
-                // JSON formatına çevir
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                
-                // Verileri işle
-                allProducts = processExcelData(jsonData);
-                filteredProducts = [...allProducts];
-                
-                // Ürünleri göster
-                document.getElementById('loadingText').textContent = 'Ürünler yükleniyor...';
-                displayProducts();
-                
-                // Yükleme ekranını gizle
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                }, 500);
-                
-            } catch (error) {
-                console.error('Excel yükleme hatası:', error);
-                document.getElementById('loadingText').textContent = `Hata: ${error.message}`;
-                
-                // Eğer GitHub'dan yüklenemezse, örnek verilerle devam et
-                setTimeout(() => {
-                    loadSampleData();
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                }, 2000);
-            }
-        }
-        
-        function processExcelData(jsonData) {
-            return jsonData.map((item, index) => {
-                // Fiyatları temizle
-                const originPrice = cleanPrice(item['Origin Price'] || item['OriginPrice'] || '0');
-                const discountPrice = cleanPrice(item['Discount Price'] || item['DiscountPrice'] || '0');
-                
-                // İndirim yüzdesini hesapla
-                let discountPercent = '0%';
-                if (item.Discount && typeof item.Discount === 'string') {
-                    discountPercent = item.Discount;
-                } else if (originPrice > 0 && discountPrice > 0) {
-                    const discount = Math.round((1 - discountPrice / originPrice) * 100);
-                    discountPercent = `${discount}%`;
-                }
-                
-                // Satış sayısını temizle
-                const sales = parseInt(item['Sales180Day'] || item['Sales'] || '0');
-                
-                // Puanı temizle
-                let rating = '0%';
-                if (item['Positive Feedback'] && typeof item['Positive Feedback'] === 'string') {
-                    rating = item['Positive Feedback'];
-                }
-                
-                return {
-                    id: item.ProductId || item.productId || `product_${index}`,
-                    image: item['Image Url'] || item.imageUrl || '',
-                    title: item['Product Desc'] || item.productDesc || 'Ürün Açıklaması Yok',
-                    originalPrice: formatPrice(originPrice),
-                    discountPrice: formatPrice(discountPrice),
-                    discount: discountPercent,
-                    rating: rating,
-                    sales: sales,
-                    code: item['Code Name'] || item.codeName || 'KOD2024',
-                    codeValue: item['Code Value'] || item.codeValue || 'EUR 0.99',
-                    link: item['Promotion Url'] || item.promotionUrl || '#',
-                    rawOriginalPrice: originPrice,
-                    rawDiscountPrice: discountPrice
-                };
-            });
-        }
-        
-        function cleanPrice(price) {
-            if (!price) return 0;
-            const str = String(price).replace(/[^\d.,]/g, '').replace(',', '.');
-            const num = parseFloat(str);
-            return isNaN(num) ? 0 : num;
-        }
-        
-        function formatPrice(price) {
-            if (price === 0) return 'EUR 0.00';
-            return `EUR ${price.toFixed(2)}`;
-        }
-        
-        function loadSampleData() {
-            // Örnek veriler (Excel yüklenemezse)
-            allProducts = Array.from({length: 50}, (_, i) => ({
-                id: `sample_${i + 1}`,
-                image: `https://picsum.photos/300/200?random=${i + 1}`,
-                title: `Örnek Ürün ${i + 1} - Kaliteli ve dayanıklı ürün ${i + 1}`,
-                originalPrice: `EUR ${(Math.random() * 100 + 10).toFixed(2)}`,
-                discountPrice: `EUR ${(Math.random() * 50 + 5).toFixed(2)}`,
-                discount: `${Math.floor(Math.random() * 70 + 10)}%`,
-                rating: `${Math.floor(Math.random() * 20 + 80)}%`,
-                sales: Math.floor(Math.random() * 10000),
-                code: `KOD${1000 + i}`,
-                codeValue: `EUR ${(Math.random() * 5).toFixed(2)}`,
-                link: `https://example.com/product/${i + 1}`,
-                rawOriginalPrice: parseFloat((Math.random() * 100 + 10).toFixed(2)),
-                rawDiscountPrice: parseFloat((Math.random() * 50 + 5).toFixed(2))
-            }));
-            
-            filteredProducts = [...allProducts];
+        function loadProducts() {
+            // Burada GitHub'dan Excel dosyasını okuyabilirsiniz
+            // Şimdilik örnek verilerle devam edelim
+            allProducts = sampleProducts;
             displayProducts();
         }
         
         function displayProducts() {
             const productsGrid = document.getElementById('productsGrid');
-            const paginationContainer = document.getElementById('paginationContainer');
-            const noProducts = document.getElementById('noProducts');
-            
-            if (filteredProducts.length === 0) {
-                productsGrid.innerHTML = '';
-                paginationContainer.style.display = 'none';
-                noProducts.style.display = 'block';
-                return;
-            }
-            
-            noProducts.style.display = 'none';
-            
-            // Sayfalama
-            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length);
-            const pageProducts = filteredProducts.slice(startIndex, endIndex);
-            
-            // Ürünleri göster
             productsGrid.innerHTML = '';
-            pageProducts.forEach(product => {
+            
+            allProducts.forEach(product => {
                 const productCard = createProductCard(product);
                 productsGrid.appendChild(productCard);
             });
-            
-            // Sayfalama kontrollerini göster
-            if (totalPages > 1) {
-                paginationContainer.style.display = 'block';
-                updatePagination(totalPages);
-            } else {
-                paginationContainer.style.display = 'none';
-            }
         }
         
         function createProductCard(product) {
@@ -669,18 +510,12 @@
                             <i class="fas fa-star"></i> ${product.rating}
                         </small>
                         <small class="text-muted">
-                            <i class="fas fa-shopping-cart"></i> ${product.sales.toLocaleString()} satış
-                        </small>
-                    </div>
-                    
-                    <div class="mt-2">
-                        <small class="text-muted">
-                            <i class="fas fa-tag"></i> Kupon: ${product.code}
+                            <i class="fas fa-shopping-cart"></i> ${product.sales.toLocaleString()}
                         </small>
                     </div>
                     
                     <button class="btn btn-primary w-100 mt-auto" onclick="selectProduct('${product.id}')">
-                        <i class="fas fa-video me-2"></i>Video Oluştur
+                        <i class="fas fa-film me-2"></i>Video Oluştur
                     </button>
                 </div>
             `;
@@ -689,107 +524,46 @@
             return col;
         }
         
-        function updatePagination(totalPages) {
-            const pagination = document.getElementById('pagination');
-            const pageInfo = document.getElementById('pageInfo');
+        function loadVideoTemplates() {
+            const templatesContainer = document.getElementById('videoTemplates');
             
-            // Sayfa bilgisi
-            const startIndex = (currentPage - 1) * itemsPerPage + 1;
-            const endIndex = Math.min(currentPage * itemsPerPage, filteredProducts.length);
-            pageInfo.textContent = `${startIndex}-${endIndex} / ${filteredProducts.length} ürün gösteriliyor`;
-            
-            // Sayfa numaraları
-            pagination.innerHTML = '';
-            
-            // Önceki sayfa butonu
-            const prevLi = document.createElement('li');
-            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">&laquo;</a>`;
-            pagination.appendChild(prevLi);
-            
-            // Sayfa numaraları
-            const maxPagesToShow = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-            
-            if (endPage - startPage + 1 < maxPagesToShow) {
-                startPage = Math.max(1, endPage - maxPagesToShow + 1);
-            }
-            
-            for (let i = startPage; i <= endPage; i++) {
-                const li = document.createElement('li');
-                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-                pagination.appendChild(li);
-            }
-            
-            // Sonraki sayfa butonu
-            const nextLi = document.createElement('li');
-            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">&raquo;</a>`;
-            pagination.appendChild(nextLi);
-        }
-        
-        function changePage(page) {
-            currentPage = page;
-            displayProducts();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function filterProducts() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            const filterDiscount = document.getElementById('filterDiscount').checked;
-            const filterRating = document.getElementById('filterRating').checked;
-            
-            filteredProducts = allProducts.filter(product => {
-                // Arama filtresi
-                const matchesSearch = product.title.toLowerCase().includes(searchText) ||
-                                    product.code.toLowerCase().includes(searchText);
+            videoTemplates.forEach(template => {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-3';
                 
-                // İndirim filtresi
-                const hasDiscount = filterDiscount ? (parseInt(product.discount) > 0) : true;
+                const card = document.createElement('div');
+                card.className = 'video-template-card';
+                card.dataset.templateId = template.id;
+                card.onclick = () => selectTemplate(template.id);
                 
-                // Puan filtresi
-                const hasHighRating = filterRating ? (parseInt(product.rating) >= 90) : true;
+                card.innerHTML = `
+                    <div class="template-preview" style="background: linear-gradient(135deg, ${template.primaryColor}, ${template.secondaryColor})">
+                        <i class="fas fa-play-circle fa-3x"></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">${template.name}</h6>
+                        <small class="text-muted">${template.duration}s</small>
+                    </div>
+                `;
                 
-                return matchesSearch && hasDiscount && hasHighRating;
+                col.appendChild(card);
+                templatesContainer.appendChild(col);
             });
             
-            currentPage = 1;
-            displayProducts();
+            // İlk şablonu seç
+            selectTemplate('modern');
         }
         
-        function sortProducts() {
-            const sortBy = document.getElementById('sortSelect').value;
+        function selectTemplate(templateId) {
+            currentTemplate = templateId;
             
-            filteredProducts.sort((a, b) => {
-                switch(sortBy) {
-                    case 'discount-high':
-                        return (parseInt(b.discount) || 0) - (parseInt(a.discount) || 0);
-                    case 'discount-low':
-                        return (parseInt(a.discount) || 0) - (parseInt(b.discount) || 0);
-                    case 'price-high':
-                        return b.rawDiscountPrice - a.rawDiscountPrice;
-                    case 'price-low':
-                        return a.rawDiscountPrice - b.rawDiscountPrice;
-                    case 'sales-high':
-                        return b.sales - a.sales;
-                    case 'rating-high':
-                        return (parseInt(b.rating) || 0) - (parseInt(a.rating) || 0);
-                    default:
-                        return 0;
-                }
+            // Tüm şablon kartlarından active class'ını kaldır
+            document.querySelectorAll('.video-template-card').forEach(card => {
+                card.classList.remove('active');
             });
             
-            currentPage = 1;
-            displayProducts();
-        }
-        
-        function setupEventListeners() {
-            document.getElementById('startVideoBtn').addEventListener('click', startVideoCreation);
-            document.getElementById('stopVideoBtn').addEventListener('click', stopVideoCreation);
-            document.getElementById('downloadVideoBtn').addEventListener('click', downloadVideo);
-            document.getElementById('shareVideoBtn').addEventListener('click', showShareModal);
+            // Seçilen şablonu aktif yap
+            document.querySelector(`[data-template-id="${templateId}"]`).classList.add('active');
         }
         
         function selectProduct(productId) {
@@ -797,250 +571,563 @@
             if (currentProduct) {
                 document.getElementById('videoCreationArea').style.display = 'block';
                 document.getElementById('productsGrid').style.display = 'none';
-                document.getElementById('paginationContainer').style.display = 'none';
-                document.querySelector('.filter-container').style.display = 'none';
                 resetVideoCreation();
-                
-                // Başlığı güncelle
-                document.querySelector('.text-center h1').style.display = 'none';
-                document.querySelector('.text-center p').style.display = 'none';
             }
         }
         
         function goBackToProducts() {
             document.getElementById('videoCreationArea').style.display = 'none';
             document.getElementById('productsGrid').style.display = 'flex';
-            document.getElementById('paginationContainer').style.display = 'block';
-            document.querySelector('.filter-container').style.display = 'block';
-            
-            // Başlığı göster
-            document.querySelector('.text-center h1').style.display = 'block';
-            document.querySelector('.text-center p').style.display = 'block';
-            
-            stopVideoCreation();
+            resetVideoCreation();
         }
         
         function resetVideoCreation() {
             document.getElementById('videoResult').style.display = 'none';
             document.getElementById('videoPreview').style.display = 'none';
-            document.getElementById('startVideoBtn').style.display = 'block';
-            document.getElementById('stopVideoBtn').style.display = 'none';
-            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('createVideoBtn').style.display = 'block';
+            document.getElementById('cancelVideoBtn').style.display = 'none';
+            document.getElementById('previewVideoBtn').style.display = 'none';
+            document.getElementById('downloadVideoBtn').style.display = 'none';
+            document.getElementById('videoProgress').style.width = '0%';
+            document.getElementById('progressText').textContent = '%0 Tamamlandı';
             
-            // Adım göstergelerini sıfırla
-            for (let i = 1; i <= 5; i++) {
-                const step = document.getElementById(`step${i}`);
-                step.className = 'step';
-                if (i === 1) step.classList.add('active');
-            }
+            videoFrames = [];
+            videoBlob = null;
+            isCreatingVideo = false;
         }
         
-        async function startVideoCreation() {
-            if (!currentProduct) return;
+        function setupEventListeners() {
+            document.getElementById('createVideoBtn').addEventListener('click', createVideo);
+            document.getElementById('cancelVideoBtn').addEventListener('click', cancelVideoCreation);
+            document.getElementById('previewVideoBtn').addEventListener('click', previewVideo);
+            document.getElementById('downloadVideoBtn').addEventListener('click', downloadVideo);
+        }
+        
+        async function createVideo() {
+            if (!currentProduct || isCreatingVideo) return;
             
-            document.getElementById('startVideoBtn').style.display = 'none';
-            document.getElementById('stopVideoBtn').style.display = 'block';
+            isCreatingVideo = true;
+            showLoading(true, 'Video oluşturuluyor...');
+            
+            // UI güncelle
+            document.getElementById('createVideoBtn').style.display = 'none';
+            document.getElementById('cancelVideoBtn').style.display = 'block';
+            document.getElementById('videoCanvas').style.display = 'block';
+            
+            const template = videoTemplates.find(t => t.id === currentTemplate);
+            const fps = 30;
+            const totalFrames = template.duration * fps;
             
             try {
-                // Video kaydı başlat
-                videoStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        width: { ideal: 1080 },
-                        height: { ideal: 1920 }
-                    },
-                    audio: true
-                });
+                // Canvas'ı hazırla
+                const canvas = document.getElementById('videoCanvas');
+                const ctx = canvas.getContext('2d');
                 
-                recorder = new MediaRecorder(videoStream, {
-                    mimeType: 'video/webm;codecs=vp9'
-                });
+                // Video karelerini oluştur
+                for (let frame = 0; frame < totalFrames; frame++) {
+                    if (!isCreatingVideo) break;
+                    
+                    // İlerlemeyi güncelle
+                    const progress = Math.round((frame / totalFrames) * 100);
+                    updateProgress(progress, frame, totalFrames);
+                    
+                    // Canvas'ı temizle
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Arka plan
+                    ctx.fillStyle = template.backgroundColor;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Kare numarasına göre içerik çiz
+                    drawVideoFrame(ctx, canvas, frame, totalFrames, template);
+                    
+                    // Canvas'tan görüntüyü al
+                    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+                    videoFrames.push(imageData);
+                    
+                    // 0 delay ile async işlem
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
                 
-                videoChunks = [];
-                
-                recorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        videoChunks.push(event.data);
-                    }
-                };
-                
-                recorder.onstop = () => {
-                    const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
-                    const videoUrl = URL.createObjectURL(videoBlob);
-                    const videoPreview = document.getElementById('videoPreview');
-                    videoPreview.src = videoUrl;
-                    videoPreview.style.display = 'block';
+                if (isCreatingVideo) {
+                    // Ses ekle
+                    await addAudioToVideo();
+                    
+                    // Videoyu birleştir
+                    await compileVideo();
+                    
+                    // UI güncelle
+                    document.getElementById('cancelVideoBtn').style.display = 'none';
+                    document.getElementById('previewVideoBtn').style.display = 'block';
+                    document.getElementById('downloadVideoBtn').style.display = 'block';
                     
                     // Sosyal medya içeriklerini oluştur
                     generateSocialMediaPosts();
                     
                     document.getElementById('videoResult').style.display = 'block';
-                };
-                
-                recorder.start();
-                
-                // Video animasyonunu başlat
-                startVideoAnimation();
+                }
                 
             } catch (error) {
                 console.error('Video oluşturma hatası:', error);
-                alert('Video oluşturma başlatılamadı. Lütfen ekran paylaşımı iznini kontrol edin.');
-                resetVideoCreation();
+                alert('Video oluşturulurken hata oluştu: ' + error.message);
+            } finally {
+                showLoading(false);
+                isCreatingVideo = false;
             }
         }
         
-        function startVideoAnimation() {
-            const videoScreen = document.getElementById('videoScreen');
-            const progressFill = document.getElementById('progressFill');
-            let step = 1;
+        function drawVideoFrame(ctx, canvas, frame, totalFrames, template) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const progress = frame / totalFrames;
             
-            // Her 3 saniyede bir adım değiştir
-            stepInterval = setInterval(() => {
-                if (step > 5) {
-                    stopVideoCreation();
-                    return;
-                }
-                
-                // Önceki adımı tamamlandı olarak işaretle
-                if (step > 1) {
-                    document.getElementById(`step${step-1}`).classList.remove('active');
-                    document.getElementById(`step${step-1}`).classList.add('completed');
-                }
-                
-                // Mevcut adımı aktif yap
-                document.getElementById(`step${step}`).classList.add('active');
-                
-                // İlerleme çubuğunu güncelle
-                progressFill.style.width = `${step * 20}%`;
-                
-                // Video ekranını güncelle
-                updateVideoScreen(step);
-                
-                step++;
-            }, 3000);
-        }
-        
-        function updateVideoScreen(stepNumber) {
-            const videoScreen = document.getElementById('videoScreen');
+            // Bölümlere ayır (0-0.2: Başlık, 0.2-0.4: Ürün, 0.4-0.6: Fiyat, 0.6-0.8: Kupon, 0.8-1: Link)
+            const section = progress < 0.2 ? 0 :
+                           progress < 0.4 ? 1 :
+                           progress < 0.6 ? 2 :
+                           progress < 0.8 ? 3 : 4;
             
-            switch(stepNumber) {
-                case 1:
-                    videoScreen.innerHTML = `
-                        <div class="video-element" style="animation-delay: 0s">
-                            <h1 class="video-title mb-4">🔥 ÖZEL TEKLİF 🔥</h1>
-                            <p style="color: #fff; font-size: 1.2em;">Sadece bugüne özel!</p>
-                        </div>
-                    `;
+            // Animasyon efektleri
+            const fadeIn = Math.min(progress * 5, 1);
+            const scale = 0.8 + fadeIn * 0.2;
+            
+            switch(section) {
+                case 0: // Başlık
+                    drawTitleSection(ctx, width, height, template, fadeIn);
                     break;
-                    
-                case 2:
-                    videoScreen.innerHTML = `
-                        <div class="video-element" style="animation-delay: 0s">
-                            <h2 style="color: #fff; font-size: 1.5em; margin-bottom: 20px;">${currentProduct.title.substring(0, 100)}...</h2>
-                            <img src="${currentProduct.image}" 
-                                 style="max-width: 300px; max-height: 300px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
-                                 onerror="this.src='https://via.placeholder.com/300x300/667eea/ffffff?text=Ürün+Resmi'">
-                        </div>
-                    `;
+                case 1: // Ürün
+                    drawProductSection(ctx, width, height, template, fadeIn);
                     break;
-                    
-                case 3:
-                    const discountPercent = parseInt(currentProduct.discount) || 0;
-                    videoScreen.innerHTML = `
-                        <div class="video-element" style="animation-delay: 0s">
-                            <h2 class="mb-3" style="color: #ff6b6b; font-size: 2em;">FİYAT DÜŞTÜ!</h2>
-                            <div style="font-size: 1.8em;">
-                                <div style="text-decoration: line-through; color: #aaa; margin-bottom: 10px;">
-                                    ${currentProduct.originalPrice}
-                                </div>
-                                <div class="video-price">
-                                    ${currentProduct.discountPrice}
-                                </div>
-                                ${discountPercent > 0 ? 
-                                    `<div style="color: #ffd93d; font-size: 1.5em; margin-top: 10px;">
-                                        ${discountPercent}% İNDİRİM!
-                                    </div>` : ''}
-                            </div>
-                        </div>
-                    `;
+                case 2: // Fiyat
+                    drawPriceSection(ctx, width, height, template, fadeIn);
                     break;
-                    
-                case 4:
-                    videoScreen.innerHTML = `
-                        <div class="video-element" style="animation-delay: 0s">
-                            <h2 style="color: #4d96ff; font-size: 2em; margin-bottom: 20px;">KUPON KODU</h2>
-                            <div class="video-code mb-3">${currentProduct.code}</div>
-                            <div style="color: #6bcf7f; font-size: 1.2em;">
-                                Değeri: ${currentProduct.codeValue}
-                            </div>
-                            <div style="color: #ffd93d; font-size: 1em; margin-top: 10px;">
-                                Kupon süresi dolmadan kullanın!
-                            </div>
-                        </div>
-                    `;
+                case 3: // Kupon
+                    drawCouponSection(ctx, width, height, template, fadeIn);
                     break;
-                    
-                case 5:
-                    videoScreen.innerHTML = `
-                        <div class="video-element" style="animation-delay: 0s">
-                            <h2 style="color: #ffd93d; font-size: 2em; margin-bottom: 20px;">HEMEN AL!</h2>
-                            <div class="video-link mb-3" style="font-size: 1.2em;">${currentProduct.link}</div>
-                            <div style="color: #fff; font-size: 1.5em; margin-top: 20px;">
-                                ⏰ Fırsat sınırlı sürelidir!
-                            </div>
-                            <div style="color: #6bcf7f; font-size: 1.2em; margin-top: 10px;">
-                                <i class="fas fa-star"></i> ${currentProduct.rating} Müşteri Puanı
-                            </div>
-                        </div>
-                    `;
+                case 4: // Link
+                    drawLinkSection(ctx, width, height, template, fadeIn);
                     break;
             }
             
-            // CSS animasyonunu tetikle
-            setTimeout(() => {
-                const elements = videoScreen.querySelectorAll('.video-element');
-                elements.forEach(el => {
-                    el.style.animation = 'none';
-                    void el.offsetWidth; // Reflow tetikle
-                    el.style.animation = 'fadeInOut 3s forwards';
+            // Kenarlık efekti
+            ctx.strokeStyle = template.primaryColor;
+            ctx.lineWidth = 10;
+            ctx.strokeRect(10, 10, width - 20, height - 20);
+            
+            // İlerleme çubuğu (alt kısım)
+            const progressBarWidth = width - 100;
+            const progressBarHeight = 20;
+            const progressBarY = height - 50;
+            
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fillRect(50, progressBarY, progressBarWidth, progressBarHeight);
+            
+            ctx.fillStyle = template.secondaryColor;
+            ctx.fillRect(50, progressBarY, progressBarWidth * progress, progressBarHeight);
+            
+            // Zaman göstergesi
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px ' + template.fontFamily;
+            ctx.textAlign = 'center';
+            const timeText = `${Math.floor(progress * template.duration)}s / ${template.duration}s`;
+            ctx.fillText(timeText, width / 2, progressBarY - 15);
+        }
+        
+        function drawTitleSection(ctx, width, height, template, fadeIn) {
+            // Başlık arka planı
+            const gradient = ctx.createLinearGradient(0, 0, width, 0);
+            gradient.addColorStop(0, template.primaryColor);
+            gradient.addColorStop(1, template.secondaryColor);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height * 0.3);
+            
+            // Başlık metni
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${60 + fadeIn * 20}px ${template.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 10;
+            ctx.fillText('🔥 ÖZEL FIRSAT 🔥', width / 2, height * 0.15);
+            
+            // Alt başlık
+            ctx.font = `italic ${30 + fadeIn * 10}px ${template.fontFamily}`;
+            ctx.fillText('Sınırlı Süre!', width / 2, height * 0.25);
+            
+            ctx.shadowBlur = 0;
+        }
+        
+        function drawProductSection(ctx, width, height, template, fadeIn) {
+            // Arka plan efekti
+            const bgGradient = ctx.createRadialGradient(
+                width / 2, height / 2, 0,
+                width / 2, height / 2, height / 2
+            );
+            bgGradient.addColorStop(0, 'rgba(102, 126, 234, 0.1)');
+            bgGradient.addColorStop(1, 'rgba(118, 75, 162, 0.1)');
+            
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Ürün adı
+            ctx.fillStyle = template.primaryColor;
+            ctx.font = `bold ${40 + fadeIn * 10}px ${template.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.fillText(currentProduct.title.substring(0, 50) + '...', width / 2, height * 0.3);
+            
+            // Ürün görseli karesi (simülasyon)
+            const imgSize = 300 * fadeIn;
+            const imgX = width / 2 - imgSize / 2;
+            const imgY = height / 2 - imgSize / 2;
+            
+            // Görsel çerçevesi
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(imgX - 10, imgY - 10, imgSize + 20, imgSize + 20);
+            
+            // Görsel yer tutucu
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(imgX, imgY, imgSize, imgSize);
+            
+            // Görsel ikonu
+            ctx.fillStyle = template.secondaryColor;
+            ctx.font = 'bold 80px FontAwesome';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('📱', width / 2, height / 2);
+            
+            // Gerçek görsel yüklenecek olsaydı:
+            // const img = new Image();
+            // img.src = currentProduct.image;
+            // ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+        }
+        
+        function drawPriceSection(ctx, width, height, template, fadeIn) {
+            // Arka plan
+            const priceBg = ctx.createLinearGradient(0, 0, 0, height);
+            priceBg.addColorStop(0, '#1a1a2e');
+            priceBg.addColorStop(1, '#16213e');
+            ctx.fillStyle = priceBg;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Fiyat başlığı
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = `bold ${60 * fadeIn}px ${template.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.fillText('FİYAT DÜŞTÜ!', width / 2, height * 0.3);
+            
+            // Eski fiyat
+            ctx.fillStyle = '#aaaaaa';
+            ctx.font = `italic ${40 * fadeIn}px ${template.fontFamily}`;
+            ctx.textDecoration = 'line-through';
+            ctx.fillText(currentProduct.originalPrice, width / 2, height * 0.45);
+            
+            // Yeni fiyat
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = `bold ${80 * fadeIn}px ${template.fontFamily}`;
+            ctx.textDecoration = 'none';
+            ctx.fillText(currentProduct.discountPrice, width / 2, height * 0.6);
+            
+            // İndirim oranı
+            ctx.fillStyle = '#6bcf7f';
+            ctx.font = `bold ${50 * fadeIn}px ${template.fontFamily}`;
+            ctx.fillText(currentProduct.discount + ' İNDİRİM', width / 2, height * 0.75);
+        }
+        
+        function drawCouponSection(ctx, width, height, template, fadeIn) {
+            // Kupon arka planı
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Kupon başlığı
+            ctx.fillStyle = '#4d96ff';
+            ctx.font = `bold ${50 * fadeIn}px ${template.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.fillText('ÖZEL KUPON KODU', width / 2, height * 0.3);
+            
+            // Kupon kodu kutusu
+            const couponWidth = 600 * fadeIn;
+            const couponHeight = 150 * fadeIn;
+            const couponX = width / 2 - couponWidth / 2;
+            const couponY = height / 2 - couponHeight / 2;
+            
+            // Kupon kutusu
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(couponX, couponY, couponWidth, couponHeight);
+            
+            // Kupon deseni
+            ctx.strokeStyle = template.primaryColor;
+            ctx.lineWidth = 3;
+            ctx.setLineDash([10, 5]);
+            ctx.strokeRect(couponX, couponY, couponWidth, couponHeight);
+            ctx.setLineDash([]);
+            
+            // Kupon kodu
+            ctx.fillStyle = template.secondaryColor;
+            ctx.font = `bold ${70 * fadeIn}px 'Courier New', monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(currentProduct.code, width / 2, height / 2);
+            
+            // Kupon değeri
+            ctx.fillStyle = '#6bcf7f';
+            ctx.font = `bold ${30 * fadeIn}px ${template.fontFamily}`;
+            ctx.fillText('Değeri: ' + currentProduct.codeValue, width / 2, height * 0.7);
+        }
+        
+        function drawLinkSection(ctx, width, height, template, fadeIn) {
+            // Son ekran
+            const finalGradient = ctx.createLinearGradient(0, 0, width, height);
+            finalGradient.addColorStop(0, template.primaryColor);
+            finalGradient.addColorStop(1, template.secondaryColor);
+            ctx.fillStyle = finalGradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Teşekkür mesajı
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${60 * fadeIn}px ${template.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.fillText('HEMEN AL!', width / 2, height * 0.3);
+            
+            // Link kutusu
+            const linkBoxWidth = 800 * fadeIn;
+            const linkBoxHeight = 100 * fadeIn;
+            const linkBoxX = width / 2 - linkBoxWidth / 2;
+            const linkBoxY = height / 2 - linkBoxHeight / 2;
+            
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fillRect(linkBoxX, linkBoxY, linkBoxWidth, linkBoxHeight);
+            
+            // Link
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = `bold ${30 * fadeIn}px ${template.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(currentProduct.link, width / 2, height / 2);
+            
+            // Alt bilgi
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `italic ${40 * fadeIn}px ${template.fontFamily}`;
+            ctx.fillText('⏰ Fırsat sınırlı sürelidir!', width / 2, height * 0.7);
+            
+            // Puan bilgisi
+            ctx.font = `bold ${35 * fadeIn}px ${template.fontFamily}`;
+            ctx.fillText(`⭐ ${currentProduct.rating} Müşteri Puanı`, width / 2, height * 0.8);
+        }
+        
+        function updateProgress(percent, currentFrame, totalFrames) {
+            const progressBar = document.getElementById('videoProgress');
+            const progressText = document.getElementById('progressText');
+            const timeRemaining = document.getElementById('timeRemaining');
+            
+            progressBar.style.width = percent + '%';
+            progressBar.textContent = percent + '%';
+            progressText.textContent = `%${percent} Tamamlandı`;
+            
+            // Kalan süreyi hesapla
+            const fps = 30;
+            const remainingFrames = totalFrames - currentFrame;
+            const remainingSeconds = Math.round(remainingFrames / fps);
+            timeRemaining.textContent = `Kalan Süre: ${remainingSeconds}s`;
+        }
+        
+        async function addAudioToVideo() {
+            if (!document.getElementById('addBackgroundMusic').checked) {
+                return;
+            }
+            
+            try {
+                // Web Audio API ile basit ses efekti oluştur
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Arka plan müziği (sentezlenmiş)
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 2);
+                
+            } catch (error) {
+                console.warn('Ses oluşturulamadı:', error);
+            }
+        }
+        
+        async function compileVideo() {
+            showLoading(true, 'Video birleştiriliyor...');
+            
+            try {
+                // Görüntüleri video'ya dönüştür
+                // NOT: Tarayıcıda MP4 oluşturmak için genellikle bir kütüphane gerekir
+                // Burada base64 görüntüleri birleştirip zip olarak indireceğiz
+                
+                // Alternatif: WebM formatında video oluştur
+                await createWebMVideo();
+                
+                // Alternatif 2: Görüntüleri zip olarak indir
+                // await createImageZip();
+                
+            } catch (error) {
+                console.error('Video birleştirme hatası:', error);
+                // Fallback: Görüntüleri zip olarak indir
+                await createImageZip();
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        async function createWebMVideo() {
+            // WebM video oluşturma (deneysel)
+            try {
+                const canvas = document.getElementById('videoCanvas');
+                const stream = canvas.captureStream(30);
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9'
                 });
-            }, 10);
+                
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    videoBlob = new Blob(chunks, { type: 'video/webm' });
+                    const videoUrl = URL.createObjectURL(videoBlob);
+                    
+                    const videoPreview = document.getElementById('videoPreview');
+                    videoPreview.src = videoUrl;
+                    videoPreview.style.display = 'block';
+                    
+                    // Dosya adını ayarla
+                    document.getElementById('videoFileName').value = 
+                        `urun_videosu_${currentProduct.id}_${new Date().getTime()}.webm`;
+                };
+                
+                // Canvas'ı kaydetmek için animasyon
+                const template = videoTemplates.find(t => t.id === currentTemplate);
+                const duration = template.duration * 1000; // ms cinsinden
+                
+                mediaRecorder.start();
+                
+                // Canvas animasyonunu oynat
+                const ctx = canvas.getContext('2d');
+                const startTime = Date.now();
+                
+                function recordFrame() {
+                    if (Date.now() - startTime >= duration) {
+                        mediaRecorder.stop();
+                        return;
+                    }
+                    
+                    const elapsed = Date.now() - startTime;
+                    const progress = elapsed / duration;
+                    const frame = Math.floor(progress * (template.duration * 30));
+                    
+                    // Canvas'ı çiz
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawVideoFrame(ctx, canvas, frame, template.duration * 30, template);
+                    
+                    requestAnimationFrame(recordFrame);
+                }
+                
+                recordFrame();
+                
+            } catch (error) {
+                console.error('WebM video oluşturma hatası:', error);
+                throw error;
+            }
         }
         
-        function stopVideoCreation() {
-            clearInterval(stepInterval);
+        async function createImageZip() {
+            // Görüntüleri zip olarak indir
+            showLoading(true, 'Görüntüler ZIP'e paketleniyor...');
             
-            if (recorder && recorder.state !== 'inactive') {
-                recorder.stop();
+            const zip = new JSZip();
+            const imgFolder = zip.folder('video_frames');
+            
+            // Her kareyi zip'e ekle
+            for (let i = 0; i < videoFrames.length; i++) {
+                const frameData = videoFrames[i];
+                const base64Data = frameData.split(',')[1];
+                imgFolder.file(`frame_${String(i).padStart(5, '0')}.jpg`, base64Data, { base64: true });
+                
+                // İlerlemeyi güncelle
+                updateProgress(Math.round((i / videoFrames.length) * 100), i, videoFrames.length);
+                await new Promise(resolve => setTimeout(resolve, 0));
             }
             
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
+            // Zip'i oluştur
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            videoBlob = zipBlob;
+            
+            // Dosya adını ayarla
+            document.getElementById('videoFileName').value = 
+                `video_frames_${currentProduct.id}_${new Date().getTime()}.zip`;
+            
+            // Bilgi mesajı göster
+            document.getElementById('videoResult').innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Video kareleri ZIP dosyası olarak hazırlandı. 
+                    Bu kareleri video düzenleme yazılımı ile birleştirebilirsiniz.
+                </div>
+                <div id="socialMediaPosts"></div>
+            `;
+            
+            document.getElementById('videoResult').style.display = 'block';
+            
+            showLoading(false);
+        }
+        
+        function cancelVideoCreation() {
+            isCreatingVideo = false;
+            resetVideoCreation();
+            
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
             }
-            
-            document.getElementById('stopVideoBtn').style.display = 'none';
-            document.getElementById('startVideoBtn').style.display = 'block';
-            
-            // Son adımı tamamlandı olarak işaretle
-            for (let i = 1; i <= 5; i++) {
-                const step = document.getElementById(`step${i}`);
-                step.classList.remove('active');
-                step.classList.add('completed');
+        }
+        
+        function previewVideo() {
+            if (videoBlob) {
+                const videoPreview = document.getElementById('videoPreview');
+                videoPreview.src = URL.createObjectURL(videoBlob);
+                videoPreview.style.display = 'block';
+                videoPreview.play();
             }
-            
-            document.getElementById('progressFill').style.width = '100%';
         }
         
         function downloadVideo() {
-            const videoPreview = document.getElementById('videoPreview');
-            if (videoPreview.src) {
-                const a = document.createElement('a');
-                a.href = videoPreview.src;
-                a.download = `urun_videosu_${currentProduct.id}_${new Date().getTime()}.mp4`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+            if (videoBlob) {
+                const fileName = document.getElementById('videoFileName').value;
+                saveAs(videoBlob, fileName);
             } else {
                 alert('Önce video oluşturmalısınız!');
+            }
+        }
+        
+        function showLoading(show, message = '') {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingTitle = document.getElementById('loadingTitle');
+            const loadingText = document.getElementById('loadingText');
+            
+            if (show) {
+                loadingOverlay.style.display = 'flex';
+                loadingTitle.textContent = message || 'İşlem Yapılıyor';
+                loadingText.textContent = 'Lütfen bekleyin...';
+            } else {
+                loadingOverlay.style.display = 'none';
             }
         }
         
@@ -1063,7 +1150,7 @@ ${currentProduct.title}
 
 👉 Hemen Al: ${currentProduct.link}
 
-#indirim #kampanya #alışveriş #onlinealışveriş #fırsat #ürün #ecommerce #flashsale #online #alışverişfırsatı`,
+#indirim #kampanya #alışveriş #onlinealışveriş #fırsat #ürün #ecommerce #flashsale`,
                 
                 twitter: `🚨 İNDİRİM ALERT! 🚨
 
@@ -1075,7 +1162,7 @@ ${currentProduct.title.substring(0, 80)}...
 
 🔗 ${currentProduct.link}
 
-#FlashSale #Deal #Discount #Shopping #Amazon #Sale`,
+#FlashSale #Deal #Discount #Shopping`,
                 
                 facebook: `🎉 ÖZEL FIRSAT! 🎉
 
@@ -1091,14 +1178,14 @@ ${currentProduct.title}
 
 Bu fırsatı kaçırmayın! ⏳
 
-#Alışveriş #İndirim #Kampanya #OnlineAlışveriş #FırsatÜrünü #FlashSale #Online`,
+#Alışveriş #İndirim #Kampanya`,
                 
                 tiktok: `🔥 İndirim fırsatı! 
 ${currentProduct.discountPrice} yerine ${currentProduct.originalPrice} 
 Kupon: ${currentProduct.code} 
 ⭐ ${currentProduct.rating} müşteri puanı 
 🔗 ${currentProduct.link} 
-#indirim #alışveriş #fırsat #online #ecommerce #tiktokshop #flashsale #kampanya #ürün`
+#indirim #alışveriş #fırsat #online #ecommerce`
             };
             
             postsContainer.innerHTML = '';
@@ -1110,99 +1197,74 @@ Kupon: ${currentProduct.code}
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <strong>${platform.toUpperCase()}</strong>
                         <div>
-                            <button class="btn btn-sm btn-outline-primary me-2" onclick="copyToClipboard('${platform}', event)">
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="copyTextToClipboard('${content.replace(/'/g, "\\'")}')">
                                 <i class="fas fa-copy"></i> Kopyala
-                            </button>
-                            <button class="btn btn-sm btn-outline-success" onclick="shareTo('${platform}')">
-                                <i class="fas fa-share"></i> Paylaş
                             </button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <textarea id="${platform}Text" class="form-control" rows="6" readonly>${content}</textarea>
+                        <textarea class="form-control" rows="4" readonly>${content}</textarea>
                     </div>
                 `;
                 postsContainer.appendChild(card);
             }
-            
-            // Video bağlantısını ayarla
-            document.getElementById('videoLinkInput').value = window.location.href + '#video_' + currentProduct.id;
         }
         
-        function copyToClipboard(platform, event) {
-            if (event) event.preventDefault();
-            const textarea = document.getElementById(`${platform}Text`);
-            textarea.select();
-            document.execCommand('copy');
-            
-            // Geri bildirim göster
-            if (event) {
-                const originalText = event.target.innerHTML;
-                event.target.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
-                event.target.className = 'btn btn-sm btn-success me-2';
-                
-                setTimeout(() => {
-                    event.target.innerHTML = originalText;
-                    event.target.className = 'btn btn-sm btn-outline-primary me-2';
-                }, 2000);
-            } else {
+        function copyTextToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
                 alert('Metin panoya kopyalandı!');
-            }
+            }).catch(err => {
+                console.error('Kopyalama hatası:', err);
+            });
         }
         
-        function shareTo(platform) {
-            const textarea = document.getElementById(`${platform}Text`);
-            const text = textarea.value;
-            
-            let shareUrl = '';
-            
-            switch(platform) {
-                case 'twitter':
-                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-                    break;
-                case 'facebook':
-                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct.link)}&quote=${encodeURIComponent(text.substring(0, 200))}`;
-                    break;
-                case 'instagram':
-                case 'tiktok':
-                    alert(`${platform.charAt(0).toUpperCase() + platform.slice(1)} için metni kopyalayıp uygulamada kullanabilirsiniz.`);
-                    copyToClipboard(platform);
-                    return;
-            }
-            
-            if (shareUrl) {
-                window.open(shareUrl, '_blank', 'width=600,height=400');
-            }
-        }
-        
-        function showShareModal() {
-            const modal = new bootstrap.Modal(document.getElementById('shareModal'));
-            modal.show();
+        function copyFileName() {
+            const input = document.getElementById('videoFileName');
+            input.select();
+            document.execCommand('copy');
+            alert('Dosya adı kopyalandı!');
         }
         
         function shareToInstagram() {
-            copyToClipboard('instagram');
-            alert('Instagram için metin kopyalandı!\n1. Videoyu indirin\n2. Instagram\'a yükleyin\n3. Açıklamaya kopyalanan metni yapıştırın');
+            copyTextToClipboard(document.querySelector('#socialMediaPosts textarea').value);
+            alert('Instagram paylaşım metni kopyalandı!');
         }
         
         function shareToTwitter() {
-            shareTo('twitter');
+            const text = document.querySelectorAll('#socialMediaPosts textarea')[1].value;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
         }
         
         function shareToFacebook() {
-            shareTo('facebook');
+            const text = document.querySelectorAll('#socialMediaPosts textarea')[2].value.substring(0, 200);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct.link)}&quote=${encodeURIComponent(text)}`, '_blank');
         }
         
         function shareToTiktok() {
-            copyToClipboard('tiktok');
-            alert('TikTok için metin kopyalandı!\n1. Videoyu indirin\n2. TikTok\'a yükleyin\n3. Açıklamaya kopyalanan metni yapıştırın');
+            copyTextToClipboard(document.querySelectorAll('#socialMediaPosts textarea')[3].value);
+            alert('TikTok paylaşım metni kopyalandı!');
         }
         
-        function copyVideoLink() {
-            const input = document.getElementById('videoLinkInput');
-            input.select();
-            document.execCommand('copy');
-            alert('Video bağlantısı kopyalandı!');
+        // GitHub'dan Excel okuma fonksiyonu (isteğe bağlı)
+        async function loadExcelFromGitHub() {
+            try {
+                // GitHub raw URL'sini buraya ekleyin
+                const response = await fetch('data22.xls');
+                const arrayBuffer = await response.arrayBuffer();
+                
+                // XLSX.js kütüphanesi gereklidir
+                // const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                // const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                // const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                
+                // Verileri işle
+                // allProducts = processExcelData(jsonData);
+                
+            } catch (error) {
+                console.error('Excel yükleme hatası:', error);
+                // Örnek verilerle devam et
+                loadProducts();
+            }
         }
     </script>
 </body>
