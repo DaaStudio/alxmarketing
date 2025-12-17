@@ -3,2268 +3,890 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Buddy Products - Video Oluşturma Özellikli</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.6.2/RecordRTC.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Ürün Video Oluşturucu - Tek Dosya</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.6.2/RecordRTC.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
-            --primary: #ff3366;
-            --primary-dark: #e62e5e;
-            --secondary: #7c5cff;
-            --dark: #0f172a;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --success: #28a745;
-            --warning: #ffc107;
-            --border-radius: 12px;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-            
-            --bg-color: #0f172a;
-            --text-color: #e2e8f0;
-            --card-bg: #1e293b;
-            --header-bg: linear-gradient(135deg, var(--primary), var(--secondary));
-            --footer-bg: var(--dark);
-            --image-border: #334155;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
         }
-
-        [data-theme="light"] {
-            --bg-color: #f5f7fa;
-            --text-color: #333;
-            --card-bg: white;
-            --header-bg: linear-gradient(135deg, var(--primary), var(--secondary));
-            --footer-bg: var(--dark);
-            --image-border: #e2e8f0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: var(--transition);
-            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 10px;
-        }
-
-        /* Header */
-        header {
-            background: var(--header-bg);
-            color: white;
-            padding: 8px 0;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo {
-            font-size: 0.9rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .logo i {
-            margin-right: 4px;
-            font-size: 1rem;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: nowrap;
-        }
-
-        .theme-toggle, .language-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 3px 6px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 0.65rem;
-            transition: var(--transition);
-            white-space: nowrap;
-            min-height: 28px;
-        }
-
-        .theme-toggle:hover, .language-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .search-bar {
-            display: flex;
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            flex: 1;
-            min-width: 100px;
-            max-width: 140px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            border: none;
-            padding: 4px 8px;
-            outline: none;
-            font-size: 0.7rem;
-            color: var(--dark);
-            min-width: 0;
-        }
-
-        .search-bar button {
-            background: var(--primary);
-            border: none;
-            color: white;
-            padding: 0 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 30px;
-        }
-
-        .search-bar button:hover {
-            background: var(--primary-dark);
-        }
-
-        /* Language Dropdown */
-        .language-selector {
-            position: relative;
-        }
-
-        .language-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--card-bg);
-            color: var(--text-color);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            min-width: 120px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1001;
-            margin-top: 4px;
-        }
-
-        .language-dropdown.show {
-            display: block;
-        }
-
-        .language-option {
-            padding: 6px 10px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(108, 117, 125, 0.3);
-            transition: var(--transition);
-            font-size: 0.7rem;
-        }
-
-        .language-option:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--success);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 1002;
-            opacity: 0;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            max-width: 90%;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Hero */
-        .hero {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 25px 12px;
-            margin-bottom: 12px;
-        }
-
-        .hero h1 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .hero p {
-            font-size: 0.75rem;
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        /* Status */
-        .status-info {
-            background: var(--card-bg);
-            padding: 8px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 0.75rem;
-        }
-
-        /* Categories */
-        .categories {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 10px;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            padding-bottom: 5px;
-            -webkit-overflow-scrolling: touch;
-            max-width: 100%;
-        }
-
-        .categories::-webkit-scrollbar {
-            height: 2px;
-        }
-
-        .categories::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .categories::-webkit-scrollbar-thumb {
-            background: var(--gray);
-            border-radius: 2px;
-        }
-
-        .category-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--gray);
-            padding: 4px 8px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            transition: var(--transition);
-            color: var(--text-color);
-            white-space: nowrap;
-            flex-shrink: 0;
-            min-height: 28px;
-        }
-
-        .category-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* Sort Button */
-        .sort-select {
-            padding: 4px 8px;
-            border-radius: 12px;
-            border: 1px solid var(--gray);
-            background: var(--card-bg);
-            color: var(--text-color);
-            font-size: 0.65rem;
-            min-width: 100px;
-            cursor: pointer;
-            transition: var(--transition);
-            flex-shrink: 0;
-            min-height: 28px;
-        }
-
-        .sort-select:hover {
-            border-color: var(--secondary);
-        }
-
-        /* Products Grid - MOBİL İÇİN 2 KOLON */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            padding: 0;
-            max-width: 100%;
-            margin: 0 auto;
-            width: 100%;
-        }
-
+        
         .product-card {
-            background: var(--card-bg);
-            border-radius: 6px;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: var(--shadow);
-            transition: transform .2s;
-            width: 100%;
-            height: auto;
-            min-height: 280px;
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            background: white;
         }
-
+        
         .product-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
-
-        .product-image-container {
-            position: relative;
-            cursor: pointer;
-            margin-bottom: 6px;
-            width: 100%;
-            height: 120px;
-            overflow: hidden;
-            border-radius: 5px;
-        }
-
+        
         .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 5px;
+            height: 200px;
+            object-fit: contain;
+            background: #f8f9fa;
+            padding: 10px;
         }
-
-        .product-badge {
+        
+        .discount-badge {
             position: absolute;
-            top: 4px;
-            right: 4px;
-            background: var(--primary);
+            top: 10px;
+            right: 10px;
+            background: var(--danger-color);
             color: white;
-            padding: 2px 4px;
-            border-radius: 6px;
-            font-size: 0.55rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-
-        .category-badge {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            background: var(--secondary);
-            color: white;
-            padding: 2px 4px;
-            border-radius: 6px;
-            font-size: 0.55rem;
-            font-weight: 600;
-            z-index: 2;
-            max-width: 55px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .remove-favorite-btn {
-            position: absolute;
-            top: 30px;
-            right: 4px;
-            background: rgba(255,255,255,0.95);
-            border: none;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            opacity: 1;
-            z-index: 3;
-            font-size: 0.55rem;
-            color: var(--dark);
-        }
-
-        .remove-favorite-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .product-info {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .product-title {
-            font-weight: 600;
-            margin: 4px 0;
-            font-size: 0.7rem;
-            line-height: 1.2;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            height: 30px;
-        }
-
-        .product-title.expanded {
-            -webkit-line-clamp: unset;
-            height: auto;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            gap: 3px;
-            flex-wrap: wrap;
-        }
-
-        .current-price {
+            padding: 5px 10px;
+            border-radius: 20px;
             font-weight: bold;
-            font-size: 0.8rem;
-            color: var(--primary);
         }
-
+        
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
         .original-price {
-            font-size: 0.65rem;
-            color: var(--gray);
             text-decoration: line-through;
+            color: #888;
+            font-size: 14px;
         }
-
-        .discount {
-            background: var(--success);
-            color: white;
-            padding: 1px 3px;
-            border-radius: 2px;
-            font-size: 0.55rem;
-            font-weight: 600;
+        
+        .discount-price {
+            color: var(--danger-color);
+            font-size: 24px;
+            font-weight: bold;
         }
-
-        .product-code {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 4px 6px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.65rem;
-            font-weight: 600;
-            width: 100%;
+        
+        .social-media-btn {
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
-
-        .code-label {
-            font-size: 0.6rem;
-            white-space: nowrap;
-        }
-
-        .code-value {
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 2px;
-            background: rgba(255,255,255,0.2);
-            font-weight: 600;
-            transition: var(--transition);
-            font-size: 0.65rem;
-            white-space: nowrap;
-        }
-
-        .code-value:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        /* Video Butonu - YENİ EKLENDİ */
-        .product-actions {
-            display: flex;
-            gap: 4px;
-            margin-top: 6px;
-            width: 100%;
-        }
-
-        .buy-btn {
-            flex: 2;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 5px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-            white-space: nowrap;
-            min-height: 30px;
-        }
-
-        .buy-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .wishlist-btn, .share-btn, .video-btn {
-            flex: 1;
-            background: var(--card-bg);
-            border: 1px solid var(--gray);
-            border-radius: 4px;
-            padding: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            color: var(--text-color);
-            min-width: 30px;
-            min-height: 30px;
-        }
-
-        .video-btn {
-            background: linear-gradient(45deg, #8a2be2, #4b0082);
-            color: white;
-            border: none;
-        }
-
-        .video-btn:hover {
-            background: linear-gradient(45deg, #9932cc, #6a0dad);
+        
+        .social-media-btn:hover {
             transform: scale(1.05);
         }
-
-        .wishlist-btn.active {
-            background: #ff4757;
-            color: white;
-            border-color: #ff4757;
-        }
-
-        .wishlist-btn:hover, .share-btn:hover {
-            background: var(--secondary);
-            color: white;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 12px;
-            display: none;
-            grid-column: 1 / -1;
-        }
-
-        .loading-spinner {
-            border: 2px solid var(--gray);
-            border-top: 2px solid var(--primary);
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 6px;
-        }
-
-        .loading p {
-            font-size: 0.75rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* End of Results */
-        .end-of-results {
-            text-align: center;
-            padding: 15px 8px;
-            color: var(--gray);
-            display: none;
-            grid-column: 1 / -1;
-        }
-
-        .end-of-results i {
-            font-size: 1.3rem;
-            margin-bottom: 6px;
-            color: var(--gray);
-        }
-
-        .end-of-results h3 {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-        }
-
-        .end-of-results p {
-            font-size: 0.7rem;
-        }
-
-        /* No Favorites */
-        .no-favorites {
-            text-align: center;
-            padding: 25px 8px;
-            color: var(--gray);
-            display: none;
-            grid-column: 1 / -1;
-        }
-
-        .no-favorites i {
-            font-size: 1.8rem;
-            margin-bottom: 6px;
-            color: var(--gray);
-        }
-
-        .no-favorites h3 {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-        }
-
-        .no-favorites p {
-            font-size: 0.7rem;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--footer-bg);
-            color: white;
-            padding: 15px 0 8px;
-            margin-top: 15px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-        }
-
-        .footer-section p, .footer-section ul li a {
-            font-size: 0.7rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 3px;
-        }
-
-        .footer-section ul li a {
-            color: #bbb;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-section ul li a:hover {
-            color: white;
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 8px;
-            border-top: 1px solid #444;
-            color: #bbb;
-            font-size: 0.65rem;
-        }
-
-        /* Copy Message */
-        .copy-msg {
-            position: fixed;
-            bottom: 12px;
-            right: 12px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            display: none;
-            box-shadow: 0 0 12px rgba(124,92,255,0.4);
-            z-index: 1003;
-            font-size: 0.75rem;
-        }
-
-        /* Video Oluşturucu Sayfası Stilleri */
-        .video-creator-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .video-creator-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: linear-gradient(90deg, #ff3366, #7c5cff);
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            color: white;
-        }
-
-        .video-creator-header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .video-creator-header p {
-            opacity: 0.9;
-        }
-
-        .video-creator-main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .video-creator-main {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .preview-section {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .controls-section {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .video-preview {
-            width: 100%;
-            background: black;
-            aspect-ratio: 9/16;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .video-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .creator-product-image {
-            width: 100%;
-            height: 60%;
-            object-fit: cover;
-        }
-
-        .creator-product-info {
-            padding: 20px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.9));
-            height: 40%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .creator-product-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #ff3366;
-            font-weight: bold;
-            text-align: center;
-            padding: 0 10px;
-        }
-
-        .creator-product-price {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #7c5cff;
-            text-align: center;
-        }
-
-        .creator-discount-code {
-            background: linear-gradient(90deg, #ff3366, #7c5cff);
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .creator-product-link {
-            color: #4fc3f7;
-            text-decoration: none;
-            word-break: break-all;
-            font-size: 0.9rem;
-            background: rgba(255,255,255,0.1);
-            padding: 8px 12px;
-            border-radius: 6px;
-            text-align: center;
-            display: block;
-        }
-
-        .creator-product-link:hover {
-            text-decoration: underline;
-        }
-
-        .creator-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .creator-control-group {
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .creator-control-group h3 {
-            margin-bottom: 10px;
-            color: #7c5cff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .creator-color-picker {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .creator-color-option {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.3s;
-        }
-
-        .creator-color-option:hover {
-            transform: scale(1.1);
-        }
-
-        .creator-color-option.active {
-            border-color: white;
-            transform: scale(1.1);
-        }
-
-        .creator-btn {
-            background: linear-gradient(90deg, #ff3366, #7c5cff);
+        
+        .btn-instagram {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-            width: 100%;
         }
-
-        .creator-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,51,102,0.4);
+        
+        .btn-twitter {
+            background: #1DA1F2;
+            color: white;
+            border: none;
         }
-
-        .creator-btn:active {
-            transform: translateY(0);
+        
+        .btn-facebook {
+            background: #1877F2;
+            color: white;
+            border: none;
         }
-
-        .creator-btn-secondary {
-            background: linear-gradient(90deg, #7c5cff, #4fc3f7);
+        
+        .btn-tiktok {
+            background: #000000;
+            color: white;
+            border: none;
         }
-
-        .creator-btn-success {
-            background: linear-gradient(90deg, #28a745, #20c997);
-        }
-
-        .creator-btn-large {
-            padding: 15px 25px;
-            font-size: 1.1rem;
-        }
-
-        .creator-loading {
-            text-align: center;
-            padding: 20px;
+        
+        #videoCanvas {
             display: none;
-        }
-
-        .creator-loading-spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid #ff3366;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        .creator-message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-        }
-
-        .creator-message.success {
-            background: rgba(40, 167, 69, 0.2);
-            border: 1px solid #28a745;
-            color: #28a745;
-        }
-
-        .creator-message.error {
-            background: rgba(220, 53, 69, 0.2);
-            border: 1px solid #dc3545;
-            color: #dc3545;
-        }
-
-        .creator-timer {
-            font-size: 1.2rem;
-            text-align: center;
-            margin-top: 15px;
-            color: #7c5cff;
-            font-weight: bold;
-        }
-
-        .creator-step {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-        }
-
-        .creator-step-number {
-            background: linear-gradient(90deg, #ff3366, #7c5cff);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .creator-footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-        }
-
-        /* Video Kayıt İçin Ek Stiller */
-        .recording-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .recording-dot {
-            width: 20px;
-            height: 20px;
-            background: #ff3366;
-            border-radius: 50%;
-            margin-bottom: 20px;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .recording-time {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .stop-recording-btn {
-            background: #ff3366;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        /* Video İndirme Stilleri */
-        .video-download-section {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .video-preview-small {
-            width: 200px;
-            height: 355px;
-            border-radius: 10px;
-            margin: 0 auto 20px;
-            background: black;
-            overflow: hidden;
-        }
-
-        .video-preview-small video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            z-index: 9999;
+            background: black;
         }
-
-        .download-options {
+        
+        #videoPreview {
+            display: none;
+            max-width: 100%;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .product-title {
+            font-size: 14px;
+            height: 60px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .video-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .step-indicator {
             display: flex;
-            gap: 10px;
             justify-content: center;
-            flex-wrap: wrap;
+            margin-bottom: 30px;
         }
-
-        .download-btn {
-            background: linear-gradient(90deg, #28a745, #20c997);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
             display: flex;
             align-items: center;
-            gap: 8px;
-            text-decoration: none;
+            justify-content: center;
+            margin: 0 10px;
             font-weight: bold;
+            color: #666;
         }
-
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+        
+        .step.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .video-screen {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 10px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-element {
+            position: absolute;
+            opacity: 0;
+            animation: fadeInOut 3s forwards;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        .video-title {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .video-price {
+            font-size: 2.5em;
+            color: #ffd93d;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .video-code {
+            font-size: 2em;
+            color: #6bcf7f;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .video-link {
+            font-size: 1.5em;
+            color: #4d96ff;
+            text-decoration: underline;
+            word-break: break-all;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background: #333;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f);
+            width: 0%;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <!-- Ana Sayfa (İndex) -->
-    <div id="main-app" style="display: block;">
-        <!-- Toast Notification -->
-        <div class="toast" id="toast">
-            <i class="fas fa-check-circle"></i>
-            <span id="toast-message">İndirim kodu kopyalandı!</span>
+    <div class="container py-5">
+        <!-- Başlık -->
+        <div class="text-center mb-5">
+            <h1 class="text-white fw-bold mb-3">
+                <i class="fas fa-video me-2"></i>Ürün Video Oluşturucu
+            </h1>
+            <p class="text-white lead">Ürünleriniz için otomatik sosyal medya videoları oluşturun</p>
         </div>
-
-        <!-- Copy Message -->
-        <div id="copyMsg" class="copy-msg">Kupon kopyalandı ✅</div>
-
-        <!-- Header -->
-        <header>
-            <div class="container">
-                <div class="header-content">
-                    <div class="logo">
-                        <i class="fas fa-bolt"></i>
-                        <span data-translate="siteTitle">Budget Buddy</span>
-                    </div>
-                    <div class="header-actions">
-                        <div class="search-bar">
-                            <input type="text" id="search-input" placeholder="Ürün ara..." data-translate="searchPlaceholder">
-                            <button id="search-btn"><i class="fas fa-search"></i></button>
-                        </div>
-                        <button class="theme-toggle" id="theme-toggle">
-                            <i class="fas fa-moon"></i>
-                            <span data-translate="darkMode">Koyu</span>
-                        </button>
-                        <div class="language-selector">
-                            <button class="language-btn" id="language-btn">
-                                <i class="fas fa-globe"></i>
-                                <span id="current-language">TR</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                            <div class="language-dropdown" id="language-dropdown">
-                                <!-- Languages will be populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <h1 data-translate="heroTitle">En İyi AliExpress İndirimleri</h1>
-                <p data-translate="heroSubtitle">Günlük indirim kodları ile en popüler ürünleri keşfedin!</p>
-            </div>
-        </section>
-
-        <div class="container">
-            <!-- Status Info -->
-            <div class="status-info" id="status-info">
-                <h3><i class="fas fa-sync-alt fa-spin"></i> <span data-translate="loadingProducts">Ürünler Yükleniyor</span>...</h3>
-                <p data-translate="loadingDescription">Excel dosyasından ürün bilgileri alınıyor. Lütfen bekleyin.</p>
-            </div>
-
-            <!-- Main Content -->
-            <div id="main-content" style="display: none;">
-                <!-- Categories - Tüm Kategoriler, Favoriler ve Sırala butonları -->
-                <div class="categories" id="categories">
-                    <button class="category-btn active" data-category="all" id="all-categories-btn">
-                        <i class="fas fa-th-large"></i> <span data-translate="allCategories">Tüm Kategoriler</span> (<span id="all-categories-count">0</span>)
-                    </button>
-                    <button class="category-btn" data-filter="favorites" id="favorites-filter-btn">
-                        <i class="fas fa-heart"></i> <span data-translate="filterFavorites">Favoriler</span> (<span id="favorites-count-badge">0</span>)
-                    </button>
-                    <select class="sort-select" id="sort-select">
-                        <option value="default" data-translate="sortDefault">Sırala</option>
-                        <option value="price-low" data-translate="sortPriceLow">Fiyat ↑</option>
-                        <option value="price-high" data-translate="sortPriceHigh">Fiyat ↓</option>
-                        <option value="discount" data-translate="sortDiscount">İndirim</option>
-                        <option value="rating" data-translate="sortRating">Puan</option>
-                    </select>
-                </div>
-
-                <!-- Favorites Management -->
-                <div class="favorites-management" id="favorites-management">
-                    <div id="favorites-count" data-translate="favoritesCount">
-                        Toplam 0 favori ürün
-                    </div>
-                    <button class="clear-favorites-btn" id="clear-all-favorites" data-translate="clearAllFavorites">
-                        Tüm Favorileri Temizle
-                    </button>
-                </div>
-
-                <!-- Products Grid -->
-                <div id="products" class="products-grid"></div>
-
-                <!-- Loading Indicator -->
-                <div class="loading" id="loading-indicator">
-                    <div class="loading-spinner"></div>
-                    <p data-translate="loadingMore">Daha fazla ürün yükleniyor...</p>
-                </div>
-
-                <!-- End of Results -->
-                <div class="end-of-results" id="end-of-results">
-                    <i class="fas fa-flag-checkered"></i>
-                    <h3 data-translate="endOfResultsTitle">Tüm ürünleri görüntülediniz!</h3>
-                    <p data-translate="endOfResultsDescription">Listelenen tüm ürünleri görüntülediniz. Daha fazla sonuç için farklı bir kategori veya filtre deneyebilirsiniz.</p>
-                </div>
-
-                <!-- No Favorites Message -->
-                <div class="no-favorites" id="no-favorites">
-                    <i class="far fa-heart"></i>
-                    <h3 data-translate="noFavoritesTitle">Henüz favori ürününüz yok</h3>
-                    <p data-translate="noFavoritesDescription">Beğendiğiniz ürünlerin yanındaki kalp ikonuna tıklayarak favorilere ekleyebilirsiniz.</p>
-                </div>
-            </div>
+        
+        <!-- Ürün Grid -->
+        <div id="productsGrid" class="row">
+            <!-- Ürünler buraya yüklenecek -->
         </div>
-
-        <!-- Footer -->
-        <footer>
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-section">
-                        <h3 data-translate="footerAbout">AliExpress İndirim</h3>
-                        <p data-translate="footerDescription">En iyi AliExpress ürünlerini en uygun fiyatlarla bulabileceğiniz platform.</p>
-                    </div>
-                    <div class="footer-section">
-                        <h3 data-translate="footerLinks">Hızlı Bağlantılar</h3>
-                        <ul>
-                            <li><a href="#" data-translate="footerHome">Ana Sayfa</a></li>
-                            <li><a href="#" data-translate="footerPopular">Popüler</a></li>
-                            <li><a href="#" data-translate="footerNew">Yeni</a></li>
-                            <li><a href="#" data-translate="footerContact">İletişim</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h3 data-translate="footerHelp">Yardım</h3>
-                        <ul>
-                            <li><a href="#" data-translate="footerFAQ">SSS</a></li>
-                            <li><a href="#" data-translate="footerShipping">Kargo</a></li>
-                            <li><a href="#" data-translate="footerReturn">İade</a></li>
-                            <li><a href="#" data-translate="footerPrivacy">Gizlilik</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="copyright">
-                    &copy; 2023 AliExpress İndirim. <span data-translate="footerRights">Tüm hakları saklıdır.</span>
-                </div>
+        
+        <!-- Video Oluşturma Alanı -->
+        <div id="videoCreationArea" class="video-container">
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+                <div class="step" id="step4">4</div>
+                <div class="step" id="step5">5</div>
             </div>
-        </footer>
-    </div>
-
-    <!-- Video Oluşturucu Sayfası -->
-    <div id="video-creator-page" style="display: none;">
-        <div class="video-creator-container">
-            <div class="video-creator-header">
-                <h1><i class="fas fa-video"></i> Sosyal Medya Video Oluşturucu</h1>
-                <p>Ürününüz için sosyal medyada paylaşabileceğiniz video oluşturun</p>
-                <button class="creator-btn" onclick="goBackToMain()" style="margin-top: 15px;">
-                    <i class="fas fa-arrow-left"></i> Ana Sayfaya Dön
+            
+            <div id="videoScreen" class="video-screen">
+                <!-- Video içeriği burada gösterilecek -->
+            </div>
+            
+            <div class="progress-bar mt-4">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button id="startVideoBtn" class="btn btn-success btn-lg">
+                    <i class="fas fa-play me-2"></i>Video Oluşturmaya Başla
+                </button>
+                <button id="stopVideoBtn" class="btn btn-danger btn-lg" style="display: none;">
+                    <i class="fas fa-stop me-2"></i>Durdur
                 </button>
             </div>
             
-            <div class="video-creator-main">
-                <div class="preview-section">
-                    <h2><i class="fas fa-eye"></i> Video Önizleme</h2>
-                    <div class="video-preview">
-                        <div class="video-content" id="video-content">
-                            <!-- Video içeriği buraya dinamik olarak eklenecek -->
-                        </div>
-                    </div>
-                    <div class="creator-timer" id="creator-timer">Video Süresi: 10 saniye</div>
-                    
-                    <!-- Video İndirme Bölümü -->
-                    <div class="video-download-section" id="video-download-section">
-                        <h3><i class="fas fa-download"></i> Videoyu İndir</h3>
-                        <div class="video-preview-small" id="video-preview-small">
-                            <!-- Video önizlemesi buraya eklenecek -->
-                        </div>
-                        <div class="download-options">
-                            <a href="#" class="download-btn" id="download-video-btn" download="urun-video.mp4">
-                                <i class="fas fa-download"></i> MP4 İndir
-                            </a>
-                            <button class="download-btn creator-btn-secondary" onclick="shareVideo()">
-                                <i class="fas fa-share"></i> Paylaş
-                            </button>
-                        </div>
-                        <p style="margin-top: 15px; font-size: 0.9rem; color: #aaa;">
-                            <i class="fas fa-info-circle"></i> Video boyutu: 1080x1920px (Instagram Reels/TikTok uyumlu)
-                        </p>
-                    </div>
+            <!-- Video Önizleme -->
+            <video id="videoPreview" controls></video>
+            
+            <div id="videoResult" class="mt-4" style="display: none;">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>Video başarıyla oluşturuldu!
                 </div>
                 
-                <div class="controls-section">
-                    <h2><i class="fas fa-sliders-h"></i> Video Ayarları</h2>
+                <div class="text-center mb-4">
+                    <button id="downloadVideoBtn" class="btn btn-primary btn-lg">
+                        <i class="fas fa-download me-2"></i>Videoyu İndir
+                    </button>
+                    <button id="shareVideoBtn" class="btn btn-info btn-lg">
+                        <i class="fas fa-share me-2"></i>Paylaş
+                    </button>
+                </div>
+                
+                <h4 class="text-center mb-3">Sosyal Medya İçerikleri</h4>
+                <div id="socialMediaPosts"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sosyal Medya Paylaşım Modalı -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-share-alt me-2"></i>Paylaşım Seçenekleri
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <button class="social-media-btn btn-instagram" onclick="shareToInstagram()">
+                        <i class="fab fa-instagram me-2"></i>Instagram
+                    </button>
+                    <button class="social-media-btn btn-twitter" onclick="shareToTwitter()">
+                        <i class="fab fa-twitter me-2"></i>Twitter
+                    </button>
+                    <button class="social-media-btn btn-facebook" onclick="shareToFacebook()">
+                        <i class="fab fa-facebook me-2"></i>Facebook
+                    </button>
+                    <button class="social-media-btn btn-tiktok" onclick="shareToTiktok()">
+                        <i class="fab fa-tiktok me-2"></i>TikTok
+                    </button>
                     
-                    <div class="creator-controls">
-                        <div class="creator-control-group">
-                            <h3><i class="fas fa-palette"></i> Arkaplan Rengi</h3>
-                            <div class="creator-color-picker">
-                                <div class="creator-color-option active" style="background: linear-gradient(135deg, #0f172a, #1e293b);" data-bg="dark"></div>
-                                <div class="creator-color-option" style="background: linear-gradient(135deg, #ff3366, #7c5cff);" data-bg="gradient"></div>
-                                <div class="creator-color-option" style="background: #000000;" data-bg="black"></div>
-                                <div class="creator-color-option" style="background: #ffffff;" data-bg="white"></div>
-                                <div class="creator-color-option" style="background: linear-gradient(135deg, #4fc3f7, #7c5cff);" data-bg="blue"></div>
-                            </div>
+                    <div class="mt-4">
+                        <h6>Video Bağlantısı:</h6>
+                        <div class="input-group">
+                            <input type="text" id="videoLinkInput" class="form-control" readonly>
+                            <button class="btn btn-outline-secondary" onclick="copyVideoLink()">
+                                <i class="fas fa-copy"></i>
+                            </button>
                         </div>
-                        
-                        <div class="creator-control-group">
-                            <h3><i class="fas fa-clock"></i> Video Süresi</h3>
-                            <div class="creator-step">
-                                <div class="creator-step-number">1</div>
-                                <span>Ürün resmi gösterimi (3sn)</span>
-                            </div>
-                            <div class="creator-step">
-                                <div class="creator-step-number">2</div>
-                                <span>Ürün adı ve fiyat (3sn)</span>
-                            </div>
-                            <div class="creator-step">
-                                <div class="creator-step-number">3</div>
-                                <span>İndirim kodu (2sn)</span>
-                            </div>
-                            <div class="creator-step">
-                                <div class="creator-step-number">4</div>
-                                <span>Satın alma linki (2sn)</span>
-                            </div>
-                        </div>
-                        
-                        <button class="creator-btn creator-btn-large" onclick="startRealVideoRecording()">
-                            <i class="fas fa-record-vinyl"></i> Video Kaydetmeye Başla
-                        </button>
-                        
-                        <div class="creator-loading" id="creator-loading">
-                            <div class="creator-loading-spinner"></div>
-                            <p>Video oluşturuluyor, lütfen bekleyin...</p>
-                        </div>
-                        
-                        <div class="creator-message" id="creator-message"></div>
                     </div>
                 </div>
             </div>
-            
-            <div class="creator-footer">
-                <p><i class="fas fa-info-circle"></i> Gerçek video kaydı için tarayıcınızın mikrofon/kamera izni istenebilir</p>
-                <p>Video kaydı tamamlandıktan sonra indirebilir veya paylaşabilirsiniz</p>
-            </div>
-        </div>
-        
-        <!-- Video Kayıt Overlay -->
-        <div class="recording-overlay" id="recording-overlay" style="display: none;">
-            <div class="recording-dot"></div>
-            <div>Video Kaydediliyor...</div>
-            <div class="recording-time" id="recording-time">00:10</div>
-            <button class="stop-recording-btn" onclick="stopRecording()">
-                <i class="fas fa-stop"></i> Kaydı Durdur
-            </button>
         </div>
     </div>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Çeviriler
-        const translations = {
-            tr: {
-                siteTitle: "Budget Buddy",
-                searchPlaceholder: "Ara...",
-                heroTitle: "En İyi İndirimler",
-                heroSubtitle: "Günlük indirim kodları ile popüler ürünler!",
-                loadingProducts: "Yükleniyor",
-                loadingDescription: "Test ürünleri yükleniyor...",
-                clearAllFavorites: "Tümünü Temizle",
-                favoritesCount: "{count} favori",
-                allCategories: "Tüm Kategoriler",
-                allCategoriesModal: "Tüm Kategoriler",
-                filterAll: "Tümü",
-                filterFavorites: "Favoriler",
-                sortDefault: "Sırala",
-                sortPriceLow: "Fiyat ↑",
-                sortPriceHigh: "Fiyat ↓",
-                sortDiscount: "İndirim",
-                sortRating: "Puan",
-                noFavoritesTitle: "Favori yok",
-                noFavoritesDescription: "Ürünleri favorilere ekleyin.",
-                loadingMore: "Daha fazla ürün yükleniyor...",
-                endOfResultsTitle: "Tüm ürünleri görüntülediniz!",
-                endOfResultsDescription: "Listelenen tüm ürünleri görüntülediniz. Daha fazla sonuç için farklı bir kategori veya filtre deneyebilirsiniz.",
-                footerAbout: "AliExpress İndirim",
-                footerDescription: "En iyi ürünler uygun fiyatlarla.",
-                footerLinks: "Bağlantılar",
-                footerHome: "Ana Sayfa",
-                footerPopular: "Popüler",
-                footerNew: "Yeni",
-                footerContact: "İletişim",
-                footerHelp: "Yardım",
-                footerFAQ: "SSS",
-                footerShipping: "Kargo",
-                footerReturn: "İade",
-                footerPrivacy: "Gizlilik",
-                footerRights: "Tüm hakları saklıdır.",
-                codeCopied: "Kopyalandı:",
-                addedToFavorites: "Favorilere eklendi",
-                removedFromFavorites: "Favorilerden çıkarıldı",
-                allFavoritesCleared: "Tüm favoriler temizlendi",
-                shareText: "Bu ürünü inceleyin!",
-                darkMode: "Koyu",
-                lightMode: "Açık",
-                noProductsFound: "Ürün bulunamadı.",
-                discountCode: "Kod:",
-                buyNow: "Satın Al",
-                confirmationTitle: "Emin misiniz?",
-                confirmationMessage: "Tüm favori ürünlerinizi temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-                cancelButton: "Hayır",
-                confirmButton: "Evet",
-                createVideo: "Video Oluştur",
-                videoCreatorTitle: "Sosyal Medya Video Oluşturucu",
-                videoCreatorDescription: "Ürününüz için sosyal medyada paylaşabileceğiniz video oluşturun",
-                backToMain: "Ana Sayfaya Dön"
+        // Örnek ürün verileri (Excel'den alınmış gibi)
+        const sampleProducts = [
+            {
+                "ProductId": "1005007876823800",
+                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/S76008ad7510f417aab4e840c5f10642bA.jpg",
+                "Product Desc": "Japan Cherry Blossom Mouse Pad XXL Gray Laptops Gaming Deskmat Sakura Mousepad",
+                "Origin Price": "EUR 6.20",
+                "Discount Price": "EUR 2.23",
+                "Discount": "64%",
+                "Positive Feedback": "91.0%",
+                "Sales180Day": "8025",
+                "Promotion Url": "https://s.click.aliexpress.com/e/_c3Gaz3HB",
+                "Code Name": "PJXD1T509HYB",
+                "Code Value": "EUR 0.74"
+            },
+            {
+                "ProductId": "1005007839347268",
+                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/S20bd0c574f454bafb00d5089fc16a481E.jpg",
+                "Product Desc": "2-in-1 Vitamin D3 K2 Supplement Softgel, 10000 IU VIT D3 + 200 MCG Vitamin K2",
+                "Origin Price": "EUR 22.41",
+                "Discount Price": "EUR 15.69",
+                "Discount": "30%",
+                "Positive Feedback": "96.3%",
+                "Sales180Day": "305",
+                "Promotion Url": "https://s.click.aliexpress.com/e/_c4KawaKz",
+                "Code Name": "M4J8J76H7LYE",
+                "Code Value": "EUR 0.87"
+            },
+            {
+                "ProductId": "1005005081276760",
+                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/S93f679ca64e84f7cbc608d6fe7f095d7W.png",
+                "Product Desc": "Mens Slimming Body Shaper Vest Shirt Abs Abdomen Slim Gym Workout Tummy Control",
+                "Origin Price": "EUR 5.92",
+                "Discount Price": "EUR 1.87",
+                "Discount": "68%",
+                "Positive Feedback": "91.9%",
+                "Sales180Day": "3275",
+                "Promotion Url": "https://s.click.aliexpress.com/e/_c3Zkybmh",
+                "Code Name": "3L5LZ1ARAJNG",
+                "Code Value": "EUR 0.87"
+            },
+            {
+                "ProductId": "1005008119845882",
+                "Image Url": "https://ae-pic-a1.aliexpress-media.com/kf/Sef12305ed58b43ad928d27b6a50c0a06F.jpg",
+                "Product Desc": "Lab Grown Sapphire Cushion Cut Royal Blue Selectable AGL Certificate",
+                "Origin Price": "EUR 8.55",
+                "Discount Price": "EUR 3.16",
+                "Discount": "63%",
+                "Positive Feedback": "94.9%",
+                "Sales180Day": "138",
+                "Promotion Url": "https://s.click.aliexpress.com/e/_c34NBzpJ",
+                "Code Name": "B72SWKO1KMDR",
+                "Code Value": "EUR 2.48"
             }
-        };
-
+        ];
+        
         // Global değişkenler
-        let allProducts = [];
-        let displayedProducts = 0;
-        const productsPerPage = 50;
-        let currentFilter = 'all';
-        let currentCategory = 'all';
-        let currentSort = 'default';
-        let isLoading = false;
-        let hasMoreProducts = true;
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        let currentLanguage = localStorage.getItem('language') || 'tr';
-        let currentTheme = localStorage.getItem('theme') || 'dark';
+        let currentProduct = null;
+        let recorder = null;
+        let videoChunks = [];
+        let videoStream = null;
+        let stepInterval = null;
         
-        // Video oluşturucu değişkenleri
-        let currentProductForVideo = null;
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let recordingInterval = null;
-        let recordingTime = 10;
-        let recordedVideoBlob = null;
-
-        // DOM Elements
-        const productsGrid = document.getElementById('products');
-        const statusInfo = document.getElementById('status-info');
-        const mainContent = document.getElementById('main-content');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const categoriesContainer = document.getElementById('categories');
-        const favoritesManagement = document.getElementById('favorites-management');
-        const noFavorites = document.getElementById('no-favorites');
-        const endOfResults = document.getElementById('end-of-results');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
-        const copyMsg = document.getElementById('copyMsg');
-        
-        // Video oluşturucu elements
-        const mainApp = document.getElementById('main-app');
-        const videoCreatorPage = document.getElementById('video-creator-page');
-        const recordingOverlay = document.getElementById('recording-overlay');
-        const recordingTimeDisplay = document.getElementById('recording-time');
-        const videoDownloadSection = document.getElementById('video-download-section');
-        const videoPreviewSmall = document.getElementById('video-preview-small');
-        const downloadVideoBtn = document.getElementById('download-video-btn');
-        const creatorMessage = document.getElementById('creator-message');
-
-        // Event Listeners
-        document.getElementById('search-btn').addEventListener('click', performSearch);
-        document.getElementById('search-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
+        // Sayfa yüklendiğinde ürünleri göster
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            setupEventListeners();
         });
-
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        document.getElementById('language-btn').addEventListener('click', toggleLanguageDropdown);
-        document.getElementById('clear-all-favorites').addEventListener('click', showConfirmationModal);
         
-        // Sonsuz scroll için event listener
-        window.addEventListener('scroll', handleScroll);
-
-        // Tema değiştirme
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            localStorage.setItem('theme', currentTheme);
-            updateThemeButton();
-        }
-
-        function updateThemeButton() {
-            const icon = document.querySelector('#theme-toggle i');
-            const text = document.querySelector('#theme-toggle span');
-            if (currentTheme === 'dark') {
-                icon.className = 'fas fa-sun';
-                text.setAttribute('data-translate', 'lightMode');
-            } else {
-                icon.className = 'fas fa-moon';
-                text.setAttribute('data-translate', 'darkMode');
-            }
-            updatePageLanguage();
-        }
-
-        // Dil değiştirme
-        function changeLanguage(lang) {
-            currentLanguage = lang;
-            localStorage.setItem('language', lang);
-            document.getElementById('current-language').textContent = lang.toUpperCase();
-            updatePageLanguage();
-            toggleLanguageDropdown();
-            
-            if (allProducts.length > 0) {
-                filterAndDisplayProducts();
-            }
-        }
-
-        function toggleLanguageDropdown() {
-            document.getElementById('language-dropdown').classList.toggle('show');
-        }
-
-        function createLanguageOptions() {
-            const languages = [
-                { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-                { code: 'en', name: 'English', flag: '🇺🇸' },
-                { code: 'es', name: 'Español', flag: '🇪🇸' },
-                { code: 'fr', name: 'Français', flag: '🇫🇷' },
-                { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-                { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-                { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-                { code: 'zh', name: '中文', flag: '🇨🇳' },
-                { code: 'ja', name: '日本語', flag: '🇯🇵' }
-            ];
-
-            const dropdown = document.getElementById('language-dropdown');
-            dropdown.innerHTML = languages.map(lang => `
-                <div class="language-option" onclick="changeLanguage('${lang.code}')">
-                    ${lang.flag} ${lang.name}
-                </div>
-            `).join('');
-        }
-
-        // Sayfa dilini güncelle
-        function updatePageLanguage() {
-            document.querySelectorAll('[data-translate]').forEach(element => {
-                const key = element.getAttribute('data-translate');
-                if (translations[currentLanguage] && translations[currentLanguage][key]) {
-                    let translatedText = translations[currentLanguage][key];
-                    
-                    if (key === 'favoritesCount') {
-                        translatedText = translatedText.replace('{count}', favorites.length);
-                    }
-                    
-                    if (element.tagName === 'INPUT') {
-                        element.placeholder = translatedText;
-                    } else if (element.tagName === 'OPTION') {
-                        element.textContent = translatedText;
-                    } else {
-                        element.textContent = translatedText;
-                    }
-                }
-            });
-            updateFavoritesCount();
-        }
-
-        // Toast bildirimi
-        function showToast(message) {
-            toastMessage.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Kupon kopyalama mesajı
-        function showCopyMsg() {
-            copyMsg.style.display = "block";
-            setTimeout(() => copyMsg.style.display = "none", 1300);
-        }
-
-        // Onay modalını göster
-        function showConfirmationModal() {
-            if (favorites.length === 0) {
-                showToast('Favori ürün bulunmuyor!');
-                return;
-            }
-            // Basit alert kullanıyoruz
-            if (confirm('Tüm favori ürünlerinizi temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
-                clearAllFavorites();
-            }
-        }
-
-        // Test ürünleri oluştur - SADECE TEST VERİLERİ
-        function createTestProducts() {
-            const testProducts = [];
-            const categories = [
-                'Elektronik', 'Giyim', 'Ev & Bahçe', 'Spor', 'Kozmetik',
-                'Takı & Aksesuar', 'Oyuncak', 'Kitap', 'Süpermarket', 'Otomotiv'
-            ];
-            
-            // Her kategori için 10 ürün oluştur
-            categories.forEach((category, categoryIndex) => {
-                for (let i = 1; i <= 10; i++) {
-                    const productId = (categoryIndex * 10) + i;
-                    const discount = Math.floor(Math.random() * 50) + 10;
-                    const originalPrice = Math.floor(Math.random() * 1000) + 100;
-                    const discountPrice = Math.floor(originalPrice * (100 - discount) / 100);
-                    
-                    const productNames = [
-                        'Premium Kalite Ürün',
-                        'Süper İndirimli Ürün',
-                        'Özel Tasarım Ürün',
-                        'Yüksek Performanslı Ürün',
-                        'Lüks ve Şık Ürün',
-                        'Pratik Kullanımlı Ürün',
-                        'Dayanıklı ve Güçlü Ürün',
-                        'Modern Tasarım Ürün',
-                        'Çok Fonksiyonlu Ürün',
-                        'Enerji Tasarruflu Ürün'
-                    ];
-                    
-                    const productName = productNames[Math.floor(Math.random() * productNames.length)];
-                    
-                    testProducts.push({
-                        id: productId.toString(),
-                        title: `${category} - ${productName} ${productId}`,
-                        image: `https://picsum.photos/300/200?random=${productId}&category=${category}`,
-                        originalPrice: `₺${originalPrice}`,
-                        discountPrice: `₺${discountPrice}`,
-                        discount: `%${discount}`,
-                        code: `INDIRIM${productId}`,
-                        link: '#',
-                        category: category,
-                        rating: (Math.random() * 10 + 85).toFixed(0),
-                        sales: Math.floor(Math.random() * 2000) + 100
-                    });
-                }
-            });
-            
-            return testProducts;
-        }
-
-        // Ürünleri yükle - SADECE TEST VERİLERİ
         function loadProducts() {
-            console.log("Test ürünleri yükleniyor...");
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = '';
             
-            // Test ürünlerini oluştur
-            allProducts = createTestProducts();
-            console.log(`${allProducts.length} test ürünü oluşturuldu`);
-            
-            // UI'ı güncelle
-            processProducts();
-        }
-
-        // Ürünleri işle
-        function processProducts() {
-            // Tüm Kategoriler, Favoriler ve Sırala butonlarını göster
-            categoriesContainer.innerHTML = `
-                <button class="category-btn active" data-category="all" id="all-categories-btn">
-                    <i class="fas fa-th-large"></i> <span data-translate="allCategories">Tüm Kategoriler</span> (<span id="all-categories-count">${allProducts.length}</span>)
-                </button>
-                <button class="category-btn" data-filter="favorites" id="favorites-filter-btn">
-                    <i class="fas fa-heart"></i> <span data-translate="filterFavorites">Favoriler</span> (<span id="favorites-count-badge">${favorites.length}</span>)
-                </button>
-                <select class="sort-select" id="sort-select">
-                    <option value="default" data-translate="sortDefault">Sırala</option>
-                    <option value="price-low" data-translate="sortPriceLow">Fiyat ↑</option>
-                    <option value="price-high" data-translate="sortPriceHigh">Fiyat ↓</option>
-                    <option value="discount" data-translate="sortDiscount">İndirim</option>
-                    <option value="rating" data-translate="sortRating">Puan</option>
-                </select>
-            `;
-
-            // Favoriler butonuna event listener ekle
-            document.getElementById('favorites-filter-btn').addEventListener('click', function() {
-                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                currentFilter = 'favorites';
-                currentDisplayedCount = 0;
-                favoritesManagement.classList.add('show');
-                filterAndDisplayProducts();
-            });
-
-            // Tüm Kategoriler butonuna event listener ekle
-            document.getElementById('all-categories-btn').addEventListener('click', function() {
-                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                currentFilter = 'all';
-                currentCategory = 'all';
-                currentDisplayedCount = 0;
-                favoritesManagement.classList.remove('show');
-                filterAndDisplayProducts();
-            });
-
-            // Sıralama seçeneği event listener'ı ekle
-            const sortSelect = document.getElementById('sort-select');
-            sortSelect.addEventListener('change', function() {
-                currentSort = this.value;
-                currentDisplayedCount = 0;
-                filterAndDisplayProducts();
-            });
-            
-            statusInfo.style.display = 'none';
-            mainContent.style.display = 'block';
-            
-            filterAndDisplayProducts();
-        }
-
-        // Filtrele ve göster
-        function filterAndDisplayProducts() {
-            let filteredProducts = [...allProducts];
-            
-            // Kategori filtresi
-            if (currentCategory !== 'all') {
-                filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
-            }
-            
-            // Ana filtreler
-            if (currentFilter === 'favorites') {
-                filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
-            }
-            
-            // Sıralama
-            filteredProducts = applySorting(filteredProducts);
-            
-            // İlk 50 ürünü göster
-            currentDisplayedCount = 0;
-            loadMoreProducts(filteredProducts);
-        }
-
-        // Sıralama
-        function applySorting(products) {
-            const sortedProducts = [...products];
-            
-            switch(currentSort) {
-                case 'price-low':
-                    sortedProducts.sort((a, b) => {
-                        const priceA = extractPrice(a.discountPrice);
-                        const priceB = extractPrice(b.discountPrice);
-                        return priceA - priceB;
-                    });
-                    break;
-                case 'price-high':
-                    sortedProducts.sort((a, b) => {
-                        const priceA = extractPrice(a.discountPrice);
-                        const priceB = extractPrice(b.discountPrice);
-                        return priceB - priceA;
-                    });
-                    break;
-                case 'discount':
-                    sortedProducts.sort((a, b) => {
-                        const discountA = extractDiscount(a.discount);
-                        const discountB = extractDiscount(b.discount);
-                        return discountB - discountA;
-                    });
-                    break;
-                case 'rating':
-                    sortedProducts.sort((a, b) => {
-                        const ratingA = parseFloat(a.rating) || 0;
-                        const ratingB = parseFloat(b.rating) || 0;
-                        return ratingB - ratingA;
-                    });
-                    break;
-                default:
-                    // Varsayılan: karışık
-                    sortedProducts.sort(() => Math.random() - 0.5);
-                    break;
-            }
-            return sortedProducts;
-        }
-
-        function extractPrice(priceStr) {
-            if (!priceStr) return 0;
-            const match = priceStr.match(/[\d,]+/);
-            return match ? parseFloat(match[0].replace(',', '')) : 0;
-        }
-
-        function extractDiscount(discountStr) {
-            if (!discountStr) return 0;
-            const match = discountStr.match(/\d+/);
-            return match ? parseInt(match[0]) : 0;
-        }
-
-        // Daha fazla ürün yükle
-        function loadMoreProducts(filteredProducts) {
-            if (isLoading) return;
-            
-            const startIndex = currentDisplayedCount;
-            const endIndex = Math.min(currentDisplayedCount + productsPerPage, filteredProducts.length);
-            
-            if (startIndex >= filteredProducts.length) {
-                endOfResults.style.display = 'block';
-                loadingIndicator.style.display = 'none';
-                return;
-            }
-            
-            isLoading = true;
-            loadingIndicator.style.display = 'block';
-            endOfResults.style.display = 'none';
-            
-            // Kısa gecikme
-            setTimeout(() => {
-                const productsToShow = filteredProducts.slice(startIndex, endIndex);
-                
-                if (currentDisplayedCount === 0) {
-                    productsGrid.innerHTML = '';
-                }
-                
-                renderProducts(productsToShow);
-                
-                currentDisplayedCount = endIndex;
-                isLoading = false;
-                loadingIndicator.style.display = 'none';
-                
-                if (currentDisplayedCount >= filteredProducts.length) {
-                    endOfResults.style.display = 'block';
-                }
-            }, 300);
-        }
-
-        // Scroll işleyicisi
-        function handleScroll() {
-            if (isLoading) return;
-            
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-            const documentHeight = document.documentElement.scrollHeight;
-            
-            if (scrollTop + windowHeight >= documentHeight - 500) {
-                // Filtrelenmiş ürünleri yeniden hesapla
-                let filteredProducts = [...allProducts];
-                
-                if (currentCategory !== 'all') {
-                    filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
-                }
-                
-                if (currentFilter === 'favorites') {
-                    filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
-                }
-                
-                filteredProducts = applySorting(filteredProducts);
-                loadMoreProducts(filteredProducts);
-            }
-        }
-
-        // Ürünleri render et
-        function renderProducts(products) {
-            if (products.length === 0 && currentDisplayedCount === 0) {
-                if (currentFilter === 'favorites') {
-                    noFavorites.style.display = 'block';
-                    productsGrid.style.display = 'none';
-                } else {
-                    productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px;">${translations[currentLanguage].noProductsFound}</p>`;
-                }
-                loadingIndicator.style.display = 'none';
-                endOfResults.style.display = 'none';
-                return;
-            }
-
-            noFavorites.style.display = 'none';
-            productsGrid.style.display = 'grid';
-
-            products.forEach(product => {
-                const isFavorite = favorites.includes(product.id);
-                
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    <div class="product-image-container" onclick="window.open('${product.link}', '_blank')">
-                        <div class="product-badge">${product.discount}</div>
-                        <div class="category-badge">${product.category}</div>
-                        ${currentFilter === 'favorites' ? `
-                        <button class="remove-favorite-btn" onclick="removeFavorite('${product.id}', event)">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        ` : ''}
-                        <img src="${product.image}" alt="${product.title}" class="product-image" onerror="this.src='https://picsum.photos/300/200'">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title" onclick="toggleTitle(this)">${product.title}</h3>
-                        <div class="product-price">
-                            <span class="current-price">${product.discountPrice}</span>
-                            <span class="original-price">${product.originalPrice}</span>
-                            <span class="discount">${product.discount}</span>
-                        </div>
-                        ${product.code ? `
-                        <div class="product-code">
-                            <span class="code-label">${translations[currentLanguage].discountCode}</span>
-                            <span class="code-value" onclick="copyCode('${product.code}', event)">${product.code}</span>
-                        </div>
-                        ` : ''}
-                        <div class="product-actions">
-                            <a href="${product.link}" target="_blank" class="buy-btn">
-                                <i class="fas fa-shopping-cart"></i> ${translations[currentLanguage].buyNow}
-                            </a>
-                            <button class="video-btn" onclick="openVideoCreator(${JSON.stringify(product).replace(/"/g, '&quot;')}, event)">
-                                <i class="fas fa-video"></i>
-                            </button>
-                            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">
-                                <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
-                            </button>
-                            <button class="share-btn" onclick="shareProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, event)">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
+            sampleProducts.forEach(product => {
+                const productCard = createProductCard(product);
                 productsGrid.appendChild(productCard);
             });
         }
-
-        // Ürün başlığını genişlet/daralt
-        function toggleTitle(element) {
-            element.classList.toggle('expanded');
-        }
-
-        // Favori işlemleri
-        function toggleFavorite(productId) {
-            const index = favorites.indexOf(productId);
-            if (index === -1) {
-                favorites.push(productId);
-                showToast(translations[currentLanguage].addedToFavorites);
-            } else {
-                favorites.splice(index, 1);
-                showToast(translations[currentLanguage].removedFromFavorites);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            updateFavoritesUI();
+        
+        function createProductCard(product) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-3 mb-4';
             
-            if (currentFilter === 'favorites') {
-                currentDisplayedCount = 0;
-                filterAndDisplayProducts();
-            }
-        }
-
-        function removeFavorite(productId, event) {
-            if (event) event.stopPropagation();
-            const index = favorites.indexOf(productId);
-            if (index !== -1) {
-                favorites.splice(index, 1);
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-                showToast(translations[currentLanguage].removedFromFavorites);
-                updateFavoritesUI();
-                
-                if (currentFilter === 'favorites') {
-                    currentDisplayedCount = 0;
-                    filterAndDisplayProducts();
-                }
-            }
-        }
-
-        function clearAllFavorites() {
-            if (favorites.length > 0) {
-                favorites = [];
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-                showToast(translations[currentLanguage].allFavoritesCleared);
-                updateFavoritesUI();
-                
-                if (currentFilter === 'favorites') {
-                    currentDisplayedCount = 0;
-                    filterAndDisplayProducts();
-                }
-            } else {
-                showToast('Favori ürün bulunmuyor!');
-            }
-        }
-
-        function updateFavoritesUI() {
-            updateFavoritesCount();
+            const card = document.createElement('div');
+            card.className = 'product-card h-100';
             
-            const favoritesBadge = document.getElementById('favorites-count-badge');
-            if (favoritesBadge) {
-                favoritesBadge.textContent = favorites.length;
-            }
-            
-            const favoritesCountElement = document.getElementById('favorites-count');
-            if (translations[currentLanguage]) {
-                favoritesCountElement.textContent = 
-                    translations[currentLanguage].favoritesCount.replace('{count}', favorites.length);
-            }
-            
-            // Favori butonlarını güncelle
-            const favoriteButtons = document.querySelectorAll('.wishlist-btn');
-            favoriteButtons.forEach(btn => {
-                const productCard = btn.closest('.product-card');
-                if (productCard) {
-                    // Basit bir yaklaşım - her butonu yeniden render et
-                    const onclickAttr = btn.getAttribute('onclick');
-                    const match = onclickAttr.match(/toggleFavorite\('([^']+)'\)/);
-                    if (match) {
-                        const productId = match[1];
-                        if (favorites.includes(productId)) {
-                            btn.classList.add('active');
-                            btn.innerHTML = '<i class="fas fa-heart"></i>';
-                        } else {
-                            btn.classList.remove('active');
-                            btn.innerHTML = '<i class="far fa-heart"></i>';
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateFavoritesCount() {
-            const count = favorites.length;
-            const favoritesCountElement = document.getElementById('favorites-count');
-            if (translations[currentLanguage]) {
-                favoritesCountElement.textContent = 
-                    translations[currentLanguage].favoritesCount.replace('{count}', count);
-            }
-        }
-
-        // Arama
-        function performSearch() {
-            const term = document.getElementById('search-input').value.toLowerCase().trim();
-            if (!term) {
-                currentDisplayedCount = 0;
-                filterAndDisplayProducts();
-                return;
-            }
-            
-            const filtered = allProducts.filter(p => {
-                return p.title.toLowerCase().includes(term) || 
-                       (p.category && p.category.toLowerCase().includes(term)) ||
-                       (p.code && p.code.toLowerCase().includes(term));
-            });
-            
-            // Filtrelenmiş ürünleri göster
-            currentDisplayedCount = 0;
-            loadMoreProducts(filtered);
-        }
-
-        // Kodu kopyala
-        function copyCode(code, event) {
-            if (event) event.stopPropagation();
-            navigator.clipboard.writeText(code).then(() => {
-                showCopyMsg();
-            }).catch(err => {
-                showToast('Kopyalama başarısız!');
-            });
-        }
-
-        // Ürün paylaş
-        function shareProduct(product, event) {
-            if (event) event.stopPropagation();
-            const shareText = translations[currentLanguage].shareText;
-            const shareUrl = product.link;
-            const discountCode = product.code ? `\n${translations[currentLanguage].discountCode} ${product.code}` : '';
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: product.title,
-                    text: `${shareText}${discountCode}`,
-                    url: shareUrl
-                });
-            } else {
-                navigator.clipboard.writeText(`${product.title} - ${shareUrl}${discountCode}`);
-                showToast('Ürün bilgileri kopyalandı!');
-            }
-        }
-
-        // Video Oluşturucu Fonksiyonları
-
-        // Video oluşturucuyu aç
-        function openVideoCreator(product, event) {
-            if (event) event.stopPropagation();
-            
-            try {
-                currentProductForVideo = typeof product === 'string' ? JSON.parse(product) : product;
-                
-                // Ana sayfayı gizle, video oluşturucuyu göster
-                mainApp.style.display = 'none';
-                videoCreatorPage.style.display = 'block';
-                
-                // Video önizlemesini oluştur
-                renderVideoPreview();
-            } catch (e) {
-                console.error("Video oluşturucu açma hatası:", e);
-                showToast("Video oluşturucu açılamadı!");
-            }
-        }
-
-        // Ana sayfaya dön
-        function goBackToMain() {
-            videoCreatorPage.style.display = 'none';
-            mainApp.style.display = 'block';
-            recordedVideoBlob = null;
-            videoDownloadSection.style.display = 'none';
-        }
-
-        // Video önizlemesini oluştur
-        function renderVideoPreview() {
-            if (!currentProductForVideo) return;
-            
-            const videoContent = document.getElementById('video-content');
-            
-            videoContent.innerHTML = `
-                <img src="${currentProductForVideo.image}" alt="${currentProductForVideo.title}" class="creator-product-image" onerror="this.src='https://picsum.photos/1080/1920'">
-                <div class="creator-product-info">
-                    <h2 class="creator-product-title">${currentProductForVideo.title}</h2>
-                    <div class="creator-product-price">
-                        <span style="text-decoration: line-through; opacity: 0.7;">${currentProductForVideo.originalPrice}</span>
-                        <span style="font-size: 1.3rem; color: #ff3366; margin-left: 10px;">${currentProductForVideo.discountPrice}</span>
-                        <span style="background: #28a745; padding: 5px 10px; border-radius: 5px; margin-left: 10px;">${currentProductForVideo.discount}</span>
+            card.innerHTML = `
+                <div class="position-relative">
+                    <img src="${product['Image Url']}" 
+                         class="card-img-top product-image" 
+                         alt="${product['Product Desc']}"
+                         onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    ${product.Discount !== '0%' ? 
+                        `<span class="discount-badge">${product.Discount} İNDİRİM</span>` : ''}
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title product-title">${product['Product Desc']}</h6>
+                    
+                    <div class="price-container">
+                        <span class="original-price">${product['Origin Price']}</span>
+                        <span class="discount-price">${product['Discount Price']}</span>
                     </div>
-                    <div class="creator-discount-code">
-                        <i class="fas fa-tag"></i> İndirim Kodu: <strong>${currentProductForVideo.code || 'YOK'}</strong>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-success">
+                                <i class="fas fa-star"></i> ${product['Positive Feedback']}
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-shopping-cart"></i> ${product['Sales180Day']}
+                            </small>
+                        </div>
+                        
+                        <button class="btn btn-primary w-100" onclick="selectProduct('${product.ProductId}')">
+                            <i class="fas fa-video me-2"></i>Video Oluştur
+                        </button>
                     </div>
-                    <a href="${currentProductForVideo.link}" target="_blank" class="creator-product-link">
-                        <i class="fas fa-link"></i> ${currentProductForVideo.link}
-                    </a>
                 </div>
             `;
             
-            setupVideoCreatorColorPicker();
+            col.appendChild(card);
+            return col;
         }
-
-        // Video oluşturucu renk seçiciyi ayarla
-        function setupVideoCreatorColorPicker() {
-            const colorOptions = document.querySelectorAll('.creator-color-option');
-            const backgrounds = {
-                dark: 'linear-gradient(135deg, #0f172a, #1e293b)',
-                gradient: 'linear-gradient(135deg, #ff3366, #7c5cff)',
-                black: '#000000',
-                white: '#ffffff',
-                blue: 'linear-gradient(135deg, #4fc3f7, #7c5cff)'
-            };
+        
+        function setupEventListeners() {
+            document.getElementById('startVideoBtn').addEventListener('click', startVideoCreation);
+            document.getElementById('stopVideoBtn').addEventListener('click', stopVideoCreation);
+            document.getElementById('downloadVideoBtn').addEventListener('click', downloadVideo);
+            document.getElementById('shareVideoBtn').addEventListener('click', showShareModal);
+        }
+        
+        function selectProduct(productId) {
+            currentProduct = sampleProducts.find(p => p.ProductId === productId);
+            if (currentProduct) {
+                document.getElementById('videoCreationArea').style.display = 'block';
+                document.getElementById('productsGrid').style.display = 'none';
+                resetVideoCreation();
+            }
+        }
+        
+        function resetVideoCreation() {
+            document.getElementById('videoResult').style.display = 'none';
+            document.getElementById('videoPreview').style.display = 'none';
+            document.getElementById('startVideoBtn').style.display = 'block';
+            document.getElementById('stopVideoBtn').style.display = 'none';
+            document.getElementById('progressFill').style.width = '0%';
             
-            colorOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    colorOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    const bgType = this.getAttribute('data-bg');
-                    document.getElementById('video-content').style.background = backgrounds[bgType];
-                });
-            });
+            // Adım göstergelerini sıfırla
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.className = 'step';
+                if (i === 1) step.classList.add('active');
+            }
         }
-
-        // Gerçek video kaydı başlat
-        async function startRealVideoRecording() {
+        
+        async function startVideoCreation() {
+            if (!currentProduct) return;
+            
+            document.getElementById('startVideoBtn').style.display = 'none';
+            document.getElementById('stopVideoBtn').style.display = 'block';
+            
             try {
-                document.getElementById('creator-loading').style.display = 'block';
-                creatorMessage.style.display = 'none';
+                // Video kaydı başlat
+                videoStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        width: { ideal: 1080 },
+                        height: { ideal: 1920 }
+                    },
+                    audio: true
+                });
                 
-                // Video simülasyonu yapıyoruz (gerçek kayıt yerine)
-                // Gerçek kayıt için tarayıcı izinleri gerekir
+                recorder = new MediaRecorder(videoStream, {
+                    mimeType: 'video/webm;codecs=vp9'
+                });
                 
-                setTimeout(() => {
-                    document.getElementById('creator-loading').style.display = 'none';
+                videoChunks = [];
+                
+                recorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        videoChunks.push(event.data);
+                    }
+                };
+                
+                recorder.onstop = () => {
+                    const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+                    const videoUrl = URL.createObjectURL(videoBlob);
+                    const videoPreview = document.getElementById('videoPreview');
+                    videoPreview.src = videoUrl;
+                    videoPreview.style.display = 'block';
                     
-                    // Simüle edilmiş video oluştur
-                    createSimulatedVideo();
+                    // Sosyal medya içeriklerini oluştur
+                    generateSocialMediaPosts();
                     
-                }, 2000);
+                    document.getElementById('videoResult').style.display = 'block';
+                };
+                
+                recorder.start();
+                
+                // Video animasyonunu başlat
+                startVideoAnimation();
                 
             } catch (error) {
-                console.error("Video oluşturma hatası:", error);
-                document.getElementById('creator-loading').style.display = 'none';
-                creatorMessage.textContent = 'Video oluşturma başarısız: ' + error.message;
-                creatorMessage.className = 'creator-message error';
-                creatorMessage.style.display = 'block';
+                console.error('Video oluşturma hatası:', error);
+                alert('Video oluşturma başlatılamadı. Lütfen ekran paylaşımı iznini kontrol edin.');
+                resetVideoCreation();
             }
         }
-
-        // Simüle edilmiş video oluştur
-        function createSimulatedVideo() {
-            // Video simülasyonu için basit bir canvas animasyonu
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1920;
-            const ctx = canvas.getContext('2d');
+        
+        function startVideoAnimation() {
+            const videoScreen = document.getElementById('videoScreen');
+            const progressFill = document.getElementById('progressFill');
+            let step = 1;
             
-            // Basit bir video simülasyonu
-            const videoDataUrl = canvas.toDataURL('image/png');
-            
-            // Blob oluştur (simülasyon)
-            recordedVideoBlob = new Blob([], { type: 'video/mp4' });
-            
-            // Video indirme bölümünü göster
-            showVideoDownloadSection();
+            // Her 3 saniyede bir adım değiştir
+            stepInterval = setInterval(() => {
+                if (step > 5) {
+                    stopVideoCreation();
+                    return;
+                }
+                
+                // Önceki adımı tamamlandı olarak işaretle
+                if (step > 1) {
+                    document.getElementById(`step${step-1}`).classList.remove('active');
+                    document.getElementById(`step${step-1}`).classList.add('completed');
+                }
+                
+                // Mevcut adımı aktif yap
+                document.getElementById(`step${step}`).classList.add('active');
+                
+                // İlerleme çubuğunu güncelle
+                progressFill.style.width = `${step * 20}%`;
+                
+                // Video ekranını güncelle
+                updateVideoScreen(step);
+                
+                step++;
+            }, 3000);
         }
+        
+        function updateVideoScreen(stepNumber) {
+            const videoScreen = document.getElementById('videoScreen');
+            
+            switch(stepNumber) {
+                case 1:
+                    videoScreen.innerHTML = `
+                        <div class="video-element" style="animation-delay: 0s">
+                            <h1 class="video-title mb-4">🔥 ÖZEL TEKLİF 🔥</h1>
+                        </div>
+                    `;
+                    break;
+                    
+                case 2:
+                    videoScreen.innerHTML = `
+                        <div class="video-element" style="animation-delay: 0s">
+                            <h2 style="color: #fff; font-size: 2em; margin-bottom: 20px;">${currentProduct['Product Desc'].substring(0, 80)}...</h2>
+                            <img src="${currentProduct['Image Url']}" 
+                                 style="max-width: 300px; max-height: 300px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
+                                 onerror="this.src='https://via.placeholder.com/300x300?text=Ürün+Resmi'">
+                        </div>
+                    `;
+                    break;
+                    
+                case 3:
+                    videoScreen.innerHTML = `
+                        <div class="video-element" style="animation-delay: 0s">
+                            <h2 class="mb-3" style="color: #ff6b6b; font-size: 2.5em;">FİYAT DÜŞTÜ!</h2>
+                            <div style="font-size: 2em;">
+                                <div style="text-decoration: line-through; color: #aaa; margin-bottom: 10px;">
+                                    ${currentProduct['Origin Price']}
+                                </div>
+                                <div class="video-price">
+                                    ${currentProduct['Discount Price']}
+                                </div>
+                                <div style="color: #ffd93d; font-size: 1.5em; margin-top: 10px;">
+                                    ${currentProduct.Discount} İNDİRİM!
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 4:
+                    videoScreen.innerHTML = `
+                        <div class="video-element" style="animation-delay: 0s">
+                            <h2 style="color: #4d96ff; font-size: 2em; margin-bottom: 20px;">KUPON KODU</h2>
+                            <div class="video-code mb-3">${currentProduct['Code Name']}</div>
+                            <div style="color: #6bcf7f; font-size: 1.2em;">
+                                Değeri: ${currentProduct['Code Value']}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 5:
+                    videoScreen.innerHTML = `
+                        <div class="video-element" style="animation-delay: 0s">
+                            <h2 style="color: #ffd93d; font-size: 2em; margin-bottom: 20px;">HEMEN AL!</h2>
+                            <div class="video-link mb-3">${currentProduct['Promotion Url']}</div>
+                            <div style="color: #fff; font-size: 1.5em; margin-top: 20px;">
+                                ⏰ Fırsat sınırlı sürelidir!
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            // CSS animasyonunu tetikle
+            setTimeout(() => {
+                const elements = videoScreen.querySelectorAll('.video-element');
+                elements.forEach(el => {
+                    el.style.animation = 'none';
+                    void el.offsetWidth; // Reflow tetikle
+                    el.style.animation = 'fadeInOut 3s forwards';
+                });
+            }, 10);
+        }
+        
+        function stopVideoCreation() {
+            clearInterval(stepInterval);
+            
+            if (recorder && recorder.state !== 'inactive') {
+                recorder.stop();
+            }
+            
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+            
+            document.getElementById('stopVideoBtn').style.display = 'none';
+            document.getElementById('startVideoBtn').style.display = 'block';
+            
+            // Son adımı tamamlandı olarak işaretle
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('active');
+                step.classList.add('completed');
+            }
+            
+            document.getElementById('progressFill').style.width = '100%';
+        }
+        
+        function downloadVideo() {
+            const videoPreview = document.getElementById('videoPreview');
+            if (videoPreview.src) {
+                const a = document.createElement('a');
+                a.href = videoPreview.src;
+                a.download = `urun_videosu_${currentProduct.ProductId}_${new Date().getTime()}.mp4`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('Önce video oluşturmalısınız!');
+            }
+        }
+        
+        function generateSocialMediaPosts() {
+            if (!currentProduct) return;
+            
+            const postsContainer = document.getElementById('socialMediaPosts');
+            
+            const posts = {
+                instagram: `🔥 FLASH SATIŞ! 🔥
 
-        // Video indirme bölümünü göster
-        function showVideoDownloadSection() {
-            if (!currentProductForVideo) return;
-            
-            // Simüle edilmiş video önizlemesi
-            videoPreviewSmall.innerHTML = `
-                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff3366, #7c5cff); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; text-align: center;">
-                    <i class="fas fa-video" style="font-size: 50px; margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 10px;">${currentProductForVideo.title.substring(0, 30)}...</h3>
-                    <p style="font-size: 18px; margin-bottom: 5px;">${currentProductForVideo.discountPrice}</p>
-                    <p style="font-size: 16px;">Kod: ${currentProductForVideo.code || 'YOK'}</p>
-                </div>
-            `;
-            
-            // İndirme linkini ayarla (simülasyon)
-            downloadVideoBtn.href = '#';
-            downloadVideoBtn.onclick = function(e) {
-                e.preventDefault();
-                // Gerçek video indirme simülasyonu
-                showToast('Video indirme başlatıldı! (Simülasyon)');
-                // Gerçek uygulamada burada video blob'u indirilir
+${currentProduct['Product Desc']}
+
+🏷️ Normal Fiyat: ${currentProduct['Origin Price']}
+💰 İndirimli Fiyat: ${currentProduct['Discount Price']}
+🎁 Kupon Kodu: ${currentProduct['Code Name']} (${currentProduct['Code Value']} değerinde!)
+
+👉 Hemen Al: ${currentProduct['Promotion Url']}
+
+#indirim #kampanya #alışveriş #onlinealışveriş #fırsat #ürün #ecommerce #flashsale`,
+                
+                twitter: `🚨 İNDİRİM ALERT! 🚨
+
+${currentProduct['Product Desc'].substring(0, 100)}...
+
+💰 Sadece: ${currentProduct['Discount Price']} (${currentProduct.Discount} indirim!)
+🎟️ Kupon: ${currentProduct['Code Name']}
+
+🔗 ${currentProduct['Promotion Url']}
+
+#FlashSale #Deal #Discount #Shopping #Amazon`,
+                
+                facebook: `🎉 ÖZEL FIRSAT! 🎉
+
+${currentProduct['Product Desc']}
+
+💸 Önceki Fiyat: ${currentProduct['Origin Price']}
+💥 İndirimli Fiyat: ${currentProduct['Discount Price']} (${currentProduct.Discount} indirim!)
+🎁 Kupon Kodu: ${currentProduct['Code Name']} (${currentProduct['Code Value']} değerinde!)
+
+🛒 Hemen satın almak için: ${currentProduct['Promotion Url']}
+
+Bu fırsatı kaçırmayın! ⏳
+
+#Alışveriş #İndirim #Kampanya #OnlineAlışveriş #FırsatÜrünü`,
+                
+                tiktok: `🔥 İndirim fırsatı! 
+${currentProduct['Discount Price']} yerine ${currentProduct['Origin Price']} 
+Kupon: ${currentProduct['Code Name']} 
+🔗 ${currentProduct['Promotion Url']} 
+#indirim #alışveriş #fırsat #online #ecommerce #tiktokshop`
             };
             
-            videoDownloadSection.style.display = 'block';
+            postsContainer.innerHTML = '';
             
-            creatorMessage.textContent = 'Video başarıyla oluşturuldu! Şimdi indirebilir veya paylaşabilirsiniz.';
-            creatorMessage.className = 'creator-message success';
-            creatorMessage.style.display = 'block';
-            
-            videoDownloadSection.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Video paylaş
-        function shareVideo() {
-            if (!currentProductForVideo) return;
-            
-            const textToCopy = `${currentProductForVideo.title}\n${currentProductForVideo.link}\nİndirim Kodu: ${currentProductForVideo.code}\nFiyat: ${currentProductForVideo.discountPrice} (İndirim: ${currentProductForVideo.discount})`;
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                creatorMessage.textContent = 'Ürün bilgileri panoya kopyalandı! Sosyal medyada yapıştırabilirsiniz.';
-                creatorMessage.className = 'creator-message success';
-                creatorMessage.style.display = 'block';
-            });
-        }
-
-        // Sayfa yüklendiğinde
-        window.addEventListener('DOMContentLoaded', () => {
-            console.log("Sayfa yükleniyor...");
-            
-            // Temayı yükle
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            currentTheme = savedTheme;
-            updateThemeButton();
-            
-            // Dili yükle
-            const savedLanguage = localStorage.getItem('language') || 'tr';
-            currentLanguage = savedLanguage;
-            document.getElementById('current-language').textContent = savedLanguage.toUpperCase();
-            
-            createLanguageOptions();
-            updatePageLanguage();
-            
-            // Test ürünlerini yükle (Excel yoksa)
-            setTimeout(() => {
-                loadProducts();
-            }, 1000);
-        });
-
-        // Global fonksiyonlar
-        window.changeLanguage = changeLanguage;
-        window.toggleFavorite = toggleFavorite;
-        window.removeFavorite = removeFavorite;
-        window.copyCode = copyCode;
-        window.shareProduct = shareProduct;
-        window.toggleTitle = toggleTitle;
-        window.openVideoCreator = openVideoCreator;
-        window.goBackToMain = goBackToMain;
-        window.startRealVideoRecording = startRealVideoRecording;
-        window.shareVideo = shareVideo;
-        window.stopRecording = function() {
-            // Basit durdurma fonksiyonu
-            if (recordingInterval) {
-                clearInterval(recordingInterval);
+            for (const [platform, content] of Object.entries(posts)) {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>${platform.toUpperCase()}</strong>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="copyToClipboard('${platform}', event)">
+                                <i class="fas fa-copy"></i> Kopyala
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="shareTo('${platform}')">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <textarea id="${platform}Text" class="form-control" rows="6" readonly>${content}</textarea>
+                    </div>
+                `;
+                postsContainer.appendChild(card);
             }
-            recordingOverlay.style.display = 'none';
-            showVideoDownloadSection();
-        };
+            
+            // Video bağlantısını ayarla
+            document.getElementById('videoLinkInput').value = window.location.href + '#video_' + currentProduct.ProductId;
+        }
+        
+        function copyToClipboard(platform, event) {
+            event.preventDefault();
+            const textarea = document.getElementById(`${platform}Text`);
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Geri bildirim göster
+            const originalText = event.target.innerHTML;
+            event.target.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
+            event.target.className = 'btn btn-sm btn-success me-2';
+            
+            setTimeout(() => {
+                event.target.innerHTML = originalText;
+                event.target.className = 'btn btn-sm btn-outline-primary me-2';
+            }, 2000);
+        }
+        
+        function shareTo(platform) {
+            const textarea = document.getElementById(`${platform}Text`);
+            const text = textarea.value;
+            
+            let shareUrl = '';
+            
+            switch(platform) {
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+                    break;
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct['Promotion Url'])}&quote=${encodeURIComponent(text.substring(0, 200))}`;
+                    break;
+                case 'instagram':
+                case 'tiktok':
+                    alert(`${platform.charAt(0).toUpperCase() + platform.slice(1)} için metni kopyalayıp uygulamada kullanabilirsiniz.`);
+                    return;
+            }
+            
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+            }
+        }
+        
+        function showShareModal() {
+            const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+            modal.show();
+        }
+        
+        function shareToInstagram() {
+            alert('Instagram için:\n1. Videoyu indirin\n2. Instagram\'a yükleyin\n3. Açıklamaya sosyal medya içeriklerini kopyalayın');
+        }
+        
+        function shareToTwitter() {
+            const text = document.getElementById('twitterText').value;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+        }
+        
+        function shareToFacebook() {
+            const text = document.getElementById('facebookText').value.substring(0, 200);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentProduct['Promotion Url'])}&quote=${encodeURIComponent(text)}`, '_blank');
+        }
+        
+        function shareToTiktok() {
+            alert('TikTok için:\n1. Videoyu indirin\n2. TikTok\'a yükleyin\n3. Açıklamaya #indirim #alışveriş etiketlerini ekleyin');
+        }
+        
+        function copyVideoLink() {
+            const input = document.getElementById('videoLinkInput');
+            input.select();
+            document.execCommand('copy');
+            alert('Video bağlantısı kopyalandı!');
+        }
+        
+        // Geri dön butonu (sayfanın en üstüne ekleyebilirsiniz)
+        function goBackToProducts() {
+            document.getElementById('videoCreationArea').style.display = 'none';
+            document.getElementById('productsGrid').style.display = 'flex';
+        }
+        
+        // Sayfanın üstüne bir geri dön butonu ekleyelim
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('.text-center');
+            const backButton = document.createElement('button');
+            backButton.className = 'btn btn-outline-light position-absolute top-0 start-0 m-3';
+            backButton.innerHTML = '<i class="fas fa-arrow-left me-2"></i>Ürünlere Dön';
+            backButton.onclick = goBackToProducts;
+            backButton.id = 'backButton';
+            backButton.style.display = 'none';
+            
+            document.querySelector('.container').insertBefore(backButton, header);
+            
+            // Ürün seçildiğinde geri butonunu göster
+            window.selectProduct = function(productId) {
+                selectProduct(productId);
+                document.getElementById('backButton').style.display = 'block';
+            };
+        });
     </script>
 </body>
 </html>
