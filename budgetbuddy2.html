@@ -2786,6 +2786,7 @@
             }
         }
 
+        // FIXED: Favorileri temizle fonksiyonu - ekrandaki ürünleri de kaldır
         function clearAllFavorites() {
             if (favorites.length > 0) {
                 favorites = [];
@@ -2794,15 +2795,44 @@
                 updateFavoritesUI();
                 closeConfirmationModal();
                 
-                // If we're in favorites view, refresh the view
+                // Favori modundaysak ekranı güncelle
                 if (currentFilter === 'favorites') {
+                    // Tüm favori ürünleri ekrandan kaldır
+                    productsGrid.innerHTML = '';
                     currentDisplayedCount = 0;
-                    filterAndDisplayProducts();
+                    
+                    // "Favori yok" mesajını göster
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Favori sayısını güncelle
+                    document.getElementById('favorites-count-badge').textContent = '0';
+                    
+                    // Favorites count mesajını güncelle
+                    const favoritesCountElement = document.getElementById('favorites-count');
+                    if (translations[currentLanguage]) {
+                        favoritesCountElement.textContent = 
+                            translations[currentLanguage].favoritesCount.replace('{count}', 0);
+                    }
+                } else {
+                    // Favori modunda değilsek, sadece favori butonlarını güncelle
+                    updateAllFavoriteButtons();
                 }
             } else {
                 closeConfirmationModal();
                 showToast(currentLanguage === 'tr' ? 'Favori ürün bulunmuyor!' : 'No favorite products found!');
             }
+        }
+
+        // Tüm favori butonlarını güncelle
+        function updateAllFavoriteButtons() {
+            const favoriteButtons = document.querySelectorAll('.wishlist-btn');
+            favoriteButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="far fa-heart"></i>';
+            });
         }
 
         function updateFavoritesUI() {
