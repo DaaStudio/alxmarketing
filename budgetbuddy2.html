@@ -2741,7 +2741,7 @@
             element.classList.toggle('expanded');
         }
 
-        // Favorite operations - FIXED
+        // Favorite operations - FIXED: Son ürün silindiğinde ekranı güncelle
         function toggleFavorite(productId, buttonElement) {
             const index = favorites.indexOf(productId);
             if (index === -1) {
@@ -2766,6 +2766,16 @@
             if (currentFilter === 'favorites') {
                 currentDisplayedCount = 0;
                 filterAndDisplayProducts();
+                
+                // Eğer favori kalmadıysa "no favorites" mesajını göster
+                if (favorites.length === 0) {
+                    // Hemen ekranı temizle
+                    productsGrid.innerHTML = '';
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                }
             }
         }
 
@@ -2782,6 +2792,16 @@
                 if (currentFilter === 'favorites') {
                     currentDisplayedCount = 0;
                     filterAndDisplayProducts();
+                    
+                    // Eğer favori kalmadıysa "no favorites" mesajını göster
+                    if (favorites.length === 0) {
+                        // Hemen ekranı temizle
+                        productsGrid.innerHTML = '';
+                        noFavorites.style.display = 'block';
+                        productsGrid.style.display = 'none';
+                        endOfResults.style.display = 'none';
+                        loadingIndicator.style.display = 'none';
+                    }
                 }
             }
         }
