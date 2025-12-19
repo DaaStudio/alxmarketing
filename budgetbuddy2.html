@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget Buddy Products</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>  
+    <style> 
         :root {
             --primary: #ff3366;
             --primary-dark: #e62e5e;
@@ -67,31 +67,20 @@
             gap: 8px;
         }
 
-        .logo {
-            font-size: 0.9rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .logo i {
-            margin-right: 4px;
-            font-size: 1rem;
-        }
-
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
             flex-wrap: nowrap;
+            width: 100%;
+            justify-content: flex-end;
         }
 
         .language-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 3px 6px;
+            padding: 3px 8px;
             border-radius: 12px;
             cursor: pointer;
             display: flex;
@@ -101,6 +90,7 @@
             transition: var(--transition);
             white-space: nowrap;
             min-height: 28px;
+            flex-shrink: 0;
         }
 
         .language-btn:hover {
@@ -114,27 +104,31 @@
             overflow: hidden;
             flex: 1;
             min-width: 100px;
-            max-width: 140px;
+            max-width: none;
+            width: 100%;
+            margin-right: 8px;
         }
 
         .search-bar input {
             flex: 1;
             border: none;
-            padding: 4px 8px;
+            padding: 4px 12px;
             outline: none;
             font-size: 0.7rem;
             color: var(--dark);
             min-width: 0;
+            width: 100%;
         }
 
         .search-bar button {
             background: var(--primary);
             border: none;
             color: white;
-            padding: 0 8px;
+            padding: 0 12px;
             cursor: pointer;
             transition: var(--transition);
-            min-width: 30px;
+            min-width: 36px;
+            flex-shrink: 0;
         }
 
         .search-bar button:hover {
@@ -144,6 +138,7 @@
         /* Language Dropdown */
         .language-selector {
             position: relative;
+            flex-shrink: 0;
         }
 
         .language-dropdown {
@@ -1004,7 +999,7 @@
         /* Responsive */
         @media (min-width: 400px) {
             .search-bar {
-                max-width: 160px;
+                max-width: none;
             }
             
             .product-card {
@@ -1013,6 +1008,15 @@
             
             .product-image-container {
                 height: 130px;
+            }
+            
+            .search-bar input {
+                font-size: 0.75rem;
+                padding: 5px 14px;
+            }
+            
+            .search-bar button {
+                padding: 0 14px;
             }
         }
 
@@ -1026,21 +1030,22 @@
             }
             
             .search-bar {
-                max-width: 180px;
+                max-width: none;
             }
             
             .search-bar input {
-                font-size: 0.75rem;
-                padding: 5px 10px;
+                font-size: 0.8rem;
+                padding: 6px 16px;
+            }
+            
+            .search-bar button {
+                padding: 0 16px;
+                min-width: 40px;
             }
             
             .language-btn {
                 font-size: 0.7rem;
-                padding: 4px 8px;
-            }
-            
-            .logo {
-                font-size: 1rem;
+                padding: 4px 10px;
             }
             
             .products-grid {
@@ -1095,16 +1100,27 @@
             }
             
             .header-actions {
-                gap: 8px;
+                gap: 12px;
             }
             
             .search-bar {
-                max-width: 200px;
+                max-width: none;
+                margin-right: 12px;
+            }
+            
+            .search-bar input {
+                font-size: 0.85rem;
+                padding: 7px 18px;
+            }
+            
+            .search-bar button {
+                padding: 0 18px;
+                min-width: 44px;
             }
             
             .language-btn {
                 font-size: 0.75rem;
-                padding: 5px 10px;
+                padding: 5px 12px;
             }
         }
 
@@ -1127,11 +1143,22 @@
             }
             
             .header-actions {
-                gap: 10px;
+                gap: 15px;
             }
             
             .search-bar {
-                max-width: 250px;
+                max-width: none;
+                margin-right: 15px;
+            }
+            
+            .search-bar input {
+                font-size: 0.9rem;
+                padding: 8px 20px;
+            }
+            
+            .search-bar button {
+                padding: 0 20px;
+                min-width: 48px;
             }
         }
 
@@ -1148,6 +1175,11 @@
             .product-image-container {
                 height: 170px;
             }
+            
+            .search-bar input {
+                font-size: 0.95rem;
+                padding: 9px 22px;
+            }
         }
 
         /* Touch device improvements */
@@ -1162,29 +1194,25 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast">
         <i class="fas fa-check-circle"></i>
-        <span id="toast-message">İndirim kodu kopyalandı!</span>
+        <span id="toast-message">Discount code copied!</span>
     </div>
 
     <!-- Copy Message -->
-    <div id="copyMsg" class="copy-msg">Kupon kopyalandı ✅</div>
+    <div id="copyMsg" class="copy-msg">Coupon copied ✅</div>
 
     <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-bolt"></i>
-                    <span data-translate="siteTitle">Budget Buddy</span>
-                </div>
                 <div class="header-actions">
                     <div class="search-bar">
-                        <input type="text" id="search-input" placeholder="Ürün ara..." data-translate="searchPlaceholder">
+                        <input type="text" id="search-input" placeholder="Search products..." data-translate="searchPlaceholder">
                         <button id="search-btn"><i class="fas fa-search"></i></button>
                     </div>
                     <div class="language-selector">
                         <button class="language-btn" id="language-btn">
                             <i class="fas fa-globe"></i>
-                            <span id="current-language">TR</span>
+                            <span id="current-language">EN</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="language-dropdown" id="language-dropdown">
@@ -1199,44 +1227,44 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1 data-translate="heroTitle">En İyi AliExpress İndirimleri</h1>
-            <p data-translate="heroSubtitle">Günlük indirim kodları ile en popüler ürünleri keşfedin!</p>
+            <h1 data-translate="heroTitle">Best AliExpress Discounts</h1>
+            <p data-translate="heroSubtitle">Discover the most popular products with daily discount codes!</p>
         </div>
     </section>
 
     <div class="container">
         <!-- Status Info -->
         <div class="status-info" id="status-info">
-            <h3><i class="fas fa-sync-alt fa-spin"></i> <span data-translate="loadingProducts">Ürünler Yükleniyor</span>...</h3>
-            <p data-translate="loadingDescription">Excel dosyasından ürün bilgileri alınıyor. Lütfen bekleyin.</p>
+            <h3><i class="fas fa-sync-alt fa-spin"></i> <span data-translate="loadingProducts">Loading Products</span>...</h3>
+            <p data-translate="loadingDescription">Product information is being retrieved from the Excel file. Please wait.</p>
         </div>
 
         <!-- Main Content -->
         <div id="main-content" style="display: none;">
-            <!-- Categories - Tüm Kategoriler, Favoriler ve Sırala butonları -->
+            <!-- Categories - All Categories, Favorites and Sort buttons -->
             <div class="categories" id="categories">
                 <button class="category-btn active" data-category="all" id="all-categories-btn">
-                    <i class="fas fa-th-large"></i> <span data-translate="allCategories">Tüm Kategoriler</span> (<span id="all-categories-count">0</span>)
+                    <i class="fas fa-th-large"></i> <span data-translate="allCategories">All Categories</span> (<span id="all-categories-count">0</span>)
                 </button>
                 <button class="category-btn" data-filter="favorites" id="favorites-filter-btn">
-                    <i class="fas fa-heart"></i> <span data-translate="filterFavorites">Favoriler</span> (<span id="favorites-count-badge">0</span>)
+                    <i class="fas fa-heart"></i> <span data-translate="filterFavorites">Favorites</span> (<span id="favorites-count-badge">0</span>)
                 </button>
                 <select class="sort-select" id="sort-select">
-                    <option value="default" data-translate="sortDefault">Sırala</option>
-                    <option value="price-low" data-translate="sortPriceLow">Fiyat ↑</option>
-                    <option value="price-high" data-translate="sortPriceHigh">Fiyat ↓</option>
-                    <option value="discount" data-translate="sortDiscount">İndirim</option>
-                    <option value="rating" data-translate="sortRating">Puan</option>
+                    <option value="default" data-translate="sortDefault">Sort</option>
+                    <option value="price-low" data-translate="sortPriceLow">Price ↑</option>
+                    <option value="price-high" data-translate="sortPriceHigh">Price ↓</option>
+                    <option value="discount" data-translate="sortDiscount">Discount</option>
+                    <option value="rating" data-translate="sortRating">Rating</option>
                 </select>
             </div>
 
             <!-- Favorites Management -->
             <div class="favorites-management" id="favorites-management">
                 <div id="favorites-count" data-translate="favoritesCount">
-                    Toplam 0 favori ürün
+                    Total 0 favorite products
                 </div>
                 <button class="clear-favorites-btn" id="clear-all-favorites" data-translate="clearAllFavorites">
-                    Tüm Favorileri Temizle
+                    Clear All Favorites
                 </button>
             </div>
 
@@ -1246,21 +1274,21 @@
             <!-- Loading Indicator -->
             <div class="loading" id="loading-indicator">
                 <div class="loading-spinner"></div>
-                <p data-translate="loadingMore">Daha fazla ürün yükleniyor...</p>
+                <p data-translate="loadingMore">Loading more products...</p>
             </div>
 
             <!-- End of Results -->
             <div class="end-of-results" id="end-of-results">
                 <i class="fas fa-flag-checkered"></i>
-                <h3 data-translate="endOfResultsTitle">Tüm ürünleri görüntülediniz!</h3>
-                <p data-translate="endOfResultsDescription">Listelenen tüm ürünleri görüntülediniz. Daha fazla sonuç için farklı bir kategori veya filtre deneyebilirsiniz.</p>
+                <h3 data-translate="endOfResultsTitle">You've viewed all products!</h3>
+                <p data-translate="endOfResultsDescription">You've viewed all listed products. Try a different category or filter for more results.</p>
             </div>
 
             <!-- No Favorites Message -->
             <div class="no-favorites" id="no-favorites">
                 <i class="far fa-heart"></i>
-                <h3 data-translate="noFavoritesTitle">Henüz favori ürününüz yok</h3>
-                <p data-translate="noFavoritesDescription">Beğendiğiniz ürünlerin yanındaki kalp ikonuna tıklayarak favorilere ekleyebilirsiniz.</p>
+                <h3 data-translate="noFavoritesTitle">You don't have any favorite products yet</h3>
+                <p data-translate="noFavoritesDescription">Click the heart icon next to products you like to add them to favorites.</p>
             </div>
         </div>
     </div>
@@ -1270,30 +1298,30 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3 data-translate="footerAbout">AliExpress İndirim</h3>
-                    <p data-translate="footerDescription">En iyi AliExpress ürünlerini en uygun fiyatlarla bulabileceğiniz platform.</p>
+                    <h3 data-translate="footerAbout">AliExpress Discount</h3>
+                    <p data-translate="footerDescription">Platform to find the best AliExpress products at the most affordable prices.</p>
                 </div>
                 <div class="footer-section">
-                    <h3 data-translate="footerLinks">Hızlı Bağlantılar</h3>
+                    <h3 data-translate="footerLinks">Quick Links</h3>
                     <ul>
-                        <li><a href="#" data-translate="footerHome">Ana Sayfa</a></li>
-                        <li><a href="#" data-translate="footerPopular">Popüler</a></li>
-                        <li><a href="#" data-translate="footerNew">Yeni</a></li>
-                        <li><a href="#" data-translate="footerContact">İletişim</a></li>
+                        <li><a href="#" data-translate="footerHome">Home</a></li>
+                        <li><a href="#" data-translate="footerPopular">Popular</a></li>
+                        <li><a href="#" data-translate="footerNew">New</a></li>
+                        <li><a href="#" data-translate="footerContact">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3 data-translate="footerHelp">Yardım</h3>
+                    <h3 data-translate="footerHelp">Help</h3>
                     <ul>
-                        <li><a href="#" data-translate="footerFAQ">SSS</a></li>
-                        <li><a href="#" data-translate="footerShipping">Kargo</a></li>
-                        <li><a href="#" data-translate="footerReturn">İade</a></li>
-                        <li><a href="#" data-translate="footerPrivacy">Gizlilik</a></li>
+                        <li><a href="#" data-translate="footerFAQ">FAQ</a></li>
+                        <li><a href="#" data-translate="footerShipping">Shipping</a></li>
+                        <li><a href="#" data-translate="footerReturn">Returns</a></li>
+                        <li><a href="#" data-translate="footerPrivacy">Privacy</a></li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                &copy; 2023 AliExpress İndirim. <span data-translate="footerRights">Tüm hakları saklıdır.</span>
+                &copy; 2023 AliExpress Discount. <span data-translate="footerRights">All rights reserved.</span>
             </div>
         </div>
     </footer>
@@ -1302,14 +1330,14 @@
     <div class="modal-overlay" id="categories-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" data-translate="allCategoriesModal">Tüm Kategoriler</h3>
+                <h3 class="modal-title" data-translate="allCategoriesModal">All Categories</h3>
                 <button class="modal-close" id="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <ul class="categories-modal-list" id="categories-modal-list">
-                    <!-- Kategoriler JavaScript ile eklenecek -->
+                    <!-- Categories will be added by JavaScript -->
                 </ul>
             </div>
         </div>
@@ -1319,23 +1347,23 @@
     <div class="confirmation-modal" id="confirmation-modal">
         <div class="confirmation-content">
             <div class="confirmation-header">
-                <h3 class="confirmation-title" data-translate="confirmationTitle">Emin misiniz?</h3>
+                <h3 class="confirmation-title" data-translate="confirmationTitle">Are you sure?</h3>
                 <button class="confirmation-close" id="confirmation-close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="confirmation-body">
-                <p class="confirmation-message" data-translate="confirmationMessage">Tüm favori ürünlerinizi temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                <p class="confirmation-message" data-translate="confirmationMessage">Are you sure you want to clear all your favorite products? This action cannot be undone.</p>
                 <div class="confirmation-actions">
-                    <button class="cancel-btn" id="cancel-clear" data-translate="cancelButton">Hayır</button>
-                    <button class="confirm-btn" id="confirm-clear" data-translate="confirmButton">Evet</button>
+                    <button class="cancel-btn" id="cancel-clear" data-translate="cancelButton">No</button>
+                    <button class="confirm-btn" id="confirm-clear" data-translate="confirmButton">Yes</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Çeviriler - Tüm diller aktif
+        // Translations - All languages active
         const translations = {
             tr: {
                 siteTitle: "Budget Buddy",
@@ -1388,7 +1416,7 @@
             },
             en: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "Search...",
+                searchPlaceholder: "Search products...",
                 heroTitle: "Best Discounts",
                 heroSubtitle: "Daily discount codes for popular products!",
                 loadingProducts: "Loading",
@@ -1419,7 +1447,7 @@
                 footerHelp: "Help",
                 footerFAQ: "FAQ",
                 footerShipping: "Shipping",
-                footerReturn: "Return",
+                footerReturn: "Returns",
                 footerPrivacy: "Privacy",
                 footerRights: "All rights reserved.",
                 codeCopied: "Copied:",
@@ -1780,7 +1808,7 @@
             }
         };
 
-        // Global değişkenler
+        // Global variables
         let allProducts = [];
         let displayedProducts = 0;
         const productsPerPage = 50;
@@ -1790,10 +1818,10 @@
         let isLoading = false;
         let hasMoreProducts = true;
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        let currentLanguage = localStorage.getItem('language') || 'tr';
-        let currentTheme = 'light'; // Sabit light tema
+        let currentLanguage = localStorage.getItem('language') || 'en'; // English as default
+        let currentTheme = 'light';
         
-        // Sonsuz scroll değişkenleri
+        // Infinite scroll variables
         let filteredProducts = [];
         let currentDisplayedCount = 0;
 
@@ -1826,7 +1854,7 @@
         // Excel URL
         const EXCEL_FILE_URL = './data22.xls';
 
-        // AliExpress Kategorileri ve Anahtar Kelimeleri
+        // AliExpress Categories and Keywords
         const categoryKeywords = {
             'Automotive & Motorcycle': [
                 'car', 'auto', 'automotive', 'motorcycle', 'motorbike', 'bike', 'scooter', 'vehicle', 'tire', 'tyre', 'wheel', 'rim', 'alloy', 'engine', 'motor',
@@ -2021,8 +2049,8 @@
                 'interactive toy', 'cat toy', 'feather wand', 'chew', 'bone', 'antler', 'rawhide', 'ball', 'tennis ball', 'fetch toy', 'frisbee',
                 'leash', 'dog leash', 'retractable leash', 'collar', 'dog collar', 'cat collar', 'breakaway collar', 'harness', 'no pull harness',
                 'step in harness', 'clothing', 'dog clothing', 'sweater', 'raincoat', 'costume', 'pet costume', 'grooming', 'brush', 'slicker brush',
-                'deshedding tool', 'comb', 'nail clipper', 'grinder', 'shampoo', 'conditioner', 'pet wipes', 'health', 'flea treatment', 'tick remover',
-                'vitamin', 'supplement', 'joint supplement', 'calming aid', 'medicine', 'first aid', 'first aid kit', 'cleaning', 'stain remover',
+                'deshedding tool', 'comb', 'wide tooth comb', 'nail clipper', 'grinder', 'shampoo', 'conditioner', 'pet wipes', 'health', 'flea treatment',
+                'tick remover', 'vitamin', 'supplement', 'joint supplement', 'calming aid', 'medicine', 'first aid', 'first aid kit', 'cleaning', 'stain remover',
                 'odor eliminator', 'litter', 'cat litter', 'clumping litter', 'box', 'litter box', 'self cleaning box', 'training', 'potty training pad',
                 'clicker', 'whistle', 'pet camera', 'feeder camera', 'gps tracker', 'pet gate', 'car seat cover', 'pet stroller'
             ]
@@ -2037,7 +2065,7 @@
         document.getElementById('language-btn').addEventListener('click', toggleLanguageDropdown);
         document.getElementById('clear-all-favorites').addEventListener('click', showConfirmationModal);
         
-        // Sonsuz scroll için event listener
+        // Infinite scroll event listener
         window.addEventListener('scroll', handleScroll);
         
         // Modal Event Listeners
@@ -2059,7 +2087,7 @@
             }
         });
         
-        // ESC tuşu ile modal kapatma
+        // ESC key to close modals
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 if (categoriesModal.classList.contains('show')) {
@@ -2071,14 +2099,14 @@
             }
         });
 
-        // Sayfa dışına tıklanınca dropdown'ı kapat
+        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.language-selector')) {
                 document.getElementById('language-dropdown').classList.remove('show');
             }
         });
 
-        // Dil değiştirme
+        // Change language
         function changeLanguage(lang) {
             currentLanguage = lang;
             localStorage.setItem('language', lang);
@@ -2086,7 +2114,7 @@
             updatePageLanguage();
             toggleLanguageDropdown();
             
-            // Ürünleri yeniden render et
+            // Re-render products
             if (allProducts.length > 0) {
                 filterAndDisplayProducts();
             }
@@ -2098,8 +2126,8 @@
 
         function createLanguageOptions() {
             const languages = [
-                { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
                 { code: 'en', name: 'English', flag: '🇺🇸' },
+                { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
                 { code: 'es', name: 'Español', flag: '🇪🇸' },
                 { code: 'fr', name: 'Français', flag: '🇫🇷' },
                 { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
@@ -2117,14 +2145,14 @@
             `).join('');
         }
 
-        // Sayfa dilini güncelle
+        // Update page language
         function updatePageLanguage() {
             document.querySelectorAll('[data-translate]').forEach(element => {
                 const key = element.getAttribute('data-translate');
                 if (translations[currentLanguage] && translations[currentLanguage][key]) {
                     let translatedText = translations[currentLanguage][key];
                     
-                    // Özel durumlar için değişkenleri değiştir
+                    // Replace variables for special cases
                     if (key === 'favoritesCount') {
                         translatedText = translatedText.replace('{count}', favorites.length);
                     }
@@ -2141,14 +2169,14 @@
             updateFavoritesCount();
         }
 
-        // Ürün başlığını çevir
+        // Translate product title
         function translateProductTitle(title, targetLang) {
             if (targetLang === 'en') return title;
             
             let translatedTitle = title;
             const titleLower = title.toLowerCase();
             
-            // Her dil için basit çeviri
+            // Simple translation for each language
             const translationMap = {
                 tr: {},
                 es: {},
@@ -2163,20 +2191,20 @@
             return translatedTitle;
         }
 
-        // Toast bildirimi
+        // Toast notification
         function showToast(message) {
             toastMessage.textContent = message;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Kupon kopyalama mesajı
+        // Coupon copy message
         function showCopyMsg() {
             copyMsg.style.display = "block";
             setTimeout(() => copyMsg.style.display = "none", 1300);
         }
 
-        // Onay modalını göster
+        // Show confirmation modal
         function showConfirmationModal() {
             if (favorites.length === 0) {
                 showToast(currentLanguage === 'tr' ? 'Favori ürün bulunmuyor!' : 'No favorite products found!');
@@ -2186,13 +2214,13 @@
             document.body.style.overflow = 'hidden';
         }
 
-        // Onay modalını kapat
+        // Close confirmation modal
         function closeConfirmationModal() {
             confirmationModal.classList.remove('show');
             document.body.style.overflow = '';
         }
 
-        // Kategori tahmini yap
+        // Predict category
         function predictCategory(productTitle) {
             const title = productTitle.toLowerCase();
             
@@ -2207,34 +2235,34 @@
             return 'Diğer';
         }
 
-        // Modal açma fonksiyonu
+        // Open modal function
         function openCategoriesModal() {
-            // Kategori listesini oluştur
+            // Create category list
             renderCategoriesModal();
             
-            // Modalı göster
+            // Show modal
             categoriesModal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Sayfa kaydırmayı engelle
+            document.body.style.overflow = 'hidden'; // Prevent page scrolling
         }
 
-        // Modal kapatma fonksiyonu
+        // Close modal function
         function closeCategoriesModal() {
             categoriesModal.classList.remove('show');
-            document.body.style.overflow = ''; // Sayfa kaydırmayı geri aç
+            document.body.style.overflow = ''; // Restore page scrolling
         }
 
-        // Modal için kategori listesini oluştur
+        // Create category list for modal
         function renderCategoriesModal() {
             if (!allProducts || allProducts.length === 0) return;
             
-            // Kategorileri topla ve sayılarını hesapla
+            // Collect categories and calculate counts
             const categoryCounts = {};
             allProducts.forEach(product => {
                 const category = product.category || 'Diğer';
                 categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             });
             
-            // Tüm kategorileri sırala (sabit sırada)
+            // Sort all categories (in fixed order)
             const allCategoryList = [
                 'all',
                 'Automotive & Motorcycle',
@@ -2258,13 +2286,13 @@
                 'Diğer'
             ];
             
-            // Modal içeriğini oluştur
+            // Create modal content
             categoriesModalList.innerHTML = allCategoryList.map(category => {
                 let count, displayName;
                 
                 if (category === 'all') {
                     count = allProducts.length;
-                    displayName = translations[currentLanguage].allCategories || 'Tüm Kategoriler';
+                    displayName = translations[currentLanguage].allCategories || 'All Categories';
                 } else {
                     count = categoryCounts[category] || 0;
                     displayName = category;
@@ -2286,31 +2314,31 @@
             }).join('');
         }
 
-        // Modal'dan kategori seçme - DÜZELTİLDİ
+        // Select category from modal - FIXED
         function selectCategoryFromModal(category) {
-            // Kategoriyi seç
+            // Select category
             currentCategory = category;
             currentDisplayedCount = 0;
             
-            // Tüm Kategoriler butonunu güncelle
+            // Update All Categories button
             updateAllCategoriesButton();
             
-            // Modal'ı kapat
+            // Close modal
             closeCategoriesModal();
             
-            // Favori filtresini kapat
+            // Turn off favorites filter
             currentFilter = 'all';
             favoritesManagement.classList.remove('show');
             
-            // Tüm Kategoriler butonunu aktif yap
+            // Activate All Categories button
             document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
             allCategoriesBtn.classList.add('active');
             
-            // Ürünleri filtrele ve göster
+            // Filter and display products
             filterAndDisplayProducts();
         }
 
-        // Tüm Kategoriler butonunu güncelle
+        // Update All Categories button
         function updateAllCategoriesButton() {
             const count = currentCategory === 'all' 
                 ? allProducts.length 
@@ -2322,7 +2350,7 @@
                 (${count})
             `;
             
-            // Çeviriyi tekrar uygula
+            // Reapply translation
             const span = allCategoriesBtn.querySelector('span[data-translate]');
             if (span && translations[currentLanguage]) {
                 const key = span.getAttribute('data-translate');
@@ -2334,22 +2362,22 @@
             }
         }
 
-        // Kategori sayısını al
+        // Get category count
         function getCategoryCount(category) {
             if (category === 'all') return allProducts.length;
             return allProducts.filter(p => p.category === category).length;
         }
 
-        // Excel yükleme
+        // Load Excel file
         async function loadExcelFile() {
             try {
-                console.log("Excel yükleniyor...");
+                console.log("Loading Excel...");
                 
-                // Test ürünleri oluştur - Her kategori için örnek ürünler
+                // Create test products - sample products for each category
                 const testProducts = [];
                 const categories = Object.keys(categoryKeywords);
                 
-                // Her kategori için 8-10 örnek ürün oluştur
+                // Create 8-10 sample products for each category
                 categories.forEach((category, categoryIndex) => {
                     const categoryKeywordsList = categoryKeywords[category];
                     
@@ -2376,7 +2404,7 @@
                     }
                 });
 
-                // Gerçek Excel dosyasını yükle
+                // Load real Excel file
                 try {
                     const response = await fetch(EXCEL_FILE_URL);
                     if (response.ok) {
@@ -2388,12 +2416,12 @@
                         
                         if (jsonData.length > 0) {
                             allProducts = jsonData.map(item => {
-                                const originalTitle = item['Product Desc'] || item.title || 'Ürün';
+                                const originalTitle = item['Product Desc'] || item.title || 'Product';
                                 const product = {
                                     id: item.ProductId || Math.random().toString(36).substr(2, 9),
                                     title: originalTitle,
                                     originalTitle: originalTitle,
-                                    image: item['Image Url'] || item.image || 'https://via.placeholder.com/300x200/666/FFFFFF?text=Resim+Yok',
+                                    image: item['Image Url'] || item.image || 'https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image',
                                     originalPrice: item['Origin Price'] || item.originalPrice || '₺0',
                                     discountPrice: item['Discount Price'] || item.discountPrice || '₺0', 
                                     discount: item.Discount || item.discount || '%0',
@@ -2410,15 +2438,15 @@
                                 
                                 return product;
                             });
-                            console.log("Excel'den", allProducts.length, "ürün yüklendi");
+                            console.log("Loaded", allProducts.length, "products from Excel");
                         } else {
-                            throw new Error('Excel dosyası boş');
+                            throw new Error('Excel file is empty');
                         }
                     } else {
-                        throw new Error('Excel dosyası bulunamadı');
+                        throw new Error('Excel file not found');
                     }
                 } catch (error) {
-                    console.log("Excel yüklenemedi, test verileri kullanılıyor:", error.message);
+                    console.log("Excel could not be loaded, using test data:", error.message);
                     allProducts = testProducts.map(product => ({
                         ...product,
                         originalTitle: product.title
@@ -2428,34 +2456,34 @@
                 processProducts();
                 
             } catch (error) {
-                console.error("Hata:", error);
-                statusInfo.innerHTML = `<h3><i class="fas fa-exclamation-triangle"></i> Hata</h3><p>${error.message}</p>`;
+                console.error("Error:", error);
+                statusInfo.innerHTML = `<h3><i class="fas fa-exclamation-triangle"></i> Error</h3><p>${error.message}</p>`;
             }
         }
 
-        // Ürünleri işle
+        // Process products
         function processProducts() {
-            // Tüm Kategoriler, Favoriler ve Sırala butonlarını göster
+            // Show All Categories, Favorites and Sort buttons
             categoriesContainer.innerHTML = `
                 <button class="category-btn active" data-category="all" id="all-categories-btn">
-                    <i class="fas fa-th-large"></i> <span data-translate="allCategories">Tüm Kategoriler</span> (<span id="all-categories-count">${allProducts.length}</span>)
+                    <i class="fas fa-th-large"></i> <span data-translate="allCategories">All Categories</span> (<span id="all-categories-count">${allProducts.length}</span>)
                 </button>
                 <button class="category-btn" data-filter="favorites" id="favorites-filter-btn">
-                    <i class="fas fa-heart"></i> <span data-translate="filterFavorites">Favoriler</span> (<span id="favorites-count-badge">${favorites.length}</span>)
+                    <i class="fas fa-heart"></i> <span data-translate="filterFavorites">Favorites</span> (<span id="favorites-count-badge">${favorites.length}</span>)
                 </button>
                 <select class="sort-select" id="sort-select">
-                    <option value="default" data-translate="sortDefault">Sırala</option>
-                    <option value="price-low" data-translate="sortPriceLow">Fiyat ↑</option>
-                    <option value="price-high" data-translate="sortPriceHigh">Fiyat ↓</option>
-                    <option value="discount" data-translate="sortDiscount">İndirim</option>
-                    <option value="rating" data-translate="sortRating">Puan</option>
+                    <option value="default" data-translate="sortDefault">Sort</option>
+                    <option value="price-low" data-translate="sortPriceLow">Price ↑</option>
+                    <option value="price-high" data-translate="sortPriceHigh">Price ↓</option>
+                    <option value="discount" data-translate="sortDiscount">Discount</option>
+                    <option value="rating" data-translate="sortRating">Rating</option>
                 </select>
             `;
 
-            // Tüm Kategoriler butonuna event listener ekle
+            // Add event listener to All Categories button
             document.getElementById('all-categories-btn').addEventListener('click', openCategoriesModal);
 
-            // Favoriler butonuna event listener ekle
+            // Add event listener to Favorites button
             document.getElementById('favorites-filter-btn').addEventListener('click', function() {
                 document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
@@ -2465,7 +2493,7 @@
                 filterAndDisplayProducts();
             });
 
-            // Sıralama seçeneği event listener'ı ekle - DÜZELTİLDİ
+            // Add sort option event listener - FIXED
             const sortSelect = document.getElementById('sort-select');
             sortSelect.addEventListener('change', handleSortChange);
             
@@ -2475,31 +2503,31 @@
             filterAndDisplayProducts();
         }
 
-        // Filtrele ve göster
+        // Filter and display
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
-            // Kategori filtresi - DÜZELTİLDİ
+            // Category filter - FIXED
             if (currentCategory !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
             }
             
-            // Ana filtreler
+            // Main filters
             switch(currentFilter) {
                 case 'favorites':
                     filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
                     break;
             }
             
-            // Sıralama
+            // Sorting
             filteredProducts = applySorting(filteredProducts);
             
-            // İlk 50 ürünü göster
+            // Show first 50 products
             currentDisplayedCount = 0;
             loadMoreProducts();
         }
 
-        // Sıralama - DÜZELTİLDİ
+        // Sorting - FIXED
         function handleSortChange() {
             currentSort = document.getElementById('sort-select').value;
             currentDisplayedCount = 0;
@@ -2539,7 +2567,7 @@
                     });
                     break;
                 default:
-                    // Varsayılan sıralama - en son eklenenler önce
+                    // Default sorting - newest first
                     break;
             }
             return sortedProducts;
@@ -2557,7 +2585,7 @@
             return match ? parseInt(match[0]) : 0;
         }
 
-        // Daha fazla ürün yükle
+        // Load more products
         function loadMoreProducts() {
             if (isLoading) return;
             
@@ -2565,7 +2593,7 @@
             const endIndex = Math.min(currentDisplayedCount + productsPerPage, filteredProducts.length);
             
             if (startIndex >= filteredProducts.length) {
-                // Tüm ürünler yüklendi
+                // All products loaded
                 endOfResults.style.display = 'block';
                 loadingIndicator.style.display = 'none';
                 return;
@@ -2575,12 +2603,12 @@
             loadingIndicator.style.display = 'block';
             endOfResults.style.display = 'none';
             
-            // Simüle edilmiş yükleme gecikmesi
+            // Simulated loading delay
             setTimeout(() => {
                 const productsToShow = filteredProducts.slice(startIndex, endIndex);
                 
                 if (currentDisplayedCount === 0) {
-                    // İlk yükleme, tüm ürünleri temizle
+                    // First load, clear all products
                     productsGrid.innerHTML = '';
                 }
                 
@@ -2590,14 +2618,14 @@
                 isLoading = false;
                 loadingIndicator.style.display = 'none';
                 
-                // Tüm ürünler yüklendi mi kontrol et
+                // Check if all products are loaded
                 if (currentDisplayedCount >= filteredProducts.length) {
                     endOfResults.style.display = 'block';
                 }
             }, 500);
         }
 
-        // Scroll işleyicisi
+        // Scroll handler
         function handleScroll() {
             if (isLoading) return;
             
@@ -2605,13 +2633,13 @@
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
             
-            // Sayfanın sonuna yaklaşıldığında daha fazla ürün yükle
+            // Load more products when approaching the end of the page
             if (scrollTop + windowHeight >= documentHeight - 500) {
                 loadMoreProducts();
             }
         }
 
-        // Ürünleri render et
+        // Render products
         function renderProducts(products) {
             if (products.length === 0 && currentDisplayedCount === 0) {
                 if (currentFilter === 'favorites') {
@@ -2631,7 +2659,7 @@
             products.forEach(product => {
                 const isFavorite = favorites.includes(product.id);
                 
-                // Ürün başlığını çevir
+                // Translate product title
                 const displayTitle = currentLanguage === 'en' 
                     ? product.title 
                     : translateProductTitle(product.originalTitle || product.title, currentLanguage);
@@ -2647,7 +2675,7 @@
                             <i class="fas fa-times"></i>
                         </button>
                         ` : ''}
-                        <img src="${product.image}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/666/FFFFFF?text=Resim+Yok'">
+                        <img src="${product.image}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image'">
                     </div>
                     <div class="product-info">
                         <h3 class="product-title" onclick="toggleTitle(this)">${displayTitle}</h3>
@@ -2679,12 +2707,12 @@
             });
         }
 
-        // Ürün başlığını genişlet/daralt
+        // Expand/collapse product title
         function toggleTitle(element) {
             element.classList.toggle('expanded');
         }
 
-        // Favori işlemleri
+        // Favorite operations
         function toggleFavorite(productId) {
             const index = favorites.indexOf(productId);
             if (index === -1) {
@@ -2740,7 +2768,7 @@
         function updateFavoritesUI() {
             updateFavoritesCount();
             
-            // Favori sayısını badge'de güncelle
+            // Update favorites count in badge
             const favoritesBadge = document.getElementById('favorites-count-badge');
             if (favoritesBadge) {
                 favoritesBadge.textContent = favorites.length;
@@ -2778,7 +2806,7 @@
             }
         }
 
-        // Diğer fonksiyonlar
+        // Other functions
         function performSearch() {
             const term = document.getElementById('search-input').value.toLowerCase().trim();
             if (!term) {
@@ -2816,7 +2844,7 @@
             const shareUrl = product.link;
             const discountCode = product.code ? `\n${translations[currentLanguage].discountCode} ${product.code}` : '';
             
-            // Çevrilmiş başlık
+            // Translated title
             const displayTitle = currentLanguage === 'en' 
                 ? product.title 
                 : translateProductTitle(product.originalTitle || product.title, currentLanguage);
@@ -2833,15 +2861,15 @@
             }
         }
 
-        // Sayfa yüklendiğinde
+        // When page loads
         window.addEventListener('DOMContentLoaded', () => {
-            console.log("Sayfa yüklendi");
+            console.log("Page loaded");
             
-            // Light tema sabit olarak ayarla
+            // Set light theme
             document.documentElement.setAttribute('data-theme', 'light');
             
-            // Dili yükle
-            const savedLanguage = localStorage.getItem('language') || 'tr';
+            // Load language - English as default
+            const savedLanguage = localStorage.getItem('language') || 'en';
             currentLanguage = savedLanguage;
             document.getElementById('current-language').textContent = savedLanguage.toUpperCase();
             
@@ -2850,7 +2878,7 @@
             loadExcelFile();
         });
 
-        // Global fonksiyonlar
+        // Global functions
         window.changeLanguage = changeLanguage;
         window.toggleFavorite = toggleFavorite;
         window.removeFavorite = removeFavorite;
