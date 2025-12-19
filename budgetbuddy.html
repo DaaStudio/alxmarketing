@@ -6,26 +6,28 @@
     <title>Budget Buddy Products</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>  
+    <style> 
         :root {
             --primary: #ff3366;
             --primary-dark: #e62e5e;
             --secondary: #7c5cff;
-            --dark: #0f172a;
-            --light: #f8f9fa;
-            --gray: #6c757d;
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #1e1e1e;
+            --gray: #8a8a8a;
+            --dark-gray: #2a2a2a;
             --success: #28a745;
             --warning: #ffc107;
             --border-radius: 12px;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             --transition: all 0.3s ease;
             
-            --bg-color: #0f172a;
-            --text-color: #e2e8f0;
-            --card-bg: #1e293b;
+            --bg-color: #121212;
+            --text-color: #f0f0f0;
+            --card-bg: #1e1e1e;
             --header-bg: linear-gradient(135deg, var(--primary), var(--secondary));
-            --footer-bg: var(--dark);
-            --image-border: #334155;
+            --footer-bg: #0a0a0a;
+            --image-border: #333;
         }
 
         * {
@@ -67,20 +69,39 @@
             gap: 8px;
         }
 
+        .logo-container {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .logo {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
         .header-actions {
             display: flex;
             align-items: center;
             gap: 8px;
             flex-wrap: nowrap;
             width: 100%;
-            justify-content: space-between;
+            justify-content: flex-end;
         }
 
         .language-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             color: white;
-            padding: 3px 6px;
+            padding: 3px 8px;
             border-radius: 12px;
             cursor: pointer;
             display: flex;
@@ -94,18 +115,20 @@
         }
 
         .language-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .search-bar {
             display: flex;
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             overflow: hidden;
             flex: 1;
-            min-width: 0;
+            min-width: 100px;
             max-width: none;
-            margin: 0 8px;
+            width: 100%;
+            margin-right: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .search-bar input {
@@ -114,9 +137,14 @@
             padding: 4px 12px;
             outline: none;
             font-size: 0.7rem;
-            color: var(--dark);
+            color: white;
+            background: transparent;
             min-width: 0;
             width: 100%;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .search-bar button {
@@ -126,7 +154,7 @@
             padding: 0 12px;
             cursor: pointer;
             transition: var(--transition);
-            min-width: 35px;
+            min-width: 36px;
             flex-shrink: 0;
         }
 
@@ -147,13 +175,14 @@
             background: var(--card-bg);
             color: var(--text-color);
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
             min-width: 120px;
             max-height: 200px;
             overflow-y: auto;
             display: none;
             z-index: 1001;
             margin-top: 4px;
+            border: 1px solid var(--dark-gray);
         }
 
         .language-dropdown.show {
@@ -163,7 +192,7 @@
         .language-option {
             padding: 6px 10px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(108, 117, 125, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: var(--transition);
             font-size: 0.7rem;
         }
@@ -171,6 +200,36 @@
         .language-option:hover {
             background: var(--primary);
             color: white;
+        }
+
+        /* Home Page Button */
+        .home-page-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+        }
+
+        .home-page-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+
+        .home-page-btn-container {
+            text-align: center;
+            margin: 20px 0;
+            display: none;
         }
 
         /* Toast */
@@ -183,7 +242,7 @@
             color: white;
             padding: 8px 14px;
             border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
             z-index: 1002;
             opacity: 0;
             transition: all 0.4s ease;
@@ -204,7 +263,7 @@
 
         /* Hero */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
                         url('https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             background-position: center;
@@ -223,6 +282,7 @@
             font-size: 0.75rem;
             max-width: 100%;
             margin: 0 auto;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         /* Status */
@@ -234,6 +294,7 @@
             margin-bottom: 10px;
             text-align: center;
             font-size: 0.75rem;
+            border: 1px solid var(--dark-gray);
         }
 
         /* Categories */
@@ -263,7 +324,7 @@
 
         .category-btn {
             background: var(--card-bg);
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-gray);
             padding: 4px 8px;
             border-radius: 12px;
             cursor: pointer;
@@ -288,7 +349,7 @@
         .sort-select {
             padding: 4px 8px;
             border-radius: 12px;
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-gray);
             background: var(--card-bg);
             color: var(--text-color);
             font-size: 0.65rem;
@@ -303,6 +364,11 @@
             border-color: var(--secondary);
         }
 
+        .sort-select option {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
         /* Favorites Management */
         .favorites-management {
             background: var(--card-bg);
@@ -314,6 +380,7 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 6px;
+            border: 1px solid var(--dark-gray);
         }
 
         .favorites-management.show {
@@ -343,6 +410,7 @@
             font-weight: 600;
             width: 100%;
             text-align: center;
+            color: var(--text-color);
         }
 
         /* Confirmation Modal */
@@ -352,7 +420,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -377,6 +445,7 @@
             overflow: hidden;
             transform: translateY(20px);
             transition: transform 0.3s ease;
+            border: 1px solid var(--dark-gray);
         }
 
         .confirmation-modal.show .confirmation-content {
@@ -385,7 +454,7 @@
 
         .confirmation-header {
             padding: 10px 12px;
-            border-bottom: 1px solid var(--gray);
+            border-bottom: 1px solid var(--dark-gray);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -427,6 +496,7 @@
             font-size: 0.8rem;
             margin-bottom: 12px;
             line-height: 1.4;
+            color: var(--text-color);
         }
 
         .confirmation-actions {
@@ -454,7 +524,7 @@
         }
 
         .cancel-btn {
-            background: var(--gray);
+            background: var(--dark-gray);
             color: white;
             border: none;
             padding: 6px 12px;
@@ -468,7 +538,7 @@
         }
 
         .cancel-btn:hover {
-            background: #5a6268;
+            background: #444;
         }
 
         /* Products Grid - MOBİL İÇİN 2 KOLON */
@@ -495,10 +565,12 @@
             height: auto;
             min-height: 280px;
             overflow: hidden;
+            border: 1px solid var(--dark-gray);
         }
 
         .product-card:hover {
             transform: translateY(-3px);
+            border-color: var(--primary);
         }
 
         .product-image-container {
@@ -552,8 +624,8 @@
             position: absolute;
             top: 30px;
             right: 4px;
-            background: rgba(255,255,255,0.95);
-            border: none;
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid var(--dark-gray);
             border-radius: 50%;
             width: 18px;
             height: 18px;
@@ -565,12 +637,13 @@
             opacity: 1;
             z-index: 3;
             font-size: 0.55rem;
-            color: var(--dark);
+            color: var(--text-color);
         }
 
         .remove-favorite-btn:hover {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
         .product-info {
@@ -592,6 +665,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             height: 30px;
+            color: var(--text-color);
         }
 
         .product-title.expanded {
@@ -696,7 +770,7 @@
         .wishlist-btn, .share-btn {
             flex: 1;
             background: var(--card-bg);
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-gray);
             border-radius: 4px;
             padding: 5px;
             cursor: pointer;
@@ -718,6 +792,7 @@
         .wishlist-btn:hover, .share-btn:hover {
             background: var(--secondary);
             color: white;
+            border-color: var(--secondary);
         }
 
         /* Loading */
@@ -729,7 +804,7 @@
         }
 
         .loading-spinner {
-            border: 2px solid var(--gray);
+            border: 2px solid var(--dark-gray);
             border-top: 2px solid var(--primary);
             border-radius: 50%;
             width: 18px;
@@ -740,6 +815,7 @@
 
         .loading p {
             font-size: 0.75rem;
+            color: var(--text-color);
         }
 
         @keyframes spin {
@@ -765,10 +841,12 @@
         .end-of-results h3 {
             font-size: 0.85rem;
             margin-bottom: 4px;
+            color: var(--text-color);
         }
 
         .end-of-results p {
             font-size: 0.7rem;
+            color: var(--gray);
         }
 
         /* No Favorites */
@@ -789,10 +867,12 @@
         .no-favorites h3 {
             font-size: 0.85rem;
             margin-bottom: 4px;
+            color: var(--text-color);
         }
 
         .no-favorites p {
             font-size: 0.7rem;
+            color: var(--gray);
         }
 
         /* Footer */
@@ -801,6 +881,7 @@
             color: white;
             padding: 15px 0 8px;
             margin-top: 15px;
+            border-top: 1px solid var(--dark-gray);
         }
 
         .footer-content {
@@ -828,7 +909,7 @@
         }
 
         .footer-section ul li a {
-            color: #bbb;
+            color: #aaa;
             text-decoration: none;
             transition: var(--transition);
         }
@@ -840,8 +921,8 @@
         .copyright {
             text-align: center;
             padding-top: 8px;
-            border-top: 1px solid #444;
-            color: #bbb;
+            border-top: 1px solid var(--dark-gray);
+            color: #888;
             font-size: 0.65rem;
         }
 
@@ -868,7 +949,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -894,6 +975,7 @@
             overflow: hidden;
             transform: translateY(20px);
             transition: transform 0.3s ease;
+            border: 1px solid var(--dark-gray);
         }
 
         .modal-overlay.show .modal-content {
@@ -902,7 +984,7 @@
 
         .modal-header {
             padding: 10px 12px;
-            border-bottom: 1px solid var(--gray);
+            border-bottom: 1px solid var(--dark-gray);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -949,12 +1031,13 @@
 
         .category-modal-item {
             padding: 8px 12px;
-            border-bottom: 1px solid var(--gray);
+            border-bottom: 1px solid var(--dark-gray);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: var(--text-color);
         }
 
         .category-modal-item:last-child {
@@ -980,7 +1063,7 @@
         }
 
         .category-count {
-            background: var(--gray);
+            background: var(--dark-gray);
             color: white;
             padding: 1px 5px;
             border-radius: 6px;
@@ -997,12 +1080,29 @@
 
         /* Responsive */
         @media (min-width: 400px) {
+            .search-bar {
+                max-width: none;
+            }
+            
             .product-card {
                 min-height: 300px;
             }
             
             .product-image-container {
                 height: 130px;
+            }
+            
+            .search-bar input {
+                font-size: 0.75rem;
+                padding: 5px 14px;
+            }
+            
+            .search-bar button {
+                padding: 0 14px;
+            }
+            
+            .logo {
+                height: 32px;
             }
         }
 
@@ -1015,9 +1115,18 @@
                 gap: 10px;
             }
             
+            .search-bar {
+                max-width: none;
+            }
+            
             .search-bar input {
-                font-size: 0.75rem;
-                padding: 5px 15px;
+                font-size: 0.8rem;
+                padding: 6px 16px;
+            }
+            
+            .search-bar button {
+                padding: 0 16px;
+                min-width: 40px;
             }
             
             .language-btn {
@@ -1035,6 +1144,10 @@
             
             .product-image-container {
                 height: 140px;
+            }
+            
+            .logo {
+                height: 34px;
             }
         }
 
@@ -1077,17 +1190,31 @@
             }
             
             .header-actions {
-                gap: 15px;
+                gap: 12px;
+            }
+            
+            .search-bar {
+                max-width: none;
+                margin-right: 12px;
             }
             
             .search-bar input {
-                font-size: 0.8rem;
-                padding: 6px 18px;
+                font-size: 0.85rem;
+                padding: 7px 18px;
+            }
+            
+            .search-bar button {
+                padding: 0 18px;
+                min-width: 44px;
             }
             
             .language-btn {
                 font-size: 0.75rem;
                 padding: 5px 12px;
+            }
+            
+            .logo {
+                height: 36px;
             }
         }
 
@@ -1110,12 +1237,26 @@
             }
             
             .header-actions {
-                gap: 20px;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                max-width: none;
+                margin-right: 15px;
             }
             
             .search-bar input {
-                font-size: 0.85rem;
-                padding: 7px 20px;
+                font-size: 0.9rem;
+                padding: 8px 20px;
+            }
+            
+            .search-bar button {
+                padding: 0 20px;
+                min-width: 48px;
+            }
+            
+            .logo {
+                height: 38px;
             }
         }
 
@@ -1134,8 +1275,12 @@
             }
             
             .search-bar input {
-                font-size: 0.9rem;
-                padding: 8px 22px;
+                font-size: 0.95rem;
+                padding: 9px 22px;
+            }
+            
+            .logo {
+                height: 40px;
             }
         }
 
@@ -1161,6 +1306,11 @@
     <header>
         <div class="container">
             <div class="header-content">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <img src="https://i.hizliresim.com/kyoizyx.jpg" alt="Budget Buddy Logo" class="logo">
+                </div>
+                
                 <div class="header-actions">
                     <div class="search-bar">
                         <input type="text" id="search-input" placeholder="Search products..." data-translate="searchPlaceholder">
@@ -1193,7 +1343,15 @@
         <!-- Status Info -->
         <div class="status-info" id="status-info">
             <h3><i class="fas fa-sync-alt fa-spin"></i> <span data-translate="loadingProducts">Loading Products</span>...</h3>
-            <p data-translate="loadingDescription">Getting product information from Excel file. Please wait.</p>
+            <p data-translate="loadingDescription">Product information is being retrieved from the Excel file. Please wait.</p>
+        </div>
+
+        <!-- Home Page Button (Shows when no products are loaded) -->
+        <div class="home-page-btn-container" id="home-page-btn-container">
+            <a href="https://s.click.aliexpress.com/e/_c40uRQID" target="_blank" class="home-page-btn">
+                <i class="fas fa-home"></i>
+                <span>Home Page (Smart Links)</span>
+            </a>
         </div>
 
         <!-- Main Content -->
@@ -1244,7 +1402,7 @@
             <!-- No Favorites Message -->
             <div class="no-favorites" id="no-favorites">
                 <i class="far fa-heart"></i>
-                <h3 data-translate="noFavoritesTitle">You don't have favorite products yet</h3>
+                <h3 data-translate="noFavoritesTitle">You don't have any favorite products yet</h3>
                 <p data-translate="noFavoritesDescription">Click the heart icon next to products you like to add them to favorites.</p>
             </div>
         </div>
@@ -1256,7 +1414,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3 data-translate="footerAbout">AliExpress Discount</h3>
-                    <p data-translate="footerDescription">Platform to find the best AliExpress products at the best prices.</p>
+                    <p data-translate="footerDescription">Platform to find the best AliExpress products at the most affordable prices.</p>
                 </div>
                 <div class="footer-section">
                     <h3 data-translate="footerLinks">Quick Links</h3>
@@ -1272,7 +1430,7 @@
                     <ul>
                         <li><a href="#" data-translate="footerFAQ">FAQ</a></li>
                         <li><a href="#" data-translate="footerShipping">Shipping</a></li>
-                        <li><a href="#" data-translate="footerReturn">Return</a></li>
+                        <li><a href="#" data-translate="footerReturn">Returns</a></li>
                         <li><a href="#" data-translate="footerPrivacy">Privacy</a></li>
                     </ul>
                 </div>
@@ -1374,12 +1532,12 @@
             en: {
                 siteTitle: "Budget Buddy",
                 searchPlaceholder: "Search products...",
-                heroTitle: "Best AliExpress Discounts",
-                heroSubtitle: "Discover the most popular products with daily discount codes!",
+                heroTitle: "Best Discounts",
+                heroSubtitle: "Daily discount codes for popular products!",
                 loadingProducts: "Loading",
-                loadingDescription: "Getting product information from Excel file. Please wait.",
-                clearAllFavorites: "Clear All Favorites",
-                favoritesCount: "Total {count} favorite products",
+                loadingDescription: "Products preparing...",
+                clearAllFavorites: "Clear All",
+                favoritesCount: "{count} favorites",
                 allCategories: "All Categories",
                 allCategoriesModal: "All Categories",
                 filterAll: "All",
@@ -1389,14 +1547,14 @@
                 sortPriceHigh: "Price ↓",
                 sortDiscount: "Discount",
                 sortRating: "Rating",
-                noFavoritesTitle: "You don't have favorite products yet",
-                noFavoritesDescription: "Click the heart icon next to products you like to add them to favorites.",
+                noFavoritesTitle: "No Favorites",
+                noFavoritesDescription: "Add products to favorites.",
                 loadingMore: "Loading more products...",
                 endOfResultsTitle: "You've viewed all products!",
                 endOfResultsDescription: "You've viewed all listed products. Try a different category or filter for more results.",
-                footerAbout: "AliExpress Discount",
-                footerDescription: "Platform to find the best AliExpress products at the best prices.",
-                footerLinks: "Quick Links",
+                footerAbout: "AliExpress",
+                footerDescription: "Best products at affordable prices.",
+                footerLinks: "Links",
                 footerHome: "Home",
                 footerPopular: "Popular",
                 footerNew: "New",
@@ -1404,7 +1562,7 @@
                 footerHelp: "Help",
                 footerFAQ: "FAQ",
                 footerShipping: "Shipping",
-                footerReturn: "Return",
+                footerReturn: "Returns",
                 footerPrivacy: "Privacy",
                 footerRights: "All rights reserved.",
                 codeCopied: "Copied:",
@@ -1422,13 +1580,13 @@
             },
             es: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "Buscar productos...",
-                heroTitle: "Mejores Descuentos AliExpress",
-                heroSubtitle: "¡Descubre los productos más populares con códigos de descuento diarios!",
+                searchPlaceholder: "Buscar...",
+                heroTitle: "Mejores Descuentos",
+                heroSubtitle: "¡Códigos de descuento diarios!",
                 loadingProducts: "Cargando",
-                loadingDescription: "Obteniendo información del producto del archivo Excel. Por favor espere.",
-                clearAllFavorites: "Limpiar Todos los Favoritos",
-                favoritesCount: "Total {count} productos favoritos",
+                loadingDescription: "Productos preparándose...",
+                clearAllFavorites: "Limpiar Todo",
+                favoritesCount: "{count} favoritos",
                 allCategories: "Todas las Categorías",
                 allCategoriesModal: "Todas las Categorías",
                 filterAll: "Todos",
@@ -1438,14 +1596,14 @@
                 sortPriceHigh: "Precio ↓",
                 sortDiscount: "Descuento",
                 sortRating: "Puntuación",
-                noFavoritesTitle: "Aún no tienes productos favoritos",
-                noFavoritesDescription: "Haz clic en el icono de corazón junto a los productos que te gustan para agregarlos a favoritos.",
+                noFavoritesTitle: "Sin Favoritos",
+                noFavoritesDescription: "Agrega productos a favoritos.",
                 loadingMore: "Cargando más productos...",
                 endOfResultsTitle: "¡Has visto todos los productos!",
                 endOfResultsDescription: "Has visto todos los productos listados. Prueba una categoría o filtro diferente para más resultados.",
-                footerAbout: "Descuento AliExpress",
-                footerDescription: "Plataforma para encontrar los mejores productos de AliExpress a los mejores precios.",
-                footerLinks: "Enlaces Rápidos",
+                footerAbout: "AliExpress",
+                footerDescription: "Mejores productos a precios asequibles.",
+                footerLinks: "Enlaces",
                 footerHome: "Inicio",
                 footerPopular: "Popular",
                 footerNew: "Nuevo",
@@ -1463,7 +1621,7 @@
                 shareText: "¡Mira este producto!",
                 noProductsFound: "No se encontraron productos.",
                 discountCode: "Código:",
-                buyNow: "Comprar Ahora",
+                buyNow: "Comprar",
                 confirmationTitle: "¿Estás seguro?",
                 confirmationMessage: "¿Estás seguro de que quieres eliminar todos tus productos favoritos? Esta acción no se puede deshacer.",
                 cancelButton: "No",
@@ -1471,13 +1629,13 @@
             },
             fr: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "Rechercher des produits...",
-                heroTitle: "Meilleures Remises AliExpress",
-                heroSubtitle: "Découvrez les produits les plus populaires avec des codes de réduction quotidiens !",
+                searchPlaceholder: "Rechercher...",
+                heroTitle: "Meilleures Promotions",
+                heroSubtitle: "Codes de réduction quotidiens !",
                 loadingProducts: "Chargement",
-                loadingDescription: "Obtention des informations sur les produits à partir du fichier Excel. Veuillez patienter.",
-                clearAllFavorites: "Effacer Tous les Favoris",
-                favoritesCount: "Total {count} produits favoris",
+                loadingDescription: "Produits en préparation...",
+                clearAllFavorites: "Tout Effacer",
+                favoritesCount: "{count} favoris",
                 allCategories: "Toutes les Catégories",
                 allCategoriesModal: "Toutes les Catégories",
                 filterAll: "Tous",
@@ -1487,14 +1645,14 @@
                 sortPriceHigh: "Prix ↓",
                 sortDiscount: "Réduction",
                 sortRating: "Note",
-                noFavoritesTitle: "Vous n'avez pas encore de produits favoris",
-                noFavoritesDescription: "Cliquez sur l'icône cœur à côté des produits que vous aimez pour les ajouter aux favoris.",
+                noFavoritesTitle: "Aucun Favori",
+                noFavoritesDescription: "Ajoutez des produits aux favoris.",
                 loadingMore: "Chargement de plus de produits...",
                 endOfResultsTitle: "Vous avez vu tous les produits !",
-                endOfResultsDescription: "Vous avez vu tous les produits listés. Essayez une catégorie ou un filtre différent pour plus de résultats.",
-                footerAbout: "Remise AliExpress",
-                footerDescription: "Plateforme pour trouver les meilleurs produits AliExpress aux meilleurs prix.",
-                footerLinks: "Liens Rapides",
+                endOfResultsDescription: "Vous avez vu todos los productos listados. Essayez une catégorie ou un filtre différent pour plus de résultats.",
+                footerAbout: "AliExpress",
+                footerDescription: "Meilleurs produits à prix abordables.",
+                footerLinks: "Liens",
                 footerHome: "Accueil",
                 footerPopular: "Populaire",
                 footerNew: "Nouveau",
@@ -1512,7 +1670,7 @@
                 shareText: "Découvrez ce produit !",
                 noProductsFound: "Aucun produit trouvé.",
                 discountCode: "Code :",
-                buyNow: "Acheter Maintenant",
+                buyNow: "Acheter",
                 confirmationTitle: "Êtes-vous sûr ?",
                 confirmationMessage: "Êtes-vous sûr de vouloir supprimer tous vos produits favoris ? Cette action ne peut pas être annulée.",
                 cancelButton: "Non",
@@ -1520,13 +1678,13 @@
             },
             de: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "Produkte suchen...",
-                heroTitle: "Beste AliExpress Rabatte",
-                heroSubtitle: "Entdecken Sie die beliebtesten Produkte mit täglichen Rabattcodes!",
+                searchPlaceholder: "Suchen...",
+                heroTitle: "Beste Rabatte",
+                heroSubtitle: "Tägliche Rabattcodes für beliebte Produkte!",
                 loadingProducts: "Lädt",
-                loadingDescription: "Produktinformationen aus der Excel-Datei werden abgerufen. Bitte warten.",
-                clearAllFavorites: "Alle Favoriten Löschen",
-                favoritesCount: "Insgesamt {count} Lieblingsprodukte",
+                loadingDescription: "Produkte werden vorbereitet...",
+                clearAllFavorites: "Alle löschen",
+                favoritesCount: "{count} Favoriten",
                 allCategories: "Alle Kategorien",
                 allCategoriesModal: "Alle Kategorien",
                 filterAll: "Alle",
@@ -1536,14 +1694,14 @@
                 sortPriceHigh: "Preis ↓",
                 sortDiscount: "Rabatt",
                 sortRating: "Bewertung",
-                noFavoritesTitle: "Sie haben noch keine Lieblingsprodukte",
-                noFavoritesDescription: "Klicken Sie auf das Herzsymbol neben den Produkten, die Ihnen gefallen, um sie zu Favoriten hinzuzufügen.",
+                noFavoritesTitle: "Keine Favoriten",
+                noFavoritesDescription: "Produkte zu Favoriten hinzufügen.",
                 loadingMore: "Lade mehr Produkte...",
                 endOfResultsTitle: "Sie haben alle Produkte gesehen!",
-                endOfResultsDescription: "Sie haben alle gelisteten Produkte gesehen. Versuchen Sie eine andere Kategorie oder Filter für weitere Ergebnisse.",
-                footerAbout: "AliExpress Rabatt",
-                footerDescription: "Plattform, um die besten AliExpress-Produkte zu den besten Preisen zu finden.",
-                footerLinks: "Schnelllinks",
+                endOfResultsDescription: "Sie haben alle gelisteten Produkte gesehen. Versuchen Sie eine andere Kategorie ou filter für weitere Ergebnisse.",
+                footerAbout: "AliExpress",
+                footerDescription: "Beste Produkte zu erschwinglichen Preisen.",
+                footerLinks: "Links",
                 footerHome: "Startseite",
                 footerPopular: "Beliebt",
                 footerNew: "Neu",
@@ -1561,7 +1719,7 @@
                 shareText: "Schauen Sie sich dieses Produkt an!",
                 noProductsFound: "Keine Produkte gefunden.",
                 discountCode: "Code:",
-                buyNow: "Jetzt Kaufen",
+                buyNow: "Jetzt kaufen",
                 confirmationTitle: "Sind Sie sicher?",
                 confirmationMessage: "Sind Sie sicher, dass Sie alle Ihre Lieblingsprodukte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
                 cancelButton: "Nein",
@@ -1569,13 +1727,13 @@
             },
             ru: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "Поиск товаров...",
-                heroTitle: "Лучшие скидки AliExpress",
-                heroSubtitle: "Откройте для себя самые популярные товары с ежедневными кодами скидок!",
+                searchPlaceholder: "Поиск...",
+                heroTitle: "Лучшие скидки",
+                heroSubtitle: "Ежедневные коды скидок на популярные товары!",
                 loadingProducts: "Загрузка",
-                loadingDescription: "Получение информации о товарах из файла Excel. Пожалуйста, подождите.",
-                clearAllFavorites: "Очистить Все Избранное",
-                favoritesCount: "Всего {count} избранных товаров",
+                loadingDescription: "Товары подготавливаются...",
+                clearAllFavorites: "Очистить все",
+                favoritesCount: "{count} избранных",
                 allCategories: "Все категории",
                 allCategoriesModal: "Все категории",
                 filterAll: "Все",
@@ -1585,14 +1743,14 @@
                 sortPriceHigh: "Цена ↓",
                 sortDiscount: "Скидка",
                 sortRating: "Рейтинг",
-                noFavoritesTitle: "У вас еще нет избранных товаров",
-                noFavoritesDescription: "Нажмите на значок сердца рядом с понравившимися товарами, чтобы добавить их в избранное.",
+                noFavoritesTitle: "Нет избранных",
+                noFavoritesDescription: "Добавьте товары в избранное.",
                 loadingMore: "Загрузка больше товаров...",
                 endOfResultsTitle: "Вы просмотрели все товары!",
                 endOfResultsDescription: "Вы просмотрели все товары в списке. Попробуйте другую категорию или фильтр для получения дополнительных результатов.",
-                footerAbout: "Скидка AliExpress",
-                footerDescription: "Платформа для поиска лучших товаров AliExpress по лучшим ценам.",
-                footerLinks: "Быстрые ссылки",
+                footerAbout: "AliExpress",
+                footerDescription: "Лучшие товары по доступным ценам.",
+                footerLinks: "Ссылки",
                 footerHome: "Главная",
                 footerPopular: "Популярные",
                 footerNew: "Новинки",
@@ -1610,7 +1768,7 @@
                 shareText: "Посмотрите этот товар!",
                 noProductsFound: "Товары не найдены.",
                 discountCode: "Код:",
-                buyNow: "Купить Сейчас",
+                buyNow: "Купить",
                 confirmationTitle: "Вы уверены?",
                 confirmationMessage: "Вы уверены, что хотите очистить все ваши избранные товары? Это действие нельзя отменить.",
                 cancelButton: "Нет",
@@ -1618,13 +1776,13 @@
             },
             ar: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "البحث عن المنتجات...",
-                heroTitle: "أفضل خصومات AliExpress",
-                heroSubtitle: "اكتشف المنتجات الأكثر شعبية مع رموز الخصم اليومية!",
+                searchPlaceholder: "بحث...",
+                heroTitle: "أفضل الخصومات",
+                heroSubtitle: "رموز الخصم اليومية للمنتجات الشعبية!",
                 loadingProducts: "جار التحميل",
-                loadingDescription: "جاري الحصول على معلومات المنتج من ملف Excel. الرجاء الانتظار.",
-                clearAllFavorites: "مسح كل المفضلة",
-                favoritesCount: "إجمالي {count} منتج مفضل",
+                loadingDescription: "يتم تحضير المنتجات...",
+                clearAllFavorites: "مسح الكل",
+                favoritesCount: "{count} مفضل",
                 allCategories: "جميع الفئات",
                 allCategoriesModal: "جميع الفئات",
                 filterAll: "الكل",
@@ -1634,14 +1792,14 @@
                 sortPriceHigh: "السعر ↓",
                 sortDiscount: "خصم",
                 sortRating: "تقييم",
-                noFavoritesTitle: "ليس لديك منتجات مفضلة بعد",
-                noFavoritesDescription: "انقر على أيقونة القلب بجانب المنتجات التي تحبها لإضافتها إلى المفضلة.",
+                noFavoritesTitle: "لا توجد مفضلات",
+                noFavoritesDescription: "أضف المنتجات إلى المفضلة.",
                 loadingMore: "جاري تحميل المزيد من المنتجات...",
                 endOfResultsTitle: "لقد شاهدت جميع المنتجات!",
                 endOfResultsDescription: "لقد شاهدت جميع المنتجات المدرجة. جرب فئة أو مرشحًا مختلفًا لمزيد من النتائج.",
-                footerAbout: "خصم AliExpress",
-                footerDescription: "منصة للعثور على أفضل منتجات AliExpress بأفضل الأسعار.",
-                footerLinks: "روابط سريعة",
+                footerAbout: "AliExpress",
+                footerDescription: "أفضل المنتجات بأسعار معقولة.",
+                footerLinks: "روابط",
                 footerHome: "الرئيسية",
                 footerPopular: "الأكثر شهرة",
                 footerNew: "الجديد",
@@ -1667,13 +1825,13 @@
             },
             zh: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "搜索产品...",
-                heroTitle: "最佳 AliExpress 折扣",
-                heroSubtitle: "使用每日折扣码发现最受欢迎的产品！",
+                searchPlaceholder: "搜索...",
+                heroTitle: "最佳折扣",
+                heroSubtitle: "热门产品每日折扣码！",
                 loadingProducts: "加载中",
-                loadingDescription: "正在从Excel文件中获取产品信息。请稍候。",
-                clearAllFavorites: "清除所有收藏",
-                favoritesCount: "总计 {count} 个收藏产品",
+                loadingDescription: "产品准备中...",
+                clearAllFavorites: "全部清除",
+                favoritesCount: "{count} 收藏",
                 allCategories: "所有类别",
                 allCategoriesModal: "所有类别",
                 filterAll: "全部",
@@ -1683,14 +1841,14 @@
                 sortPriceHigh: "价格 ↓",
                 sortDiscount: "折扣",
                 sortRating: "评分",
-                noFavoritesTitle: "您还没有收藏产品",
-                noFavoritesDescription: "点击您喜欢的产品旁边的心形图标将其添加到收藏夹。",
+                noFavoritesTitle: "无收藏",
+                noFavoritesDescription: "将产品添加到收藏夹。",
                 loadingMore: "加载更多产品...",
                 endOfResultsTitle: "您已查看所有产品！",
                 endOfResultsDescription: "您已查看所有列出的产品。尝试不同的类别或过滤器以获得更多结果。",
-                footerAbout: "AliExpress 折扣",
-                footerDescription: "寻找最佳价格的最佳AliExpress产品的平台。",
-                footerLinks: "快速链接",
+                footerAbout: "AliExpress",
+                footerDescription: "实惠价格的最佳产品。",
+                footerLinks: "链接",
                 footerHome: "首页",
                 footerPopular: "热门",
                 footerNew: "新品",
@@ -1716,13 +1874,13 @@
             },
             ja: {
                 siteTitle: "Budget Buddy",
-                searchPlaceholder: "商品を検索...",
-                heroTitle: "ベスト AliExpress ディスカウント",
-                heroSubtitle: "毎日の割引コードで最も人気のある商品を発見しましょう！",
+                searchPlaceholder: "検索...",
+                heroTitle: "ベストディスカウント",
+                heroSubtitle: "人気商品の毎日割引コード！",
                 loadingProducts: "読み込み中",
-                loadingDescription: "Excelファイルから商品情報を取得しています。お待ちください。",
-                clearAllFavorites: "すべてのお気に入りをクリア",
-                favoritesCount: "合計 {count} 個のお気に入り商品",
+                loadingDescription: "商品を準備中...",
+                clearAllFavorites: "すべてクリア",
+                favoritesCount: "{count} お気に入り",
                 allCategories: "すべてのカテゴリー",
                 allCategoriesModal: "すべてのカテゴリー",
                 filterAll: "すべて",
@@ -1732,14 +1890,14 @@
                 sortPriceHigh: "価格 ↓",
                 sortDiscount: "割引",
                 sortRating: "評価",
-                noFavoritesTitle: "まだお気に入り商品がありません",
-                noFavoritesDescription: "好きな商品の横にあるハートアイコンをクリックしてお気に入りに追加します。",
+                noFavoritesTitle: "お気に入りなし",
+                noFavoritesDescription: "商品をお気に入りに追加します。",
                 loadingMore: "さらに商品を読み込み中...",
                 endOfResultsTitle: "すべての商品を表示しました！",
-                endOfResultsDescription: "リストされたすべての商品を表示しました。より多くの結果を得るために、別のカテゴリーやフィルターをお試しください。",
-                footerAbout: "AliExpress ディスカウント",
-                footerDescription: "最高の価格で最高のAliExpress商品を見つけるプラットフォーム。",
-                footerLinks: "クイックリンク",
+                endOfResultsDescription: "リストされたすべての商品を表示しました。より多くの结果を得るために、别のカテゴリーやフィルターをお試しください。",
+                footerAbout: "AliExpress",
+                footerDescription: "お手頃価格のベスト商品。",
+                footerLinks: "リンク",
                 footerHome: "ホーム",
                 footerPopular: "人気",
                 footerNew: "新着",
@@ -1757,7 +1915,7 @@
                 shareText: "この商品をチェック！",
                 noProductsFound: "商品が見つかりません。",
                 discountCode: "コード：",
-                buyNow: "今すぐ購入",
+                buyNow: "購入する",
                 confirmationTitle: "よろしいですか？",
                 confirmationMessage: "すべてのお気に入り商品をクリアしてもよろしいですか？この操作は元に戻せません。",
                 cancelButton: "いいえ",
@@ -1775,7 +1933,7 @@
         let isLoading = false;
         let hasMoreProducts = true;
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        let currentLanguage = localStorage.getItem('language') || 'en'; // Default to English
+        let currentLanguage = localStorage.getItem('language') || 'en'; // English as default
         
         // Infinite scroll variables
         let filteredProducts = [];
@@ -1793,6 +1951,7 @@
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
         const copyMsg = document.getElementById('copyMsg');
+        const homePageBtnContainer = document.getElementById('home-page-btn-container');
         
         // Modal Elements
         const categoriesModal = document.getElementById('categories-modal');
@@ -2005,8 +2164,8 @@
                 'interactive toy', 'cat toy', 'feather wand', 'chew', 'bone', 'antler', 'rawhide', 'ball', 'tennis ball', 'fetch toy', 'frisbee',
                 'leash', 'dog leash', 'retractable leash', 'collar', 'dog collar', 'cat collar', 'breakaway collar', 'harness', 'no pull harness',
                 'step in harness', 'clothing', 'dog clothing', 'sweater', 'raincoat', 'costume', 'pet costume', 'grooming', 'brush', 'slicker brush',
-                'deshedding tool', 'comb', 'nail clipper', 'grinder', 'shampoo', 'conditioner', 'pet wipes', 'health', 'flea treatment', 'tick remover',
-                'vitamin', 'supplement', 'joint supplement', 'calming aid', 'medicine', 'first aid', 'first aid kit', 'cleaning', 'stain remover',
+                'deshedding tool', 'comb', 'wide tooth comb', 'nail clipper', 'grinder', 'shampoo', 'conditioner', 'pet wipes', 'health', 'flea treatment',
+                'tick remover', 'vitamin', 'supplement', 'joint supplement', 'calming aid', 'medicine', 'first aid', 'first aid kit', 'cleaning', 'stain remover',
                 'odor eliminator', 'litter', 'cat litter', 'clumping litter', 'box', 'litter box', 'self cleaning box', 'training', 'potty training pad',
                 'clicker', 'whistle', 'pet camera', 'feeder camera', 'gps tracker', 'pet gate', 'car seat cover', 'pet stroller'
             ]
@@ -2154,7 +2313,7 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Copy message
+        // Coupon copy message
         function showCopyMsg() {
             copyMsg.style.display = "block";
             setTimeout(() => copyMsg.style.display = "none", 1300);
@@ -2204,7 +2363,7 @@
         // Close modal function
         function closeCategoriesModal() {
             categoriesModal.classList.remove('show');
-            document.body.style.overflow = ''; // Re-enable page scrolling
+            document.body.style.overflow = ''; // Restore page scrolling
         }
 
         // Create category list for modal
@@ -2218,7 +2377,7 @@
                 categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             });
             
-            // All categories in fixed order
+            // Sort all categories (in fixed order)
             const allCategoryList = [
                 'all',
                 'Automotive & Motorcycle',
@@ -2329,37 +2488,6 @@
             try {
                 console.log("Loading Excel...");
                 
-                // Create test products - sample products for each category
-                const testProducts = [];
-                const categories = Object.keys(categoryKeywords);
-                
-                // Create 8-10 sample products for each category
-                categories.forEach((category, categoryIndex) => {
-                    const categoryKeywordsList = categoryKeywords[category];
-                    
-                    for (let i = 1; i <= 10; i++) {
-                        const productIndex = (categoryIndex * 10) + i;
-                        const randomKeyword = categoryKeywordsList[Math.floor(Math.random() * categoryKeywordsList.length)];
-                        const discount = Math.floor(Math.random() * 50) + 10;
-                        const originalPrice = Math.floor(Math.random() * 1000) + 100;
-                        const discountPrice = Math.floor(originalPrice * (100 - discount) / 100);
-                        
-                        testProducts.push({
-                            id: productIndex.toString(),
-                            title: `${randomKeyword} ${productIndex} - Premium Quality ${category} Product with Special Features`,
-                            image: `https://via.placeholder.com/300x200/${Math.floor(Math.random()*16777215).toString(16)}/FFFFFF?text=${category.replace(/\s+/g, '+')}`,
-                            originalPrice: `₺${originalPrice}`,
-                            discountPrice: `₺${discountPrice}`,
-                            discount: `%${discount}`,
-                            code: `CODE${productIndex}`,
-                            link: '#',
-                            category: category,
-                            rating: (Math.random() * 10 + 85).toFixed(0),
-                            sales: Math.floor(Math.random() * 2000) + 100
-                        });
-                    }
-                });
-
                 // Load real Excel file
                 try {
                     const response = await fetch(EXCEL_FILE_URL);
@@ -2377,7 +2505,7 @@
                                     id: item.ProductId || Math.random().toString(36).substr(2, 9),
                                     title: originalTitle,
                                     originalTitle: originalTitle,
-                                    image: item['Image Url'] || item.image || 'https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image',
+                                    image: item['Image Url'] || item.image || '',
                                     originalPrice: item['Origin Price'] || item.originalPrice || '₺0',
                                     discountPrice: item['Discount Price'] || item.discountPrice || '₺0', 
                                     discount: item.Discount || item.discount || '%0',
@@ -2402,23 +2530,31 @@
                         throw new Error('Excel file not found');
                     }
                 } catch (error) {
-                    console.log("Could not load Excel, using test data:", error.message);
-                    allProducts = testProducts.map(product => ({
-                        ...product,
-                        originalTitle: product.title
-                    }));
+                    console.log("Excel could not be loaded:", error.message);
+                    // Show home page button when no products are loaded
+                    statusInfo.style.display = 'none';
+                    homePageBtnContainer.style.display = 'block';
+                    return;
                 }
 
                 processProducts();
                 
             } catch (error) {
                 console.error("Error:", error);
-                statusInfo.innerHTML = `<h3><i class="fas fa-exclamation-triangle"></i> Error</h3><p>${error.message}</p>`;
+                statusInfo.style.display = 'none';
+                homePageBtnContainer.style.display = 'block';
             }
         }
 
         // Process products
         function processProducts() {
+            if (allProducts.length === 0) {
+                // Show home page button when no products are loaded
+                statusInfo.style.display = 'none';
+                homePageBtnContainer.style.display = 'block';
+                return;
+            }
+            
             // Show All Categories, Favorites and Sort buttons
             categoriesContainer.innerHTML = `
                 <button class="category-btn active" data-category="all" id="all-categories-btn">
@@ -2449,30 +2585,31 @@
                 filterAndDisplayProducts();
             });
 
-            // Add sort option event listener - FIXED
+            // Add sort option event listener
             const sortSelect = document.getElementById('sort-select');
             sortSelect.addEventListener('change', handleSortChange);
             
             statusInfo.style.display = 'none';
+            homePageBtnContainer.style.display = 'none';
             mainContent.style.display = 'block';
             
             filterAndDisplayProducts();
         }
 
-        // Filter and display
+        // Filter and display - FIXED: Favorilerde kategori filtresini uygulamama
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
-            // Category filter - FIXED
-            if (currentCategory !== 'all') {
-                filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
-            }
-            
-            // Main filters
-            switch(currentFilter) {
-                case 'favorites':
-                    filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
-                    break;
+            // Favorites filter - TÜM KATEGORİLERDEN FAVORİLERİ GÖSTER
+            if (currentFilter === 'favorites') {
+                filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
+                favoritesManagement.classList.add('show');
+            } else {
+                // Category filter (only apply when not in favorites mode)
+                if (currentCategory !== 'all') {
+                    filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
+                }
+                favoritesManagement.classList.remove('show');
             }
             
             // Sorting
@@ -2483,7 +2620,7 @@
             loadMoreProducts();
         }
 
-        // Sorting - FIXED
+        // Sorting
         function handleSortChange() {
             currentSort = document.getElementById('sort-select').value;
             currentDisplayedCount = 0;
@@ -2574,9 +2711,18 @@
                 isLoading = false;
                 loadingIndicator.style.display = 'none';
                 
-                // Check if all products loaded
+                // Check if all products are loaded
                 if (currentDisplayedCount >= filteredProducts.length) {
                     endOfResults.style.display = 'block';
+                }
+                
+                // Show no favorites message if in favorites mode and no favorites
+                if (currentFilter === 'favorites' && filteredProducts.length === 0) {
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                } else {
+                    noFavorites.style.display = 'none';
+                    productsGrid.style.display = 'grid';
                 }
             }, 500);
         }
@@ -2602,7 +2748,7 @@
                     noFavorites.style.display = 'block';
                     productsGrid.style.display = 'none';
                 } else {
-                    productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px;">${translations[currentLanguage].noProductsFound}</p>`;
+                    productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-color);">${translations[currentLanguage].noProductsFound}</p>`;
                 }
                 loadingIndicator.style.display = 'none';
                 endOfResults.style.display = 'none';
@@ -2620,6 +2766,9 @@
                     ? product.title 
                     : translateProductTitle(product.originalTitle || product.title, currentLanguage);
                 
+                // Use product image or placeholder
+                const productImage = product.image || `https://via.placeholder.com/300x200/333/FFFFFF?text=No+Image`;
+                
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
@@ -2631,7 +2780,7 @@
                             <i class="fas fa-times"></i>
                         </button>
                         ` : ''}
-                        <img src="${product.image}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image'">
+                        <img src="${productImage}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/333/FFFFFF?text=No+Image'">
                     </div>
                     <div class="product-info">
                         <h3 class="product-title" onclick="toggleTitle(this)">${displayTitle}</h3>
@@ -2650,7 +2799,7 @@
                             <a href="${product.link}" target="_blank" class="buy-btn">
                                 <i class="fas fa-shopping-cart"></i> ${translations[currentLanguage].buyNow}
                             </a>
-                            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">
+                            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${product.id}', this)">
                                 <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                             </button>
                             <button class="share-btn" onclick="shareProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, event)">
@@ -2668,22 +2817,41 @@
             element.classList.toggle('expanded');
         }
 
-        // Favorite operations
-        function toggleFavorite(productId) {
+        // Favorite operations - FIXED: Son ürün silindiğinde ekranı güncelle
+        function toggleFavorite(productId, buttonElement) {
             const index = favorites.indexOf(productId);
             if (index === -1) {
                 favorites.push(productId);
                 showToast(translations[currentLanguage].addedToFavorites);
+                if (buttonElement) {
+                    buttonElement.classList.add('active');
+                    buttonElement.innerHTML = '<i class="fas fa-heart"></i>';
+                }
             } else {
                 favorites.splice(index, 1);
                 showToast(translations[currentLanguage].removedFromFavorites);
+                if (buttonElement) {
+                    buttonElement.classList.remove('active');
+                    buttonElement.innerHTML = '<i class="far fa-heart"></i>';
+                }
             }
             localStorage.setItem('favorites', JSON.stringify(favorites));
             updateFavoritesUI();
             
+            // If we're in favorites view, refresh the view
             if (currentFilter === 'favorites') {
                 currentDisplayedCount = 0;
                 filterAndDisplayProducts();
+                
+                // Eğer favori kalmadıysa "no favorites" mesajını göster
+                if (favorites.length === 0) {
+                    // Hemen ekranı temizle
+                    productsGrid.innerHTML = '';
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                }
             }
         }
 
@@ -2696,13 +2864,25 @@
                 showToast(translations[currentLanguage].removedFromFavorites);
                 updateFavoritesUI();
                 
+                // If we're in favorites view, refresh the view
                 if (currentFilter === 'favorites') {
                     currentDisplayedCount = 0;
                     filterAndDisplayProducts();
+                    
+                    // Eğer favori kalmadıysa "no favorites" mesajını göster
+                    if (favorites.length === 0) {
+                        // Hemen ekranı temizle
+                        productsGrid.innerHTML = '';
+                        noFavorites.style.display = 'block';
+                        productsGrid.style.display = 'none';
+                        endOfResults.style.display = 'none';
+                        loadingIndicator.style.display = 'none';
+                    }
                 }
             }
         }
 
+        // FIXED: Favorileri temizle fonksiyonu - ekrandaki ürünleri de kaldır
         function clearAllFavorites() {
             if (favorites.length > 0) {
                 favorites = [];
@@ -2711,9 +2891,30 @@
                 updateFavoritesUI();
                 closeConfirmationModal();
                 
+                // Favori modundaysak ekranı güncelle
                 if (currentFilter === 'favorites') {
+                    // Tüm favori ürünleri ekrandan kaldır
+                    productsGrid.innerHTML = '';
                     currentDisplayedCount = 0;
-                    filterAndDisplayProducts();
+                    
+                    // "Favori yok" mesajını göster
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Favori sayısını güncelle
+                    document.getElementById('favorites-count-badge').textContent = '0';
+                    
+                    // Favorites count mesajını güncelle
+                    const favoritesCountElement = document.getElementById('favorites-count');
+                    if (translations[currentLanguage]) {
+                        favoritesCountElement.textContent = 
+                            translations[currentLanguage].favoritesCount.replace('{count}', 0);
+                    }
+                } else {
+                    // Favori modunda değilsek, sadece favori butonlarını güncelle
+                    updateAllFavoriteButtons();
                 }
             } else {
                 closeConfirmationModal();
@@ -2721,36 +2922,44 @@
             }
         }
 
+        // Tüm favori butonlarını güncelle
+        function updateAllFavoriteButtons() {
+            const favoriteButtons = document.querySelectorAll('.wishlist-btn');
+            favoriteButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="far fa-heart"></i>';
+            });
+        }
+
         function updateFavoritesUI() {
             updateFavoritesCount();
             
-            // Update favorite count in badge
+            // Update favorites count in badge
             const favoritesBadge = document.getElementById('favorites-count-badge');
             if (favoritesBadge) {
                 favoritesBadge.textContent = favorites.length;
             }
             
+            // Update all favorite buttons on the page
             const favoriteButtons = document.querySelectorAll('.wishlist-btn');
             favoriteButtons.forEach(btn => {
                 const productCard = btn.closest('.product-card');
                 if (productCard) {
-                    const productId = getProductIdFromCard(productCard);
-                    if (favorites.includes(productId)) {
-                        btn.classList.add('active');
-                        btn.innerHTML = '<i class="fas fa-heart"></i>';
-                    } else {
-                        btn.classList.remove('active');
-                        btn.innerHTML = '<i class="far fa-heart"></i>';
+                    // Get product ID from the button's onclick attribute
+                    const onclickAttr = btn.getAttribute('onclick');
+                    const match = onclickAttr.match(/toggleFavorite\('([^']+)'/);
+                    if (match) {
+                        const productId = match[1];
+                        if (favorites.includes(productId)) {
+                            btn.classList.add('active');
+                            btn.innerHTML = '<i class="fas fa-heart"></i>';
+                        } else {
+                            btn.classList.remove('active');
+                            btn.innerHTML = '<i class="far fa-heart"></i>';
+                        }
                     }
                 }
             });
-        }
-
-        function getProductIdFromCard(card) {
-            const wishlistBtn = card.querySelector('.wishlist-btn');
-            const onclickAttr = wishlistBtn.getAttribute('onclick');
-            const match = onclickAttr.match(/toggleFavorite\('([^']+)'\)/);
-            return match ? match[1] : null;
         }
 
         function updateFavoritesCount() {
@@ -2821,10 +3030,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             console.log("Page loaded");
             
-            // Dark theme active
+            // Apply dark theme
             document.documentElement.setAttribute('data-theme', 'dark');
             
-            // Load language - default to English
+            // Load language - English as default
             const savedLanguage = localStorage.getItem('language') || 'en';
             currentLanguage = savedLanguage;
             document.getElementById('current-language').textContent = savedLanguage.toUpperCase();
