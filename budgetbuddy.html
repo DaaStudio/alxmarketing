@@ -28,15 +28,6 @@
             --image-border: #334155;
         }
 
-        [data-theme="light"] {
-            --bg-color: #f5f7fa;
-            --text-color: #333;
-            --card-bg: white;
-            --header-bg: linear-gradient(135deg, var(--primary), var(--secondary));
-            --footer-bg: var(--dark);
-            --image-border: #e2e8f0;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -96,7 +87,7 @@
             flex-wrap: nowrap;
         }
 
-        .theme-toggle, .language-btn {
+        .language-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
@@ -112,7 +103,7 @@
             min-height: 28px;
         }
 
-        .theme-toggle:hover, .language-btn:hover {
+        .language-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -1043,7 +1034,7 @@
                 padding: 5px 10px;
             }
             
-            .theme-toggle, .language-btn {
+            .language-btn {
                 font-size: 0.7rem;
                 padding: 4px 8px;
             }
@@ -1111,7 +1102,7 @@
                 max-width: 200px;
             }
             
-            .theme-toggle, .language-btn {
+            .language-btn {
                 font-size: 0.75rem;
                 padding: 5px 10px;
             }
@@ -1190,10 +1181,6 @@
                         <input type="text" id="search-input" placeholder="Ürün ara..." data-translate="searchPlaceholder">
                         <button id="search-btn"><i class="fas fa-search"></i></button>
                     </div>
-                    <button class="theme-toggle" id="theme-toggle">
-                        <i class="fas fa-moon"></i>
-                        <span data-translate="darkMode">Koyu</span>
-                    </button>
                     <div class="language-selector">
                         <button class="language-btn" id="language-btn">
                             <i class="fas fa-globe"></i>
@@ -1391,8 +1378,6 @@
                 removedFromFavorites: "Favorilerden çıkarıldı",
                 allFavoritesCleared: "Tüm favoriler temizlendi",
                 shareText: "Bu ürünü inceleyin!",
-                darkMode: "Koyu",
-                lightMode: "Açık",
                 noProductsFound: "Ürün bulunamadı.",
                 discountCode: "Kod:",
                 buyNow: "Satın Al",
@@ -1442,8 +1427,6 @@
                 removedFromFavorites: "Removed from favorites",
                 allFavoritesCleared: "All favorites cleared",
                 shareText: "Check this product!",
-                darkMode: "Dark",
-                lightMode: "Light",
                 noProductsFound: "No products found.",
                 discountCode: "Code:",
                 buyNow: "Buy Now",
@@ -1493,8 +1476,6 @@
                 removedFromFavorites: "Eliminado de favoritos",
                 allFavoritesCleared: "Todos los favoritos eliminados",
                 shareText: "¡Mira este producto!",
-                darkMode: "Oscuro",
-                lightMode: "Claro",
                 noProductsFound: "No se encontraron productos.",
                 discountCode: "Código:",
                 buyNow: "Comprar",
@@ -1544,8 +1525,6 @@
                 removedFromFavorites: "Retiré des favoris",
                 allFavoritesCleared: "Tous les favoris effacés",
                 shareText: "Découvrez ce produit !",
-                darkMode: "Sombre",
-                lightMode: "Clair",
                 noProductsFound: "Aucun produit trouvé.",
                 discountCode: "Code :",
                 buyNow: "Acheter",
@@ -1595,8 +1574,6 @@
                 removedFromFavorites: "Aus Favoriten entfernt",
                 allFavoritesCleared: "Alle Favoriten gelöscht",
                 shareText: "Schauen Sie sich dieses Produkt an!",
-                darkMode: "Dunkel",
-                lightMode: "Hell",
                 noProductsFound: "Keine Produkte gefunden.",
                 discountCode: "Code:",
                 buyNow: "Jetzt kaufen",
@@ -1646,8 +1623,6 @@
                 removedFromFavorites: "Удалено из избранного",
                 allFavoritesCleared: "Все избранные очищены",
                 shareText: "Посмотрите этот товар!",
-                darkMode: "Темный",
-                lightMode: "Светлый",
                 noProductsFound: "Товары не найдены.",
                 discountCode: "Код:",
                 buyNow: "Купить",
@@ -1697,8 +1672,6 @@
                 removedFromFavorites: "تمت الإزالة من المفضلة",
                 allFavoritesCleared: "تم مسح جميع المفضلة",
                 shareText: "تحقق من هذا المنتج!",
-                darkMode: "داكن",
-                lightMode: "فاتح",
                 noProductsFound: "لم يتم العثور على منتجات.",
                 discountCode: "كود:",
                 buyNow: "اشتر الآن",
@@ -1748,8 +1721,6 @@
                 removedFromFavorites: "已从收藏夹移除",
                 allFavoritesCleared: "所有收藏已清除",
                 shareText: "查看此产品！",
-                darkMode: "深色",
-                lightMode: "浅色",
                 noProductsFound: "未找到产品。",
                 discountCode: "代码：",
                 buyNow: "立即购买",
@@ -1799,8 +1770,6 @@
                 removedFromFavorites: "お気に入りから削除されました",
                 allFavoritesCleared: "すべてのお気に入りがクリアされました",
                 shareText: "この商品をチェック！",
-                darkMode: "ダーク",
-                lightMode: "ライト",
                 noProductsFound: "商品が見つかりません。",
                 discountCode: "コード：",
                 buyNow: "購入する",
@@ -1822,7 +1791,6 @@
         let hasMoreProducts = true;
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentLanguage = localStorage.getItem('language') || 'tr';
-        let currentTheme = localStorage.getItem('theme') || 'dark';
         
         // Sonsuz scroll değişkenleri
         let filteredProducts = [];
@@ -2065,7 +2033,6 @@
             if (e.key === 'Enter') performSearch();
         });
 
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
         document.getElementById('language-btn').addEventListener('click', toggleLanguageDropdown);
         document.getElementById('clear-all-favorites').addEventListener('click', showConfirmationModal);
         
@@ -2109,27 +2076,6 @@
                 document.getElementById('language-dropdown').classList.remove('show');
             }
         });
-
-        // Tema değiştirme
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            localStorage.setItem('theme', currentTheme);
-            updateThemeButton();
-        }
-
-        function updateThemeButton() {
-            const icon = document.querySelector('#theme-toggle i');
-            const text = document.querySelector('#theme-toggle span');
-            if (currentTheme === 'dark') {
-                icon.className = 'fas fa-sun';
-                text.setAttribute('data-translate', 'lightMode');
-            } else {
-                icon.className = 'fas fa-moon';
-                text.setAttribute('data-translate', 'darkMode');
-            }
-            updatePageLanguage();
-        }
 
         // Dil değiştirme
         function changeLanguage(lang) {
@@ -2890,11 +2836,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             console.log("Sayfa yüklendi");
             
-            // Temayı yükle
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            currentTheme = savedTheme;
-            updateThemeButton();
+            // Koyu tema aktif
+            document.documentElement.setAttribute('data-theme', 'dark');
             
             // Dili yükle
             const savedLanguage = localStorage.getItem('language') || 'tr';
