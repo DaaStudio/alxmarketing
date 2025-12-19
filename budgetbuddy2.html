@@ -2520,24 +2520,20 @@
             filterAndDisplayProducts();
         }
 
-        // Filter and display
+        // Filter and display - FIXED: Favorilerde kategori filtresini uygulamama
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
-            // Category filter
-            if (currentCategory !== 'all') {
-                filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
-            }
-            
-            // Main filters
-            switch(currentFilter) {
-                case 'favorites':
-                    filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
-                    favoritesManagement.classList.add('show');
-                    break;
-                default:
-                    favoritesManagement.classList.remove('show');
-                    break;
+            // Favorites filter - TÜM KATEGORİLERDEN FAVORİLERİ GÖSTER
+            if (currentFilter === 'favorites') {
+                filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
+                favoritesManagement.classList.add('show');
+            } else {
+                // Category filter (only apply when not in favorites mode)
+                if (currentCategory !== 'all') {
+                    filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
+                }
+                favoritesManagement.classList.remove('show');
             }
             
             // Sorting
