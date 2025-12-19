@@ -845,7 +845,8 @@
             font-size: 0.7rem;
         }
 
-        /* Footer */
+        /* Footer - YORUM SATIRI İÇİN STİLLER KALDI AMA CSS'İ KAPATMAK İSTEMİYORUZ */
+        /*
         footer {
             background: var(--footer-bg);
             color: white;
@@ -894,6 +895,7 @@
             color: #bbb;
             font-size: 0.65rem;
         }
+        */
 
         /* Copy Message */
         .copy-msg {
@@ -1375,7 +1377,8 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer - YORUM SATIRINA ALINDI -->
+    <!--
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -1407,6 +1410,7 @@
             </div>
         </div>
     </footer>
+    -->
 
     <!-- Categories Modal -->
     <div class="modal-overlay" id="categories-modal">
@@ -2549,6 +2553,18 @@
                 this.classList.add('active');
                 currentFilter = 'favorites';
                 currentDisplayedCount = 0;
+                
+                // Eğer favori sayısı 0 ise sadece "no favorites" mesajını göster
+                if (favorites.length === 0) {
+                    productsGrid.innerHTML = '';
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    favoritesManagement.classList.add('show');
+                    return;
+                }
+                
                 favoritesManagement.classList.add('show');
                 filterAndDisplayProducts();
             });
@@ -2564,12 +2580,23 @@
             filterAndDisplayProducts();
         }
 
-        // Filter and display - FIXED: Favorilerde kategori filtresini uygulamama
+        // Filter and display - DÜZELTİLDİ: Favori sayısı 0 ise hiçbir ürün gösterme
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
             // Favorites filter - TÜM KATEGORİLERDEN FAVORİLERİ GÖSTER
             if (currentFilter === 'favorites') {
+                // Eğer favori sayısı 0 ise hiçbir ürün gösterme
+                if (favorites.length === 0) {
+                    filteredProducts = [];
+                    productsGrid.innerHTML = '';
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    return;
+                }
+                
                 filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
                 favoritesManagement.classList.add('show');
             } else {
@@ -2650,6 +2677,16 @@
         function loadMoreProducts() {
             if (isLoading) return;
             
+            // Eğer favori modunda ve favori sayısı 0 ise hiçbir şey yapma
+            if (currentFilter === 'favorites' && favorites.length === 0) {
+                productsGrid.innerHTML = '';
+                noFavorites.style.display = 'block';
+                productsGrid.style.display = 'none';
+                endOfResults.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+                return;
+            }
+            
             const startIndex = currentDisplayedCount;
             const endIndex = Math.min(currentDisplayedCount + productsPerPage, filteredProducts.length);
             
@@ -2698,6 +2735,11 @@
         // Scroll handler
         function handleScroll() {
             if (isLoading) return;
+            
+            // Eğer favori modunda ve favori sayısı 0 ise hiçbir şey yapma
+            if (currentFilter === 'favorites' && favorites.length === 0) {
+                return;
+            }
             
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
@@ -2785,7 +2827,7 @@
             element.classList.toggle('expanded');
         }
 
-        // Favorite operations - FIXED: Son ürün silindiğinde ekranı güncelle
+        // Favorite operations - DÜZELTİLDİ: Favori sayısı 0 olduğunda doğru davranış
         function toggleFavorite(productId, buttonElement) {
             const index = favorites.indexOf(productId);
             if (index === -1) {
@@ -2850,7 +2892,7 @@
             }
         }
 
-        // FIXED: Favorileri temizle fonksiyonu - ekrandaki ürünleri de kaldır
+        // Favorileri temizle fonksiyonu - DÜZELTİLDİ
         function clearAllFavorites() {
             if (favorites.length > 0) {
                 favorites = [];
