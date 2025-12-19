@@ -174,6 +174,36 @@
             color: white;
         }
 
+        /* Home Page Button */
+        .home-page-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+        }
+
+        .home-page-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.15);
+        }
+
+        .home-page-btn-container {
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
         /* Toast */
         .toast {
             position: fixed;
@@ -1239,6 +1269,14 @@
             <p data-translate="loadingDescription">Product information is being retrieved from the Excel file. Please wait.</p>
         </div>
 
+        <!-- Home Page Button (Shows when no products are loaded) -->
+        <div class="home-page-btn-container" id="home-page-btn-container">
+            <a href="https://s.click.aliexpress.com/e/_c40uRQID" target="_blank" class="home-page-btn">
+                <i class="fas fa-home"></i>
+                <span>Home Page (Smart Links)</span>
+            </a>
+        </div>
+
         <!-- Main Content -->
         <div id="main-content" style="display: none;">
             <!-- Categories - All Categories, Favorites and Sort buttons -->
@@ -1779,7 +1817,7 @@
                 noFavoritesDescription: "商品をお気に入りに追加します。",
                 loadingMore: "さらに商品を読み込み中...",
                 endOfResultsTitle: "すべての商品を表示しました！",
-                endOfResultsDescription: "リストされたすべての商品を表示しました。より多くの結果を得るために、別のカテゴリーやフィルターをお試しください。",
+                endOfResultsDescription: "リストされたすべての商品を表示しました。より多くの结果を得るために、别のカテゴリーやフィルターをお試しください。",
                 footerAbout: "AliExpress",
                 footerDescription: "お手頃価格のベスト商品。",
                 footerLinks: "リンク",
@@ -1837,6 +1875,7 @@
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
         const copyMsg = document.getElementById('copyMsg');
+        const homePageBtnContainer = document.getElementById('home-page-btn-container');
         
         // Modal Elements
         const categoriesModal = document.getElementById('categories-modal');
@@ -2373,37 +2412,6 @@
             try {
                 console.log("Loading Excel...");
                 
-                // Create test products - sample products for each category
-                const testProducts = [];
-                const categories = Object.keys(categoryKeywords);
-                
-                // Create 8-10 sample products for each category
-                categories.forEach((category, categoryIndex) => {
-                    const categoryKeywordsList = categoryKeywords[category];
-                    
-                    for (let i = 1; i <= 10; i++) {
-                        const productIndex = (categoryIndex * 10) + i;
-                        const randomKeyword = categoryKeywordsList[Math.floor(Math.random() * categoryKeywordsList.length)];
-                        const discount = Math.floor(Math.random() * 50) + 10;
-                        const originalPrice = Math.floor(Math.random() * 1000) + 100;
-                        const discountPrice = Math.floor(originalPrice * (100 - discount) / 100);
-                        
-                        testProducts.push({
-                            id: productIndex.toString(),
-                            title: `${randomKeyword} ${productIndex} - Premium Quality ${category} Product with Special Features`,
-                            image: `https://via.placeholder.com/300x200/${Math.floor(Math.random()*16777215).toString(16)}/FFFFFF?text=${category.replace(/\s+/g, '+')}`,
-                            originalPrice: `₺${originalPrice}`,
-                            discountPrice: `₺${discountPrice}`,
-                            discount: `%${discount}`,
-                            code: `CODE${productIndex}`,
-                            link: '#',
-                            category: category,
-                            rating: (Math.random() * 10 + 85).toFixed(0),
-                            sales: Math.floor(Math.random() * 2000) + 100
-                        });
-                    }
-                });
-
                 // Load real Excel file
                 try {
                     const response = await fetch(EXCEL_FILE_URL);
@@ -2421,7 +2429,7 @@
                                     id: item.ProductId || Math.random().toString(36).substr(2, 9),
                                     title: originalTitle,
                                     originalTitle: originalTitle,
-                                    image: item['Image Url'] || item.image || 'https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image',
+                                    image: item['Image Url'] || item.image || '',
                                     originalPrice: item['Origin Price'] || item.originalPrice || '₺0',
                                     discountPrice: item['Discount Price'] || item.discountPrice || '₺0', 
                                     discount: item.Discount || item.discount || '%0',
@@ -2446,23 +2454,31 @@
                         throw new Error('Excel file not found');
                     }
                 } catch (error) {
-                    console.log("Excel could not be loaded, using test data:", error.message);
-                    allProducts = testProducts.map(product => ({
-                        ...product,
-                        originalTitle: product.title
-                    }));
+                    console.log("Excel could not be loaded:", error.message);
+                    // Show home page button when no products are loaded
+                    statusInfo.style.display = 'none';
+                    homePageBtnContainer.style.display = 'block';
+                    return;
                 }
 
                 processProducts();
                 
             } catch (error) {
                 console.error("Error:", error);
-                statusInfo.innerHTML = `<h3><i class="fas fa-exclamation-triangle"></i> Error</h3><p>${error.message}</p>`;
+                statusInfo.style.display = 'none';
+                homePageBtnContainer.style.display = 'block';
             }
         }
 
         // Process products
         function processProducts() {
+            if (allProducts.length === 0) {
+                // Show home page button when no products are loaded
+                statusInfo.style.display = 'none';
+                homePageBtnContainer.style.display = 'block';
+                return;
+            }
+            
             // Show All Categories, Favorites and Sort buttons
             categoriesContainer.innerHTML = `
                 <button class="category-btn active" data-category="all" id="all-categories-btn">
@@ -2493,11 +2509,12 @@
                 filterAndDisplayProducts();
             });
 
-            // Add sort option event listener - FIXED
+            // Add sort option event listener
             const sortSelect = document.getElementById('sort-select');
             sortSelect.addEventListener('change', handleSortChange);
             
             statusInfo.style.display = 'none';
+            homePageBtnContainer.style.display = 'none';
             mainContent.style.display = 'block';
             
             filterAndDisplayProducts();
@@ -2507,7 +2524,7 @@
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
-            // Category filter - FIXED
+            // Category filter
             if (currentCategory !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.category === currentCategory);
             }
@@ -2516,6 +2533,10 @@
             switch(currentFilter) {
                 case 'favorites':
                     filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
+                    favoritesManagement.classList.add('show');
+                    break;
+                default:
+                    favoritesManagement.classList.remove('show');
                     break;
             }
             
@@ -2527,7 +2548,7 @@
             loadMoreProducts();
         }
 
-        // Sorting - FIXED
+        // Sorting
         function handleSortChange() {
             currentSort = document.getElementById('sort-select').value;
             currentDisplayedCount = 0;
@@ -2622,6 +2643,15 @@
                 if (currentDisplayedCount >= filteredProducts.length) {
                     endOfResults.style.display = 'block';
                 }
+                
+                // Show no favorites message if in favorites mode and no favorites
+                if (currentFilter === 'favorites' && filteredProducts.length === 0) {
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                } else {
+                    noFavorites.style.display = 'none';
+                    productsGrid.style.display = 'grid';
+                }
             }, 500);
         }
 
@@ -2664,6 +2694,9 @@
                     ? product.title 
                     : translateProductTitle(product.originalTitle || product.title, currentLanguage);
                 
+                // Use product image or placeholder
+                const productImage = product.image || `https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image`;
+                
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
@@ -2675,7 +2708,7 @@
                             <i class="fas fa-times"></i>
                         </button>
                         ` : ''}
-                        <img src="${product.image}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image'">
+                        <img src="${productImage}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image'">
                     </div>
                     <div class="product-info">
                         <h3 class="product-title" onclick="toggleTitle(this)">${displayTitle}</h3>
@@ -2694,7 +2727,7 @@
                             <a href="${product.link}" target="_blank" class="buy-btn">
                                 <i class="fas fa-shopping-cart"></i> ${translations[currentLanguage].buyNow}
                             </a>
-                            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">
+                            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${product.id}', this)">
                                 <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                             </button>
                             <button class="share-btn" onclick="shareProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, event)">
@@ -2712,19 +2745,28 @@
             element.classList.toggle('expanded');
         }
 
-        // Favorite operations
-        function toggleFavorite(productId) {
+        // Favorite operations - FIXED
+        function toggleFavorite(productId, buttonElement) {
             const index = favorites.indexOf(productId);
             if (index === -1) {
                 favorites.push(productId);
                 showToast(translations[currentLanguage].addedToFavorites);
+                if (buttonElement) {
+                    buttonElement.classList.add('active');
+                    buttonElement.innerHTML = '<i class="fas fa-heart"></i>';
+                }
             } else {
                 favorites.splice(index, 1);
                 showToast(translations[currentLanguage].removedFromFavorites);
+                if (buttonElement) {
+                    buttonElement.classList.remove('active');
+                    buttonElement.innerHTML = '<i class="far fa-heart"></i>';
+                }
             }
             localStorage.setItem('favorites', JSON.stringify(favorites));
             updateFavoritesUI();
             
+            // If we're in favorites view, refresh the view
             if (currentFilter === 'favorites') {
                 currentDisplayedCount = 0;
                 filterAndDisplayProducts();
@@ -2740,6 +2782,7 @@
                 showToast(translations[currentLanguage].removedFromFavorites);
                 updateFavoritesUI();
                 
+                // If we're in favorites view, refresh the view
                 if (currentFilter === 'favorites') {
                     currentDisplayedCount = 0;
                     filterAndDisplayProducts();
@@ -2755,6 +2798,7 @@
                 updateFavoritesUI();
                 closeConfirmationModal();
                 
+                // If we're in favorites view, refresh the view
                 if (currentFilter === 'favorites') {
                     currentDisplayedCount = 0;
                     filterAndDisplayProducts();
@@ -2774,27 +2818,26 @@
                 favoritesBadge.textContent = favorites.length;
             }
             
+            // Update all favorite buttons on the page
             const favoriteButtons = document.querySelectorAll('.wishlist-btn');
             favoriteButtons.forEach(btn => {
                 const productCard = btn.closest('.product-card');
                 if (productCard) {
-                    const productId = getProductIdFromCard(productCard);
-                    if (favorites.includes(productId)) {
-                        btn.classList.add('active');
-                        btn.innerHTML = '<i class="fas fa-heart"></i>';
-                    } else {
-                        btn.classList.remove('active');
-                        btn.innerHTML = '<i class="far fa-heart"></i>';
+                    // Get product ID from the button's onclick attribute
+                    const onclickAttr = btn.getAttribute('onclick');
+                    const match = onclickAttr.match(/toggleFavorite\('([^']+)'/);
+                    if (match) {
+                        const productId = match[1];
+                        if (favorites.includes(productId)) {
+                            btn.classList.add('active');
+                            btn.innerHTML = '<i class="fas fa-heart"></i>';
+                        } else {
+                            btn.classList.remove('active');
+                            btn.innerHTML = '<i class="far fa-heart"></i>';
+                        }
                     }
                 }
             });
-        }
-
-        function getProductIdFromCard(card) {
-            const wishlistBtn = card.querySelector('.wishlist-btn');
-            const onclickAttr = wishlistBtn.getAttribute('onclick');
-            const match = onclickAttr.match(/toggleFavorite\('([^']+)'\)/);
-            return match ? match[1] : null;
         }
 
         function updateFavoritesCount() {
