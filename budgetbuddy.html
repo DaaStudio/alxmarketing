@@ -849,7 +849,7 @@
             color: var(--gray);
         }
 
-        /* No Favorites */
+        /* No Favorites Message */
         .no-favorites {
             text-align: center;
             padding: 25px 8px;
@@ -875,13 +875,14 @@
             color: var(--gray);
         }
 
-        /* Footer */
+        /* Footer - COMMENTED OUT
         footer {
             background: var(--footer-bg);
             color: white;
             padding: 15px 0 8px;
             margin-top: 15px;
             border-top: 1px solid var(--dark-gray);
+            display: none;
         }
 
         .footer-content {
@@ -925,6 +926,7 @@
             color: #888;
             font-size: 0.65rem;
         }
+        */
 
         /* Copy Message */
         .copy-msg {
@@ -1408,7 +1410,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer - COMMENTED OUT
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -1440,6 +1442,7 @@
             </div>
         </div>
     </footer>
+    -->
 
     <!-- Categories Modal -->
     <div class="modal-overlay" id="categories-modal">
@@ -1646,7 +1649,7 @@
                 sortDiscount: "Réduction",
                 sortRating: "Note",
                 noFavoritesTitle: "Aucun Favori",
-                noFavoritesDescription: "Ajoutez des produits aux favoris.",
+                noFavoritesDescription: "Ajoutez des productos aux favoris.",
                 loadingMore: "Chargement de plus de produits...",
                 endOfResultsTitle: "Vous avez vu tous les produits !",
                 endOfResultsDescription: "Vous avez vu todos los productos listados. Essayez une catégorie ou un filtre différent pour plus de résultats.",
@@ -2582,7 +2585,18 @@
                 currentFilter = 'favorites';
                 currentDisplayedCount = 0;
                 favoritesManagement.classList.add('show');
-                filterAndDisplayProducts();
+                
+                // Eğer favori yoksa, hiçbir ürün gösterme
+                if (favorites.length === 0) {
+                    productsGrid.innerHTML = '';
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    favoritesManagement.classList.add('show');
+                } else {
+                    filterAndDisplayProducts();
+                }
             });
 
             // Add sort option event listener
@@ -2604,6 +2618,16 @@
             if (currentFilter === 'favorites') {
                 filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
                 favoritesManagement.classList.add('show');
+                
+                // Eğer favori yoksa, hiçbir ürün gösterme
+                if (favorites.length === 0) {
+                    productsGrid.innerHTML = '';
+                    noFavorites.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                    endOfResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    return; // Burada return yaparak aşağıdaki kodu çalıştırmayı durduruyoruz
+                }
             } else {
                 // Category filter (only apply when not in favorites mode)
                 if (currentCategory !== 'all') {
