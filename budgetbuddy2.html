@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget Buddy Products</title>
@@ -11,21 +11,24 @@
             --primary: #ff3366;
             --primary-dark: #e62e5e;
             --secondary: #7c5cff;
-            --dark: #0f172a;
-            --light: #f8f9fa;
-            --gray: #6c757d;
+            /* AYDINLIK MOD RENKLERİ */
+            --dark: #f8f9fa;          /* Header arka plan rengi */
+            --darker: #ffffff;         /* Body arka plan rengi */
+            --light: #ffffff;          /* Kart arka plan rengi */
+            --gray: #6c757d;           /* İkincil metin rengi */
+            --dark-gray: #dee2e6;      /* Kenarlık rengi */
             --success: #28a745;
             --warning: #ffc107;
             --border-radius: 12px;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Daha hafif gölge */
             --transition: all 0.3s ease;
             
-            --bg-color: #f5f7fa;
-            --text-color: #333;
-            --card-bg: white;
-            --header-bg: linear-gradient(135deg, var(--primary), var(--secondary));
-            --footer-bg: var(--dark);
-            --image-border: #e2e8f0;
+            --bg-color: #ffffff;        /* Genel arka plan beyaz */
+            --text-color: #212529;      /* Genel metin rengi koyu gri/siyah */
+            --card-bg: #ffffff;         /* Kart arka planı beyaz */
+            --header-bg: linear-gradient(135deg, var(--primary), var(--secondary)); /* Header aynı kalabilir */
+            --footer-bg: #f8f9fa;       /* Footer arka planı */
+            --image-border: #dee2e6;
         }
 
         * {
@@ -96,8 +99,8 @@
         }
 
         .language-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             color: white;
             padding: 3px 8px;
             border-radius: 12px;
@@ -113,12 +116,12 @@
         }
 
         .language-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .search-bar {
             display: flex;
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             overflow: hidden;
             flex: 1;
@@ -126,6 +129,7 @@
             max-width: none;
             width: 100%;
             margin-right: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .search-bar input {
@@ -134,9 +138,14 @@
             padding: 4px 12px;
             outline: none;
             font-size: 0.7rem;
-            color: var(--dark);
+            color: white;
+            background: transparent;
             min-width: 0;
             width: 100%;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .search-bar button {
@@ -167,13 +176,14 @@
             background: var(--card-bg);
             color: var(--text-color);
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             min-width: 120px;
             max-height: 200px;
             overflow-y: auto;
             display: none;
             z-index: 1001;
             margin-top: 4px;
+            border: 1px solid var(--dark-gray);
         }
 
         .language-dropdown.show {
@@ -183,7 +193,7 @@
         .language-option {
             padding: 6px 10px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(108, 117, 125, 0.3);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             transition: var(--transition);
             font-size: 0.7rem;
         }
@@ -233,7 +243,7 @@
             color: white;
             padding: 8px 14px;
             border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
             z-index: 1002;
             opacity: 0;
             transition: all 0.4s ease;
@@ -254,7 +264,7 @@
 
         /* Hero */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             background-position: center;
@@ -273,6 +283,7 @@
             font-size: 0.75rem;
             max-width: 100%;
             margin: 0 auto;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         /* Status */
@@ -284,6 +295,7 @@
             margin-bottom: 10px;
             text-align: center;
             font-size: 0.75rem;
+            border: 1px solid var(--dark-gray);
         }
 
         /* Categories */
@@ -313,7 +325,7 @@
 
         .category-btn {
             background: var(--card-bg);
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-gray);
             padding: 4px 8px;
             border-radius: 12px;
             cursor: pointer;
@@ -338,7 +350,7 @@
         .sort-select {
             padding: 4px 8px;
             border-radius: 12px;
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-gray);
             background: var(--card-bg);
             color: var(--text-color);
             font-size: 0.65rem;
@@ -353,6 +365,11 @@
             border-color: var(--secondary);
         }
 
+        .sort-select option {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
         /* Favorites Management */
         .favorites-management {
             background: var(--card-bg);
@@ -364,6 +381,7 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 6px;
+            border: 1px solid var(--dark-gray);
         }
 
         .favorites-management.show {
@@ -393,6 +411,7 @@
             font-weight: 600;
             width: 100%;
             text-align: center;
+            color: var(--text-color);
         }
 
         /* Confirmation Modal */
@@ -402,7 +421,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -427,6 +446,7 @@
             overflow: hidden;
             transform: translateY(20px);
             transition: transform 0.3s ease;
+            border: 1px solid var(--dark-gray);
         }
 
         .confirmation-modal.show .confirmation-content {
@@ -435,7 +455,7 @@
 
         .confirmation-header {
             padding: 10px 12px;
-            border-bottom: 1px solid var(--gray);
+            border-bottom: 1px solid var(--dark-gray);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -477,6 +497,7 @@
             font-size: 0.8rem;
             margin-bottom: 12px;
             line-height: 1.4;
+            color: var(--text-color);
         }
 
         .confirmation-actions {
@@ -504,8 +525,8 @@
         }
 
         .cancel-btn {
-            background: var(--gray);
-            color: white;
+            background: var(--dark-gray);
+            color: var(--text-color);
             border: none;
             padding: 6px 12px;
             border-radius: 5px;
@@ -518,7 +539,7 @@
         }
 
         .cancel-btn:hover {
-            background: #5a6268;
+            background: #ced4da;
         }
 
         /* Products Grid - MOBİL İÇİN 2 KOLON */
@@ -545,10 +566,12 @@
             height: auto;
             min-height: 280px;
             overflow: hidden;
+            border: 1px solid var(--dark-gray);
         }
 
         .product-card:hover {
             transform: translateY(-3px);
+            border-color: var(--primary);
         }
 
         .product-image-container {
@@ -602,8 +625,8 @@
             position: absolute;
             top: 30px;
             right: 4px;
-            background: rgba(255,255,255,0.95);
-            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--dark-gray);
             border-radius: 50%;
             width: 18px;
             height: 18px;
@@ -615,12 +638,13 @@
             opacity: 1;
             z-index: 3;
             font-size: 0.55rem;
-            color: var(--dark);
+            color: var(--text-color);
         }
 
         .remove-favorite-btn:hover {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
         .product-info {
@@ -642,6 +666,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             height: 30px;
+            color: var(--text-color);
         }
 
         .product-title.expanded {
@@ -746,7 +771,7 @@
         .wishlist-btn, .share-btn {
             flex: 1;
             background: var(--card-bg);
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-gray);
             border-radius: 4px;
             padding: 5px;
             cursor: pointer;
@@ -768,6 +793,7 @@
         .wishlist-btn:hover, .share-btn:hover {
             background: var(--secondary);
             color: white;
+            border-color: var(--secondary);
         }
 
         /* Loading */
@@ -779,7 +805,7 @@
         }
 
         .loading-spinner {
-            border: 2px solid var(--gray);
+            border: 2px solid var(--dark-gray);
             border-top: 2px solid var(--primary);
             border-radius: 50%;
             width: 18px;
@@ -790,6 +816,7 @@
 
         .loading p {
             font-size: 0.75rem;
+            color: var(--text-color);
         }
 
         @keyframes spin {
@@ -815,13 +842,15 @@
         .end-of-results h3 {
             font-size: 0.85rem;
             margin-bottom: 4px;
+            color: var(--text-color);
         }
 
         .end-of-results p {
             font-size: 0.7rem;
+            color: var(--gray);
         }
 
-        /* No Favorites */
+        /* No Favorites Message */
         .no-favorites {
             text-align: center;
             padding: 25px 8px;
@@ -839,63 +868,13 @@
         .no-favorites h3 {
             font-size: 0.85rem;
             margin-bottom: 4px;
+            color: var(--text-color);
         }
 
         .no-favorites p {
             font-size: 0.7rem;
+            color: var(--gray);
         }
-
-        /* Footer - YORUM SATIRI İÇİN STİLLER KALDI AMA CSS'İ KAPATMAK İSTEMİYORUZ */
-        /*
-        footer {
-            background: var(--footer-bg);
-            color: white;
-            padding: 15px 0 8px;
-            margin-top: 15px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-        }
-
-        .footer-section p, .footer-section ul li a {
-            font-size: 0.7rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 3px;
-        }
-
-        .footer-section ul li a {
-            color: #bbb;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-section ul li a:hover {
-            color: white;
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 8px;
-            border-top: 1px solid #444;
-            color: #bbb;
-            font-size: 0.65rem;
-        }
-        */
 
         /* Copy Message */
         .copy-msg {
@@ -920,7 +899,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -946,6 +925,7 @@
             overflow: hidden;
             transform: translateY(20px);
             transition: transform 0.3s ease;
+            border: 1px solid var(--dark-gray);
         }
 
         .modal-overlay.show .modal-content {
@@ -954,7 +934,7 @@
 
         .modal-header {
             padding: 10px 12px;
-            border-bottom: 1px solid var(--gray);
+            border-bottom: 1px solid var(--dark-gray);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1001,12 +981,13 @@
 
         .category-modal-item {
             padding: 8px 12px;
-            border-bottom: 1px solid var(--gray);
+            border-bottom: 1px solid var(--dark-gray);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: var(--text-color);
         }
 
         .category-modal-item:last-child {
@@ -1032,8 +1013,8 @@
         }
 
         .category-count {
-            background: var(--gray);
-            color: white;
+            background: var(--dark-gray);
+            color: var(--text-color);
             padding: 1px 5px;
             border-radius: 6px;
             font-size: 0.7rem;
@@ -1045,6 +1026,7 @@
         .category-modal-item:hover .category-count,
         .category-modal-item.active .category-count {
             background: rgba(255,255,255,0.3);
+            color: white;
         }
 
         /* Responsive */
@@ -1377,41 +1359,6 @@
         </div>
     </div>
 
-    <!-- Footer - YORUM SATIRINA ALINDI -->
-    <!--
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3 data-translate="footerAbout">AliExpress Discount</h3>
-                    <p data-translate="footerDescription">Platform to find the best AliExpress products at the most affordable prices.</p>
-                </div>
-                <div class="footer-section">
-                    <h3 data-translate="footerLinks">Quick Links</h3>
-                    <ul>
-                        <li><a href="#" data-translate="footerHome">Home</a></li>
-                        <li><a href="#" data-translate="footerPopular">Popular</a></li>
-                        <li><a href="#" data-translate="footerNew">New</a></li>
-                        <li><a href="#" data-translate="footerContact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3 data-translate="footerHelp">Help</h3>
-                    <ul>
-                        <li><a href="#" data-translate="footerFAQ">FAQ</a></li>
-                        <li><a href="#" data-translate="footerShipping">Shipping</a></li>
-                        <li><a href="#" data-translate="footerReturn">Returns</a></li>
-                        <li><a href="#" data-translate="footerPrivacy">Privacy</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; 2023 AliExpress Discount. <span data-translate="footerRights">All rights reserved.</span>
-            </div>
-        </div>
-    </footer>
-    -->
-
     <!-- Categories Modal -->
     <div class="modal-overlay" id="categories-modal">
         <div class="modal-content">
@@ -1617,7 +1564,7 @@
                 sortDiscount: "Réduction",
                 sortRating: "Note",
                 noFavoritesTitle: "Aucun Favori",
-                noFavoritesDescription: "Ajoutez des produits aux favoris.",
+                noFavoritesDescription: "Ajoutez des productos aux favoris.",
                 loadingMore: "Chargement de plus de produits...",
                 endOfResultsTitle: "Vous avez vu tous les produits !",
                 endOfResultsDescription: "Vous avez vu todos los productos listados. Essayez une catégorie ou un filtre différent pour plus de résultats.",
@@ -1905,7 +1852,6 @@
         let hasMoreProducts = true;
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentLanguage = localStorage.getItem('language') || 'en'; // English as default
-        let currentTheme = 'light';
         
         // Infinite scroll variables
         let filteredProducts = [];
@@ -2192,6 +2138,21 @@
                 document.getElementById('language-dropdown').classList.remove('show');
             }
         });
+
+        // ---------- YENİ YARDIMCI FONKSİYON: Dizi Karıştırıcı ----------
+        /**
+         * Fisher-Yates (Knuth) Shuffle algoritması ile bir diziyi karıştırır.
+         * @param {Array} array Karıştırılacak dizi.
+         * @returns {Array} Karıştırılmış yeni dizi.
+         */
+        function shuffleArray(array) {
+            const newArray = [...array]; // Orijinal diziyi değiştirmemek için kopya oluştur
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
 
         // Change language
         function changeLanguage(lang) {
@@ -2494,7 +2455,11 @@
                                 
                                 return product;
                             });
-                            console.log("Loaded", allProducts.length, "products from Excel");
+                            
+                            // ** YENİ EKLENEN KISIM **
+                            // Excel'den yüklenen ürünleri karıştır (shuffle)
+                            allProducts = shuffleArray(allProducts);
+                            console.log("Loaded and shuffled", allProducts.length, "products from Excel");
                         } else {
                             throw new Error('Excel file is empty');
                         }
@@ -2553,8 +2518,9 @@
                 this.classList.add('active');
                 currentFilter = 'favorites';
                 currentDisplayedCount = 0;
+                favoritesManagement.classList.add('show');
                 
-                // Eğer favori sayısı 0 ise sadece "no favorites" mesajını göster
+                // Eğer favori yoksa, hiçbir ürün gösterme
                 if (favorites.length === 0) {
                     productsGrid.innerHTML = '';
                     noFavorites.style.display = 'block';
@@ -2562,11 +2528,9 @@
                     endOfResults.style.display = 'none';
                     loadingIndicator.style.display = 'none';
                     favoritesManagement.classList.add('show');
-                    return;
+                } else {
+                    filterAndDisplayProducts();
                 }
-                
-                favoritesManagement.classList.add('show');
-                filterAndDisplayProducts();
             });
 
             // Add sort option event listener
@@ -2580,25 +2544,24 @@
             filterAndDisplayProducts();
         }
 
-        // Filter and display - DÜZELTİLDİ: Favori sayısı 0 ise hiçbir ürün gösterme
+        // Filter and display - FIXED: Favorilerde kategori filtresini uygulamama
         function filterAndDisplayProducts() {
             filteredProducts = [...allProducts];
             
             // Favorites filter - TÜM KATEGORİLERDEN FAVORİLERİ GÖSTER
             if (currentFilter === 'favorites') {
-                // Eğer favori sayısı 0 ise hiçbir ürün gösterme
+                filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
+                favoritesManagement.classList.add('show');
+                
+                // Eğer favori yoksa, hiçbir ürün gösterme
                 if (favorites.length === 0) {
-                    filteredProducts = [];
                     productsGrid.innerHTML = '';
                     noFavorites.style.display = 'block';
                     productsGrid.style.display = 'none';
                     endOfResults.style.display = 'none';
                     loadingIndicator.style.display = 'none';
-                    return;
+                    return; // Burada return yaparak aşağıdaki kodu çalıştırmayı durduruyoruz
                 }
-                
-                filteredProducts = filteredProducts.filter(p => favorites.includes(p.id));
-                favoritesManagement.classList.add('show');
             } else {
                 // Category filter (only apply when not in favorites mode)
                 if (currentCategory !== 'all') {
@@ -2623,7 +2586,7 @@
         }
 
         function applySorting(products) {
-            const sortedProducts = [...products];
+            let sortedProducts = [...products];
             
             switch(currentSort) {
                 case 'price-low':
@@ -2655,7 +2618,9 @@
                     });
                     break;
                 default:
-                    // Default sorting - newest first
+                    // ** YENİ DEĞİŞİKLİK **
+                    // Varsayılan sıralamada diziyi karıştır.
+                    sortedProducts = shuffleArray(sortedProducts);
                     break;
             }
             return sortedProducts;
@@ -2676,16 +2641,6 @@
         // Load more products
         function loadMoreProducts() {
             if (isLoading) return;
-            
-            // Eğer favori modunda ve favori sayısı 0 ise hiçbir şey yapma
-            if (currentFilter === 'favorites' && favorites.length === 0) {
-                productsGrid.innerHTML = '';
-                noFavorites.style.display = 'block';
-                productsGrid.style.display = 'none';
-                endOfResults.style.display = 'none';
-                loadingIndicator.style.display = 'none';
-                return;
-            }
             
             const startIndex = currentDisplayedCount;
             const endIndex = Math.min(currentDisplayedCount + productsPerPage, filteredProducts.length);
@@ -2736,11 +2691,6 @@
         function handleScroll() {
             if (isLoading) return;
             
-            // Eğer favori modunda ve favori sayısı 0 ise hiçbir şey yapma
-            if (currentFilter === 'favorites' && favorites.length === 0) {
-                return;
-            }
-            
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
@@ -2758,7 +2708,7 @@
                     noFavorites.style.display = 'block';
                     productsGrid.style.display = 'none';
                 } else {
-                    productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px;">${translations[currentLanguage].noProductsFound}</p>`;
+                    productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-color);">${translations[currentLanguage].noProductsFound}</p>`;
                 }
                 loadingIndicator.style.display = 'none';
                 endOfResults.style.display = 'none';
@@ -2777,7 +2727,10 @@
                     : translateProductTitle(product.originalTitle || product.title, currentLanguage);
                 
                 // Use product image or placeholder
-                const productImage = product.image || `https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image`;
+                const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23e9ecef'/%3E%3Ctext x='50%25' y='50%25' font-size='18' fill='%236c757d' font-family='Arial, sans-serif' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";                
+               
+                // Ürün resmi varsa onu, yoksa yeni placeholder'ı kullan.
+                const productImage = product.image || PLACEHOLDER_IMAGE;
                 
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
@@ -2790,7 +2743,7 @@
                             <i class="fas fa-times"></i>
                         </button>
                         ` : ''}
-                        <img src="${productImage}" alt="${displayTitle}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200/666/FFFFFF?text=No+Image'">
+                        <img src="${productImage}" alt="${displayTitle}" class="product-image" onerror="this.src='${PLACEHOLDER_IMAGE}'; console.log('Image load failed, using static placeholder for:', '${product.id}');">
                     </div>
                     <div class="product-info">
                         <h3 class="product-title" onclick="toggleTitle(this)">${displayTitle}</h3>
@@ -2827,7 +2780,7 @@
             element.classList.toggle('expanded');
         }
 
-        // Favorite operations - DÜZELTİLDİ: Favori sayısı 0 olduğunda doğru davranış
+        // Favorite operations - FIXED: Son ürün silindiğinde ekranı güncelle
         function toggleFavorite(productId, buttonElement) {
             const index = favorites.indexOf(productId);
             if (index === -1) {
@@ -2892,7 +2845,7 @@
             }
         }
 
-        // Favorileri temizle fonksiyonu - DÜZELTİLDİ
+        // FIXED: Favorileri temizle fonksiyonu - ekrandaki ürünleri de kaldır
         function clearAllFavorites() {
             if (favorites.length > 0) {
                 favorites = [];
@@ -3040,7 +2993,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             console.log("Page loaded");
             
-            // Set light theme
+            // Apply light theme
             document.documentElement.setAttribute('data-theme', 'light');
             
             // Load language - English as default
